@@ -400,6 +400,59 @@
     }
   };
 
+  // src/sw-pagination/sw-pagination.style.css
+  var sw_pagination_style_default = "a {\n    text-decoration: none;\n}\n\n.wrapper {\n    display: flex;\n    align-items: center;\n    justify-content: end;\n    padding-top: 2rem;\n}\n\ndiv.wrapper a,\ndiv.wrapper span {\n    margin: 0 .5rem;\n}\n\n#next {\n    margin-left: .5rem;\n}\n\n.currentPage {\n    color: var(--primary-color-100)\n}\n\n.previous, .next {\n    font-weight: bold;\n    text-transform: uppercase;\n    letter-spacing: .125rem;\n}\n\nspan:not(span.currentPage, span.caption) {\n    cursor: pointer;\n}\n";
+
+  // src/sw-pagination/sw-pagination.jsx
+  var SwPagination = class extends _ {
+    pageChange(page) {
+      this.ref.getRootNode().host.dispatchEvent(new CustomEvent("pageChange", {
+        detail: page,
+        bubbles: true
+      }));
+    }
+    render({ currentPage, numberOfPages }) {
+      currentPage = Number.parseInt(currentPage);
+      numberOfPages = Number.parseInt(numberOfPages);
+      return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("style", null, sw_pagination_style_default), /* @__PURE__ */ v("div", {
+        ref: (node) => this.ref = node,
+        className: "wrapper"
+      }, currentPage > 1 ? /* @__PURE__ */ v("span", {
+        className: "previous",
+        onClick: () => this.pageChange(currentPage - 1)
+      }, "Previous page") : "", numberOfPages > 1 && currentPage !== 1 ? /* @__PURE__ */ v("span", {
+        onClick: () => this.pageChange(1)
+      }, "1") : "", numberOfPages > 7 && currentPage > 4 || numberOfPages === 7 && currentPage > 5 ? /* @__PURE__ */ v("span", {
+        className: "caption"
+      }, "...") : "", currentPage - 4 > 0 && currentPage + 1 > numberOfPages ? /* @__PURE__ */ v("span", {
+        onClick: () => this.pageChange(currentPage - 4)
+      }, currentPage - 4) : "", currentPage - 3 > 0 && currentPage + 2 > numberOfPages ? /* @__PURE__ */ v("span", {
+        onClick: () => this.pageChange(currentPage - 3)
+      }, currentPage - 3) : "", currentPage - 2 > 0 && currentPage !== 3 ? /* @__PURE__ */ v("span", {
+        onClick: () => this.pageChange(currentPage - 2)
+      }, currentPage - 2) : "", currentPage - 1 > 0 && currentPage !== 2 ? /* @__PURE__ */ v("span", {
+        onClick: () => this.pageChange(currentPage - 1)
+      }, currentPage - 1) : "", /* @__PURE__ */ v("span", {
+        className: "currentPage"
+      }, currentPage), currentPage + 1 <= numberOfPages ? /* @__PURE__ */ v("span", {
+        onClick: () => this.pageChange(currentPage + 1)
+      }, currentPage + 1) : "", currentPage + 2 <= numberOfPages ? /* @__PURE__ */ v("span", {
+        onClick: () => this.pageChange(currentPage + 2)
+      }, currentPage + 2) : "", currentPage + 3 <= numberOfPages && currentPage - 4 < 4 && currentPage < 4 ? /* @__PURE__ */ v("span", {
+        onClick: () => this.pageChange(currentPage + 3)
+      }, currentPage + 3) : "", currentPage + 4 <= numberOfPages && currentPage - 4 < 4 && currentPage < 3 ? /* @__PURE__ */ v("span", {
+        onClick: () => this.pageChange(currentPage + 4)
+      }, currentPage + 4) : "", /* @__PURE__ */ v("span", {
+        className: "caption"
+      }, "of"), /* @__PURE__ */ v("span", {
+        className: "caption"
+      }, numberOfPages), numberOfPages > 1 && numberOfPages - currentPage !== 0 ? /* @__PURE__ */ v("span", {
+        className: "next",
+        onClick: () => this.pageChange(currentPage + 1)
+      }, "Next page") : ""));
+    }
+  };
+
   // src/sw-table/sw-table.style.css
   var sw_table_style_default = "table {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n    text-align: left;\n    background: #fbfbfb;\n}\n\nthead {\n    font-style: italic;\n    color: darkgray;\n}\n\ntbody tr:nth-child(even) {\n    background: white;\n}\n\ntbody tr:nth-child(odd) {\n    border-bottom: 1px solid #eeeeee;\n}\n\nth, td {\n    padding: .5rem;\n}\n\ntd.components *:not(:first-child) {\n    margin-left: 2rem;\n}\n";
 
@@ -428,6 +481,7 @@
   // src/index.js
   preact_custom_element_esm_default(SwButton, "sw-button", [], { shadow: true });
   preact_custom_element_esm_default(SwLoader, "sw-loader", [], { shadow: true });
+  preact_custom_element_esm_default(SwPagination, "sw-pagination", ["current-page", "number-of-pages"], { shadow: true });
   preact_custom_element_esm_default(SwTable, "sw-table", ["source", "fields"], { shadow: true });
 
   // test-client/index.jsx
@@ -481,10 +535,24 @@
     }
   ];
   var Main = class extends _ {
+    constructor() {
+      super();
+      this.onPageChange();
+    }
+    async onPageChange(page) {
+      this.setState({
+        numberOfPages: 30,
+        currentPage: page?.detail ? page.detail : 1
+      });
+    }
     render() {
       return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("sw-table", {
         source,
         fields
+      }), /* @__PURE__ */ v("sw-pagination", {
+        "number-of-pages": this.state.numberOfPages,
+        "current-page": this.state.currentPage,
+        onpageChange: (page) => this.onPageChange(page)
       }));
     }
   };

@@ -56,10 +56,25 @@ const fields = [
 ];
 
 class Main extends Component {
+    constructor() {
+        super();
+        this.onPageChange();
+    }
+
+    async onPageChange(page) {
+        this.setState({
+            numberOfPages: 30,
+            currentPage: page?.detail ? page.detail : 1
+        });
+    }
+
+
     render() {
         return (
             <>
                 <sw-table source={source} fields={fields} />
+                <sw-pagination number-of-pages={this.state.numberOfPages} current-page={this.state.currentPage}
+                               onpageChange={page => this.onPageChange(page)} />
             </>
         );
     }
