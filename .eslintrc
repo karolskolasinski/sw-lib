@@ -1,0 +1,6 @@
+{
+    "extends": "@7willows/eslint-config-7w",
+    "globals": {
+        "root": "readonly"
+    }
+}

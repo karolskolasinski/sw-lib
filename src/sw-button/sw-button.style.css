@@ -1,0 +1,78 @@
+input {
+    padding: .4rem;
+    font-size: 1rem;
+    border: 0;
+    border-bottom: 1px solid lightgray;
+    border-radius: 3px;
+}
+
+input[type=text], input[type=password] {
+    margin-bottom: .5rem;
+}
+
+input[type=submit] {
+    width: fit-content;
+    margin-top: .5rem;
+    color: var(--foreground-color);
+    cursor: pointer;
+    background: var(--primary-color-100);
+    border: none;
+}
+
+input[type=submit]:disabled,
+input[type=submit]:disabled:hover {
+    background: var(--primary-color-40);
+}
+
+input[type=submit]:hover {
+    background: var(--primary-color-90);
+}
+
+input[type=submit]:active {
+    background: var(--primary-color-70);
+}
+
+input.primary,
+input.danger {
+    width: fit-content;
+    background: var(--primary-color-100);
+    color: white;
+    border: 0;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+input.primary:hover {
+    background: var(--primary-color-90);
+    outline: 0;
+}
+
+input.primary:focus,
+input[type=submit]:focus {
+    box-shadow: 0 0 2px 1px var(--primary-color-70);
+}
+
+input.danger:hover {
+    background: rgba(255, 0, 0, 0.8);
+    outline: 0;
+}
+
+input.danger:focus {
+    box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.8);
+}
+
+label:not(.toggle) {
+    position: relative;
+    top: -2.1rem;
+    left: .45rem;
+    transition: .2s ease-out all;
+    cursor: text;
+    height: 1rem;
+}
+
+input:focus + label,
+input:not(:placeholder-shown) + label {
+    top: -4rem;
+    font-size: .85rem;
+    color: gray;
+}
