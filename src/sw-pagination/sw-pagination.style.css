@@ -1,0 +1,33 @@
+a {
+    text-decoration: none;
+}
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    padding-top: 2rem;
+}
+
+div.wrapper a,
+div.wrapper span {
+    margin: 0 .5rem;
+}
+
+#next {
+    margin-left: .5rem;
+}
+
+.currentPage {
+    color: var(--primary-color-100)
+}
+
+.previous, .next {
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: .125rem;
+}
+
+span:not(span.currentPage, span.caption) {
+    cursor: pointer;
+}
