@@ -1,5 +1,6 @@
 import { h, render, Component } from 'preact';
 import '../src/index';
+import formatDate from './utils/utils.mjs';
 
 const source = [
     {
@@ -33,23 +34,21 @@ const fields = [
     },
     {
         label: 'Data utworzenia',
-        field: 'revCreatedAt',
+        component: item => <>{formatDate(item.revCreatedAt)}</>,
         sortable: true
     },
     {
         label: 'Actions',
         component: item =>
             <>
-                <sw-button sw-class="danger"
-                           icon="fas fa-info-circle"
-                           onclick={() => onDetailsItemClick(item)}
-                           button-text="Szczegóły">Szczegóły
+                <sw-button class="danger"
+                           icon="info-circle"
+                           onclick={() => onDetailsItemClick(item)}>Szczegóły
                 </sw-button>
 
-                <sw-button sw-class="primary"
+                <sw-button class="primary"
                            icon="trash"
-                           onclick={() => onRemoveItemClick(item)}
-                           button-text="Usuń">Usuń
+                           onclick={() => onRemoveItemClick(item)}>Usuń
                 </sw-button>
             </>
     }
