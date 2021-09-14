@@ -12,7 +12,7 @@ export default class SwButton extends Component {
 
             <button type="button"
                     role="button"
-                    disabled={disabled === 'true' || disabled}>{child}
+                    disabled={!!disabled}>{child}
             </button>
         </>;
     }
