@@ -2,7 +2,7 @@ import { Component } from 'preact';
 import style from './sw-text-input.style.css';
 
 export default class SwTextInput extends Component {
-    render({ name, required, placeholder }) {
+    render({ name, required, placeholder, disabled, value }) {
         return <>
             <style>{style}</style>
 
@@ -13,11 +13,10 @@ export default class SwTextInput extends Component {
                        type="text"
                        required={required === 'true'}
                        placeholder=" "
+                       disabled={disabled}
+                       value={value}
                        onInput={e => this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
-                               detail: {
-                                   name: name,
-                                   value: e.target.value
-                               },
+                               detail: { name: name, value: e.target.value },
                                bubbles: true
                            }
                        ))}

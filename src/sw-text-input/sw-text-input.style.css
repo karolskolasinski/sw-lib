@@ -70,7 +70,7 @@ input.danger:focus {
 label:not(.toggle) {
     position: absolute;
     top: .5rem;
-    left: .45rem;
+    left: .4rem;
     transition: .2s ease-out all;
     cursor: text;
     height: 1rem;
@@ -78,7 +78,7 @@ label:not(.toggle) {
 
 input:focus + label,
 input:not(:placeholder-shown) + label {
-    top: -1.5rem;
+    top: 2.4rem;
     font-size: .85rem;
     color: gray;
 }
