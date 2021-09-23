@@ -1,7 +1,6 @@
 {
-    "private": true,
     "name": "sw-web-components",
-    "version": "0.0.0",
+    "version": "1.0.1",
     "license": "UNLICENSED",
     "main": "dist/build.js",
     "scripts": {
@@ -17,9 +16,11 @@
         "type": "git",
         "url": "git+ssh://git@gitlab.com/7willows/sw-web-components.git"
     },
-    "author": "",
     "bugs": {
         "url": "https://gitlab.com/7willows/sw-web-components/issues"
+    },
+    "publishConfig": {
+        "registry": "https://npm.7willows.com"
     },
     "homepage": "https://gitlab.com/7willows/sw-web-components#readme",
     "devDependencies": {
