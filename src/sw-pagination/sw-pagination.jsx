@@ -4,7 +4,7 @@ import style from './sw-pagination.style.css';
 export default class SwPagination extends Component {
     pageChange(page) {
         this.ref.getRootNode().host.dispatchEvent(new CustomEvent('pageChange', {
-            detail: page,
+            detail: { page },
             bubbles: true
         }));
     }
