@@ -1,6 +1,6 @@
 {
-    "name": "sw-web-components",
-    "version": "1.0.1",
+    "name": "@7willows/sw-web-components",
+    "version": "1.0.2",
     "license": "UNLICENSED",
     "main": "dist/build.js",
     "scripts": {
@@ -20,7 +20,7 @@
         "url": "https://gitlab.com/7willows/sw-web-components/issues"
     },
     "publishConfig": {
-        "registry": "https://npm.7willows.com"
+        "@7willows:registry": "https://gitlab.com/api/v4/projects/29228786/packages/npm/"
     },
     "homepage": "https://gitlab.com/7willows/sw-web-components#readme",
     "devDependencies": {
