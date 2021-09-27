@@ -81,7 +81,7 @@ label:not(.toggle) {
 
 input:focus + label,
 input:not(:placeholder-shown) + label {
-    top: 2.4rem;
+    top: -1.5rem;
     font-size: .85rem;
     color: gray;
 }
