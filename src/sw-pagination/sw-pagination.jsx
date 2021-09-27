@@ -30,9 +30,9 @@ export default class SwPagination extends Component {
                     <span className="caption">...</span> : ''}
 
 
-                {currentPage - 4 > 0 && currentPage + 1 > numberOfPages ?
+                {currentPage - 4 > 0 && currentPage + 1 > numberOfPages && currentPage !== 5 ?
                     <span onClick={() => this.pageChange(currentPage - 4)}>{currentPage - 4}</span> : ''}
-                {currentPage - 3 > 0 && currentPage + 2 > numberOfPages ?
+                {currentPage - 3 > 0 && currentPage + 2 > numberOfPages && currentPage !== 4 ?
                     <span onClick={() => this.pageChange(currentPage - 3)}>{currentPage - 3}</span> : ''}
                 {currentPage - 2 > 0 && currentPage !== 3 ?
                     <span onClick={() => this.pageChange(currentPage - 2)}>{currentPage - 2}</span> : ''}
