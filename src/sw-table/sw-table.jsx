@@ -2,7 +2,7 @@ import { Component } from 'preact';
 import style from './sw-table.style.css';
 
 export default class SwTable extends Component {
-    render({ source, fields }) {
+    render({ config: { source, fields} }) {
         if (source && typeof source === 'string') {
             source = JSON.parse(source);
         }
@@ -10,7 +10,7 @@ export default class SwTable extends Component {
         if (fields && typeof fields === 'string') {
             fields = JSON.parse(fields);
         }
-        
+
         if (source && fields) {
             return <>
                 <style>{style}</style>
