@@ -14,15 +14,15 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+ssh://git@gitlab.com/7willows/sw-web-components.git"
+        "url": "git+ssh://git@gitlab.com/7willows/sw-lib.git"
     },
     "bugs": {
-        "url": "https://gitlab.com/7willows/sw-web-components/issues"
+        "url": "https://gitlab.com/7willows/sw-lib/issues"
     },
     "publishConfig": {
         "@7willows:registry": "https://gitlab.com/api/v4/projects/29228786/packages/npm/"
     },
-    "homepage": "https://gitlab.com/7willows/sw-web-components#readme",
+    "homepage": "https://gitlab.com/7willows/sw-lib#readme",
     "devDependencies": {
         "concurrently": "^6.2.1",
         "esbuild": "^0.12.26",
