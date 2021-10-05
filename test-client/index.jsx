@@ -1,79 +1,71 @@
 import { h, render, Component } from 'preact';
 import '../src/index';
-import formatDate from './utils/utils.mjs';
-
-const source = [
-    {
-        id: '2f984f9a51903dd2af4c6cf3cd00141f',
-        rev: '10-2fb3414188f50f26b50978f41f905e28',
-        docType: 'genericArticle',
-        label: 'Article 1',
-        revCreatedBy: 'John',
-        revCreatedAt: 1629795068605
-    },
-    {
-        id: 'djl03f9a51903dd2af4c6cf3cdww993d',
-        rev: '08-2d03414188f50f26b50978f41f90244d',
-        docType: 'genericArticle',
-        label: 'Article 2',
-        revCreatedBy: 'Will',
-        revCreatedAt: 1630145063766
-    }
-];
-
-const fields = [
-    {
-        label: 'Tytuł',
-        field: 'label',
-        sortable: true
-    },
-    {
-        label: 'Utworzył',
-        field: 'revCreatedBy',
-        sortable: true
-    },
-    {
-        label: 'Data utworzenia',
-        component: item => <>{formatDate(item.revCreatedAt)}</>,
-        sortable: true
-    },
-    {
-        label: 'Actions',
-        component: item =>
-            <>
-                <sw-button class="danger"
-                           icon="info-circle"
-                           onclick={() => onDetailsItemClick(item)}>Szczegóły
-                </sw-button>
-
-                <sw-button class="primary"
-                           icon="trash"
-                           onclick={() => onRemoveItemClick(item)}>Usuń
-                </sw-button>
-            </>
-    }
-];
+import { flashMessage } from '../src';
 
 class Main extends Component {
-    constructor() {
-        super();
-        this.onPageChange();
-    }
-
-    async onPageChange(page) {
-        this.setState({
-            numberOfPages: 30,
-            currentPage: page?.detail ? page.detail : 1
-        });
-    }
-
-
     render() {
         return (
             <>
-                <sw-table source={source} fields={fields} />
-                <sw-pagination number-of-pages={this.state.numberOfPages} current-page={this.state.currentPage}
-                               onpageChange={page => this.onPageChange(page)} />
+                <h2 style="cursor: pointer" onClick={() => {
+                    flashMessage('Info flash message', 'info');
+                    flashMessage('Success flash message', 'success');
+                    flashMessage('Warning flash message', 'warning');
+                    flashMessage('Error flash message', 'error');
+                }}>Click here to test flash messages</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam distinctio, excepturi iste nostrum
+                    odit quibusdam quisquam sunt tempore ullam voluptates. Aperiam commodi debitis doloremque, error et
+                    hic in mollitia nemo numquam rem, tempora ut vel? Debitis dolorem excepturi illo non odit provident
+                    quas rerum, tempore voluptatibus! Alias animi aut blanditiis consequuntur culpa debitis delectus
+                    deleniti dignissimos dolor dolores eius eligendi enim et, exercitationem illum in ipsa iusto laborum
+                    molestias, necessitatibus neque nisi nobis obcaecati pariatur porro praesentium quam quas quisquam
+                    repellendus saepe sit soluta sunt unde vel vero voluptatem voluptates. Amet aperiam autem
+                    consectetur cum cumque doloremque eius eos error facilis hic illum ipsum, iure laboriosam molestiae
+                    natus nisi numquam odit optio perspiciatis praesentium quis quos recusandae reiciendis sunt tenetur
+                    ullam, vitae! Aspernatur, deserunt distinctio doloremque et facere fuga fugiat in inventore iste
+                    itaque nihil placeat possimus reiciendis totam veritatis. Ad aut consequatur delectus distinctio
+                    dolor dolorem est eum eveniet fugiat harum illo, maiores minima mollitia quam, quos. Cupiditate esse
+                    id pariatur ullam. Alias eum nemo nobis, quod quos similique sit. Alias animi delectus doloremque
+                    ducimus, error, est, facilis fugit laborum laudantium natus nihil omnis praesentium quidem sunt
+                    ullam! A, ad deserunt dolorum ea exercitationem in laudantium officia quam, quas quasi quidem, sequi
+                    vero. Alias animi aperiam consectetur distinctio dolore ea eligendi fugiat itaque magnam maxime
+                    neque nobis, perferendis, porro quaerat quam repellat, repellendus repudiandae saepe tempore
+                    temporibus ullam veniam voluptatum? Accusamus aliquid consequuntur cupiditate dicta doloremque
+                    dolores dolorum eaque esse eveniet excepturi facere facilis fuga in laborum magnam maiores minima
+                    modi nostrum, obcaecati odio omnis quas repellendus reprehenderit sit soluta tenetur voluptatum?
+                    Aliquid atque aut autem culpa dignissimos doloremque ea eligendi exercitationem illum iusto maiores
+                    maxime minus modi molestias neque, nisi pariatur perferendis placeat, ratione repudiandae vel,
+                    voluptatem voluptatum. Adipisci assumenda dignissimos eaque eius, esse excepturi illo itaque libero,
+                    molestias nihil nulla perferendis perspiciatis quae, quas quo quod recusandae reiciendis repudiandae
+                    sed ut! Dignissimos doloremque fugit repellat sapiente tempore. Aliquid at cumque enim error eum,
+                    excepturi explicabo in libero minima nostrum, odit perferendis porro. Aliquam assumenda beatae
+                    dolore doloribus eligendi, excepturi facilis, iste libero molestias neque pariatur placeat quidem?
+                    Ad aperiam dignissimos eligendi, esse, excepturi explicabo itaque molestias nemo sapiente temporibus
+                    ullam vero? Ad animi cupiditate dolorem ea eligendi, est minus nisi odio pariatur qui? Aliquam
+                    beatae commodi consequatur culpa dicta distinctio ducimus error est, in iste libero obcaecati,
+                    omnis, pariatur reiciendis totam! Aliquam architecto dicta doloribus ea eaque error eum eveniet
+                    expedita, harum itaque molestiae numquam perspiciatis, provident quas quidem ullam voluptates.
+                    Aspernatur molestiae natus obcaecati saepe sapiente. Ad ea fugit natus quod, quos rem ut voluptatum!
+                    Consectetur dicta est ex minus nemo numquam qui quis quo sit unde. Aliquam, consectetur
+                    consequuntur, cupiditate deserunt dignissimos dolore exercitationem impedit iste laboriosam laborum
+                    magni maxime nam non obcaecati officia optio placeat quibusdam quidem sed tempore temporibus vitae
+                    voluptates? Adipisci animi consequatur culpa cumque id, illo ipsa non praesentium qui sapiente ullam
+                    veritatis vitae voluptatum? Accusantium aperiam aut autem corporis cum delectus dignissimos eaque
+                    ex, excepturi id ipsam laborum maxime molestias mollitia natus necessitatibus odit perferendis
+                    placeat porro provident quaerat repudiandae, totam voluptate voluptatem voluptatum? Corporis quaerat
+                    quisquam sed. Alias earum nemo, nisi quod similique tempora unde veniam! Ab aliquam amet asperiores
+                    cumque deleniti earum, eius eum expedita facilis impedit, inventore nihil omnis, porro qui sed
+                    voluptate voluptatum. Animi commodi consectetur eos ipsam magni qui reiciendis sit vitae? Accusamus
+                    aliquid iusto libero nemo saepe. At deserunt ex hic laboriosam maiores necessitatibus neque optio
+                    quos recusandae unde. Fuga iusto magnam nulla, tenetur vel vero? Aliquid blanditiis consequuntur
+                    eveniet, magnam nesciunt nobis voluptas. A beatae, debitis deleniti doloribus fuga fugit labore odio
+                    quos ratione ut. Corporis doloribus, ducimus, explicabo facere, iste magni nobis perferendis quaerat
+                    quo repellendus sapiente sequi sit soluta sunt suscipit tempora tempore. Dolor et incidunt quae
+                    rerum. Ab alias, esse hic magnam veritatis vitae voluptas. A aliquam aperiam at beatae enim, est
+                    eveniet ex, excepturi exercitationem, laboriosam minus porro quae rem sit suscipit tempore ullam
+                    vero. Aperiam aut culpa dicta distinctio dolores doloribus earum et facere, facilis fugit impedit
+                    ipsum labore optio, porro reiciendis rem repellat rerum sapiente sit unde veritatis, voluptas
+                    voluptatum! Ab aliquam asperiores autem cupiditate earum eveniet explicabo ipsum itaque iusto minus
+                    modi, neque nostrum, officia, vitae.</p>
             </>
         );
     }
