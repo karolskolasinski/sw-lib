@@ -13,7 +13,7 @@
     cursor: pointer;
     min-height: 3.5rem;
     box-shadow: rgba(0, 0, 0, 0.04) 0 3px 5px;
-    border-radius: var(--flash-radius);
+    border-radius: var(--radius);
 }
 
 .content {
