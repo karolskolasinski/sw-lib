@@ -51,7 +51,7 @@ export function modal({ header, body, footer, large }) {
     const modalSize = large === true ? 'modal-large' : 'modal-small';
 
     item.innerHTML = `<div id="modal-${id}" class="modal-wrapper modal-prevent">
-                              <div class="modal-content ${modalSize}">
+                              <div class="modal-content ${modalSize} swing-in-top-fwd">
                                   <div class="modal-header">
                                       <div class="modal-header-content">${header}</div>
                                       <div class="modal-header-icon">
