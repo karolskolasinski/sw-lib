@@ -13,15 +13,13 @@ function manageStyle() {
     }
 
     const modalContainer = document.querySelector('.modal-container');
-    if (!modalContainer) {
-        document.head.removeChild(style);
-    }
+    if (!modalContainer) document.head.removeChild(style);
 }
 
 function managePrevent() {
     const modals = document.querySelectorAll('.modal-wrapper');
     modals?.forEach(modal => {
-        if (modal.id === `modal${counter - 1}`) modal.classList.remove('modal-prevent');
+        if (modal.id === `modal-${counter - 1}`) modal.classList.remove('modal-prevent');
         else modal.classList.add('modal-prevent');
     });
 }
@@ -37,27 +35,22 @@ function manageModalContainer() {
         return;
     }
 
-    if (counter === 0) {
-        modalContainer.remove();
-    }
+    if (counter === 0) modalContainer.remove();
     managePrevent();
     manageStyle();
 }
 
-export function modal({ header, body, footer, size }) {
-    if (!header && !body && !footer && !size) {
+export function modal({ header, body, footer, large }) {
+    if (!header && !body && !footer && !large) {
         throw new Error('Missing modal parameters');
     }
     manageStyle();
 
     const item = document.createElement('div');
-    let modalSize;
     const id = counter++;
+    const modalSize = large === true ? 'modal-large' : 'modal-small';
 
-    size === 'large' ? modalSize = 'modal-large' : modalSize = 'modal-small';
-    if (size === 'xlarge') modalSize = 'modal-xlarge';
-
-    item.innerHTML = `<div id="modal${id}" class="modal-wrapper modal-prevent">
+    item.innerHTML = `<div id="modal-${id}" class="modal-wrapper modal-prevent">
                               <div class="modal-content ${modalSize}">
                                   <div class="modal-header">
                                       <div class="modal-header-content">${header}</div>
@@ -73,6 +66,8 @@ export function modal({ header, body, footer, size }) {
                           </div>`;
 
     const modal = item.firstChild;
+    modal.style.top = `${id * 2 + 12}%`;
+
     const icon = modal.querySelector('.modal-header-icon');
     icon.addEventListener('click', () => {
         modal.remove();
