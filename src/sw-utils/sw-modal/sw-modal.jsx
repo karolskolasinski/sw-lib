@@ -1,20 +1,28 @@
 import cssFile from './sw-modal.style.css';
 
-let isStyleFileAdded = false;
 let counter = 0;
 
-function addStyleFile() {
-    const style = document.createElement('style');
-    style.innerHTML = cssFile;
-    document.head.appendChild(style);
-    isStyleFileAdded = true;
+function manageStyle() {
+    const style = document.querySelector('#modal-style');
+    if (!style) {
+        const style = document.createElement('style');
+        style.innerHTML = cssFile;
+        style.id = 'modal-style';
+        document.head.appendChild(style);
+        return;
+    }
+
+    const modalContainer = document.querySelector('.modal-container');
+    if (!modalContainer) {
+        document.head.removeChild(style);
+    }
 }
 
 function managePrevent() {
     const modals = document.querySelectorAll('.modal-wrapper');
-    modals.forEach(modal => {
-        if (modal.id === `modal${counter - 1}`) modal.classList.remove('prevent');
-        else modal.classList.add('prevent');
+    modals?.forEach(modal => {
+        if (modal.id === `modal${counter - 1}`) modal.classList.remove('modal-prevent');
+        else modal.classList.add('modal-prevent');
     });
 }
 
@@ -25,18 +33,22 @@ function manageModalContainer() {
         const modalContainer = document.createElement('div');
         modalContainer.classList.add('modal-container');
         document.body.appendChild(modalContainer);
+        managePrevent();
         return;
     }
 
-    if (counter === 0) modalContainer.remove();
+    if (counter === 0) {
+        modalContainer.remove();
+    }
     managePrevent();
+    manageStyle();
 }
 
 export function modal({ header, body, footer, size }) {
     if (!header && !body && !footer && !size) {
         throw new Error('Missing modal parameters');
     }
-    if (!isStyleFileAdded) addStyleFile();
+    manageStyle();
 
     const item = document.createElement('div');
     let modalSize;
@@ -45,7 +57,7 @@ export function modal({ header, body, footer, size }) {
     size === 'large' ? modalSize = 'modal-large' : modalSize = 'modal-small';
     if (size === 'xlarge') modalSize = 'modal-xlarge';
 
-    item.innerHTML = `<div id="modal${id}" class="modal-wrapper prevent">
+    item.innerHTML = `<div id="modal${id}" class="modal-wrapper modal-prevent">
                               <div class="modal-content ${modalSize}">
                                   <div class="modal-header">
                                       <div class="modal-header-content">${header}</div>

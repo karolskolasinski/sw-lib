@@ -11,7 +11,7 @@
 
 .modal-wrapper {
     position: absolute;
-    top: 30%;
+    top: 12%;
     left: 50%;
     transform: translate(-50%);
     z-index: 10;
@@ -64,7 +64,12 @@
     justify-content: end;
 }
 
-.prevent {
+.modal-prevent {
     pointer-events: none;
-    filter: blur(1px) brightness(80%);
+    filter: blur(1px) brightness(95%);
+}
+
+body > :not(.modal-wrapper, .modal-container) {
+    display: inherit;
+    filter: blur(1px);
 }
