@@ -1,4 +1,6 @@
 import cssFile from './sw-modal.style.css';
+import { render } from 'preact';
+import sanitizeHtml from 'sanitize-html';
 
 let counter = 0;
 
@@ -40,66 +42,77 @@ function manageModalContainer() {
     manageStyle();
 }
 
-const closeModal = function(modal) {
-    modal.remove();
-    counter--;
-    manageModalContainer();
+const close = function(flag) {
+    if (flag) {
+        const modal = document.querySelector(`#modal-${counter - 1}`);
+        const modalContent = modal.querySelector('.modal-content');
+        modalContent.classList.add('slide-out-top');
+
+        setTimeout(() => {
+            modal.remove();
+            counter--;
+            manageModalContainer();
+        }, 100);
+    }
 };
 
-export function modal({ header, body, footer, large }) {
-    if (!header && !body && !footer && !large) {
-        throw new Error('Missing modal parameters');
+function convertToElement(toConvert, modal, selector) {
+    let item;
+    if (typeof toConvert === 'string') {
+        item = toConvert;
+    } else if (typeof toConvert === 'function') {
+        item = toConvert({ close });
     }
+
+    const element = modal.querySelector(`.${selector}-content`);
+
+    if (typeof item === 'string') {
+        element.innerHTML = sanitizeHtml(item);
+        item = element;
+    }
+
+    render(item ? item : toConvert, element);
+}
+
+export function modal({ header, body, footer, large }) {
+    if (!header && !body && !footer && !large) throw new Error('Missing modal parameters');
     manageStyle();
 
-    const item = document.createElement('div');
     const id = counter++;
     const modalSize = large ? 'modal-large' : 'modal-small';
-
-    // div.innerHTML = `<div>.....<div class="modal-header"></div>...</div>`
-    //
-    // const content = div.firstChild;
-    // let headerElement = typeof header === 'string' ? header : header({ close: closeModal });
-    //
-    // if (typeof headerElement === 'string') {
-    //     const element = new HTMLElement();
-    //     element.innerHTML = stripJS(headerElement);
-    //     headerElement = element;
-    // }
-    //
-    // if (isJsx(headerElement)) {
-    //     const element = new HTMLElement();
-    //     render(headerElement, element);
-    //     headerElement = element;
-    // }
-    //
-    // if (headerElement extends HTMLElement) {
-    //     content.querySelector('.modal-header').appendChild(headerElement);
-    // }
-
+    const item = document.createElement('div');
 
     item.innerHTML = `<div id="modal-${id}" class="modal-wrapper modal-prevent">
-                              <div class="modal-content ${modalSize} swing-in-top-fwd">
-                                  <div class="modal-header">
-                                      <div class="modal-header-content">${header(closeModal)}</div>
-                                      <div class="modal-header-icon">
-                                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="" viewBox="0 0 16 16">
-                                              <path d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z" />
-                                          </svg>                                                          
-                                      </div>
+                          <div class="modal-content ${modalSize} swing-in-top-fwd">
+                              <div class="modal-header">
+                                  <div class="modal-header-content"></div>
+                                  <div class="modal-header-icon">
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="" viewBox="0 0 16 16">
+                                          <path d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z" />
+                                      </svg>                                                          
                                   </div>
-                                  <div class="modal-body">${'BODY'}</div>
-                                  <div class="modal-footer"><sw-button>Button</sw-button></div>
                               </div>
-                          </div>`;
+                                  
+                              <div class="modal-body">
+                                  <div class="modal-body-content"></div>
+                              </div>
+                                  
+                              <div class="modal-footer">
+                                  <div class="modal-footer-content"></div>
+                              </div>
+                          </div>
+                      </div>`;
 
     const modal = item.firstChild;
+
+    if (header) convertToElement(header, modal, 'modal-header');
+    if (body) convertToElement(body, modal, 'modal-body');
+    if (footer) convertToElement(footer, modal, 'modal-footer');
+
     modal.style.top = `${id * 2 + 12}%`;
 
     const icon = modal.querySelector('.modal-header-icon');
-    icon.addEventListener('click', () => {
-        closeModal(modal);
-    });
+    icon.addEventListener('click', () => close(true));
 
     document.body.appendChild(modal);
     manageModalContainer();
