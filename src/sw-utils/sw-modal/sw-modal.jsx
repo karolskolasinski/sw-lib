@@ -74,6 +74,16 @@ function convertToElement(toConvert, modal, selector) {
     render(item ? item : toConvert, element);
 }
 
+/**
+ * @typedef {function(flag:boolean):void} Close
+ *
+ * @param {string | function({ close:Close }):string | function({ close:Close }):JSX | JSX} header
+ * @param {string | function({ close:Close }):string | function({ close:Close }):JSX | JSX} body
+ * @param {string | function({ close:Close }):string | function({ close:Close }):JSX | JSX} footer
+ * @param {boolean} large
+ * @throws {Error} when there is no modal parameters specified
+ * @return {Promise<>}
+ */
 export function modal({ header, body, footer, large }) {
     if (!header && !body && !footer && !large) throw new Error('Missing modal parameters');
     manageStyle();
