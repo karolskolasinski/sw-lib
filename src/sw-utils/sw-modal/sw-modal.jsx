@@ -144,3 +144,40 @@ export function modal({ header, body, footer, large }) {
         manageModalContainer();
     });
 }
+
+export function modalAlert({ title, text, buttonLabel, icon }) {
+    return modal({
+        header: title,
+        body: text,
+        footer: ({ close }) => <sw-button onClick={() => close('modalAlert')}>{buttonLabel}</sw-button>,
+        large: false
+    });
+}
+
+export function modalPrompt({ title, text, placeholder, initialValue, icon }) {
+    return modal({
+        header: title,
+        body: () => <>
+            <p>{text}</p>
+            <sw-text-input name={title}
+                           required={true}
+                           placeholder={placeholder}
+                           value={initialValue}
+            />
+        </>,
+        footer: ({ close }) => <sw-button onClick={() => close('modalPrompt')}>Submit</sw-button>,
+        large: false
+    });
+}
+
+export function modalConfirm({ title, text, okLabel, cancelLabel, icon }) {
+    return modal({
+        header: title,
+        body: text,
+        footer: ({ close }) => <>
+            <sw-button onClick={() => close('ok')}>{okLabel}</sw-button>
+            <sw-button onClick={() => close('cancel')}>{cancelLabel}</sw-button>
+        </>,
+        large: false
+    });
+}

@@ -1,6 +1,6 @@
 import { h, render, Component } from 'preact';
 import '../src/index';
-import { modal } from '../src';
+import { modal, modalAlert, modalConfirm, modalPrompt } from '../src';
 
 class Main extends Component {
     render() {
@@ -31,8 +31,44 @@ class Main extends Component {
                     });
 
                     console.log(a, b);
-
                 }}>Click HERE!!!</h2>
+
+                <h3 onClick={async () => {
+                    const alert = await modalAlert({
+                        title: 'Danger!',
+                        text: 'You are not allowed to view this content!',
+                        buttonLabel: 'O.K.',
+                        icon: 'cross'
+                    });
+
+                    console.log(alert);
+                }}>Modal Alert CLICK ME!</h3>
+
+
+                <h3 onClick={async () => {
+                    const name = await modalPrompt({
+                        title: 'Please answer',
+                        text: 'Please enter your name',
+                        placeholder: 'name',
+                        initialValue: '',
+                        icon: 'user'
+                    });
+
+                    console.log(name);
+                }}>Modal Prompt CLICK ME!</h3>
+
+
+                <h3 onClick={async () => {
+                    const userAccepted = await modalConfirm({
+                        title: 'License',
+                        text: 'Do you accept the license?',
+                        okLabel: 'Yes',
+                        cancelLabel: 'No',
+                        icon: 'question-mark'
+                    });
+
+                    console.log(userAccepted);
+                }}>Modal Confirm CLICK ME!</h3>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam distinctio, excepturi iste nostrum
                     odit quibusdam quisquam sunt tempore ullam voluptates. Aperiam commodi debitis doloremque, error et
                     hic in mollitia nemo numquam rem, tempora ut vel? Debitis dolorem excepturi illo non odit provident
