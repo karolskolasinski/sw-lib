@@ -8364,31 +8364,12 @@ and ensure you are accounting for this risk.
     managePrevent();
     manageStyle();
   }
-  var close = function(id) {
-    if (typeof id === "number" && id >= 0) {
-      const modals = document.querySelectorAll("[id^='modal-']");
-      modals.forEach((modal2) => {
-        const parsedId = Number.parseInt(modal2.id.substring(6, modal2.id.length));
-        if (parsedId >= id) {
-          const modalContent = modal2.querySelector(".modal-content");
-          modalContent.classList.add("slide-out-top");
-          setTimeout(() => {
-            modal2.remove();
-            counter--;
-            manageModalContainer();
-          }, 100);
-        }
-      });
-    } else {
-      throw new Error("The id is not a number.");
-    }
-  };
-  function convertToElement(toConvert, modal2, id, selector) {
+  function convertToElement(toConvert, modal2, close, selector) {
     let item;
     if (typeof toConvert === "string") {
       item = toConvert;
     } else if (typeof toConvert === "function") {
-      item = toConvert({ close, id });
+      item = toConvert({ close });
     }
     const element = modal2.querySelector(`.${selector}-content`);
     if (typeof item === "string") {
@@ -8415,26 +8396,42 @@ and ensure you are accounting for this risk.
                                   <div class="modal-header-icon">
                                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="" viewBox="0 0 16 16">
                                           <path d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z" />
-                                      </svg>                                                          
+                                      </svg>
                                   </div>
                               </div>
-                                  
+
                               <div class="modal-body">
                                   <div class="modal-body-content"></div>
                               </div>
-                                  
+
                               <div class="modal-footer">
                                   <div class="modal-footer-content"></div>
                               </div>
                           </div>
                       </div>`;
     const modal2 = item.firstChild;
+    function close() {
+      const modals = document.querySelectorAll("[id^='modal-']");
+      modals.forEach((modal3) => {
+        const parsedId = Number.parseInt(modal3.id.substring(6, modal3.id.length));
+        if (parsedId >= id) {
+          const modalContent = modal3.querySelector(".modal-content");
+          modalContent.classList.add("slide-out-top");
+          setTimeout(() => {
+            modal3.remove();
+            counter--;
+            manageModalContainer();
+          }, 100);
+        }
+      });
+    }
+    ;
     if (header)
-      convertToElement(header, modal2, id, "modal-header");
+      convertToElement(header, modal2, close, "modal-header");
     if (body)
-      convertToElement(body, modal2, id, "modal-body");
+      convertToElement(body, modal2, close, "modal-body");
     if (footer)
-      convertToElement(footer, modal2, id, "modal-footer");
+      convertToElement(footer, modal2, close, "modal-footer");
     modal2.style.top = `${id * 2 + 12}%`;
     const icon = modal2.querySelector(".modal-header-icon");
     icon.addEventListener("click", () => {
@@ -8458,28 +8455,28 @@ and ensure you are accounting for this risk.
         style: "cursor: pointer",
         onClick: () => {
           modal({
-            header: ({ close: close2, id }) => '<h2 onclick="alert("aaaaaa")" class="test">Welcome</h2>',
-            body: ({ close: close2, id }) => /* @__PURE__ */ v("div", {
+            header: ({ close, id }) => '<h2 onclick="alert("aaaaaa")" class="test">Welcome</h2>',
+            body: ({ close, id }) => /* @__PURE__ */ v("div", {
               className: "test2"
             }, "Welcome one our website", /* @__PURE__ */ v("div", null, "TEST")),
-            footer: ({ close: close2, id }) => /* @__PURE__ */ v("sw-button", {
-              onClick: () => close2(id)
+            footer: ({ close, id }) => /* @__PURE__ */ v("sw-button", {
+              onClick: () => close(id)
             }, "OK"),
             large: true
           });
           modal({
             header: /* @__PURE__ */ v("h2", null, "Next"),
             body: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nLorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?",
-            footer: ({ close: close2, id }) => /* @__PURE__ */ v("sw-button", {
-              onClick: () => close2(id)
+            footer: ({ close, id }) => /* @__PURE__ */ v("sw-button", {
+              onClick: () => close(id)
             }, "OK"),
             large: false
           });
           modal({
-            header: ({ close: close2, id }) => "Welcomessssss",
-            body: ({ close: close2, id }) => /* @__PURE__ */ v("p", null, "Welcome one our website"),
-            footer: ({ close: close2, id }) => /* @__PURE__ */ v("sw-button", {
-              onClick: () => close2(id)
+            header: ({ close, id }) => "Welcomessssss",
+            body: ({ close, id }) => /* @__PURE__ */ v("p", null, "Welcome one our website"),
+            footer: ({ close, id }) => /* @__PURE__ */ v("sw-button", {
+              onClick: () => close(id)
             }, "OK")
           });
         }

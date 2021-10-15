@@ -42,35 +42,12 @@ function manageModalContainer() {
     manageStyle();
 }
 
-const close = function(id) {
-    if (typeof id === 'number' && id >= 0) {
-        const modals = document.querySelectorAll("[id^='modal-']");
-
-        modals.forEach(modal => {
-            const parsedId = Number.parseInt(modal.id.substring(6, modal.id.length));
-
-            if (parsedId >= id) {
-                const modalContent = modal.querySelector('.modal-content');
-                modalContent.classList.add('slide-out-top');
-
-                setTimeout(() => {
-                    modal.remove();
-                    counter--;
-                    manageModalContainer();
-                }, 100);
-            }
-        });
-    } else {
-        throw new Error('The id is not a number.');
-    }
-};
-
-function convertToElement(toConvert, modal, id, selector) {
+function convertToElement(toConvert, modal, close, selector) {
     let item;
     if (typeof toConvert === 'string') {
         item = toConvert;
     } else if (typeof toConvert === 'function') {
-        item = toConvert({ close, id });
+        item = toConvert({ close });
     }
 
     const element = modal.querySelector(`.${selector}-content`);
@@ -113,14 +90,14 @@ export function modal({ header, body, footer, large }) {
                                   <div class="modal-header-icon">
                                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="" viewBox="0 0 16 16">
                                           <path d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z" />
-                                      </svg>                                                          
+                                      </svg>
                                   </div>
                               </div>
-                                  
+
                               <div class="modal-body">
                                   <div class="modal-body-content"></div>
                               </div>
-                                  
+
                               <div class="modal-footer">
                                   <div class="modal-footer-content"></div>
                               </div>
@@ -129,9 +106,28 @@ export function modal({ header, body, footer, large }) {
 
     const modal = item.firstChild;
 
-    if (header) convertToElement(header, modal, id, 'modal-header');
-    if (body) convertToElement(body, modal, id, 'modal-body');
-    if (footer) convertToElement(footer, modal, id, 'modal-footer');
+    function close() {
+        const modals = document.querySelectorAll("[id^='modal-']");
+
+        modals.forEach(modal => {
+            const parsedId = Number.parseInt(modal.id.substring(6, modal.id.length));
+            
+            if (parsedId >= id) {
+                const modalContent = modal.querySelector('.modal-content');
+                modalContent.classList.add('slide-out-top');
+                
+                setTimeout(() => {
+                    modal.remove();
+                    counter--;
+                    manageModalContainer();
+                }, 100);
+            }
+        });
+    };
+
+    if (header) convertToElement(header, modal, close, 'modal-header');
+    if (body) convertToElement(body, modal, close, 'modal-body');
+    if (footer) convertToElement(footer, modal, close, 'modal-footer');
 
     modal.style.top = `${id * 2 + 12}%`;
 
