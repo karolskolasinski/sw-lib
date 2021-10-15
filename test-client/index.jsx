@@ -6,28 +6,30 @@ class Main extends Component {
     render() {
         return (
             <>
-                <h2 style="cursor: pointer" onClick={() => {
-                    modal({
-                        header: ({ close, id }) => '<h2 onclick="alert("aaaaaa")" class="test">Welcome</h2>',
-                        body: ({ close, id }) => <div className="test2">Welcome one our website
+                <h2 style="cursor: pointer" onClick={async () => {
+                    const a = await modal({
+                        header: ({ close }) => '<h2 onclick="alert("aaaaaa")" class="test">Welcome</h2>',
+                        body: ({ close }) => <div className="test2">Welcome one our website
                             <div>TEST</div>
                         </div>,
-                        footer: ({ close, id }) => <sw-button onClick={() => close(id)}>OK</sw-button>,
+                        footer: ({ close }) => <sw-button onClick={() => close(123)}>OK</sw-button>,
                         large: true,
                     });
 
-                    modal({
-                        header: <h2>Next</h2>,
-                        body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nLorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?',
-                        footer: ({ close, id }) => <sw-button onClick={() => close(id)}>OK</sw-button>,
-                        large: false,
-                    });
+                    console.log(a);
 
-                    modal({
-                        header: ({ close, id }) => 'Welcomessssss',
-                        body: ({ close, id }) => <p>Welcome one our website</p>,
-                        footer: ({ close, id }) => <sw-button onClick={() => close(id)}>OK</sw-button>,
-                    });
+                    // modal({
+                    //     header: <h2>Next</h2>,
+                    //     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nLorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?',
+                    //     footer: ({ close }) => <sw-button onClick={() => close()}>OK</sw-button>,
+                    //     large: false,
+                    // });
+                    //
+                    // modal({
+                    //     header: ({ close }) => 'Welcomessssss',
+                    //     body: ({ close }) => <p>Welcome one our website</p>,
+                    //     footer: ({ close }) => <sw-button onClick={() => close()}>OK</sw-button>,
+                    // });
 
                 }}>Click HERE!!!</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam distinctio, excepturi iste nostrum

@@ -76,14 +76,19 @@ function convertToElement(toConvert, modal, close, selector) {
  * @return {Promise<>}
  */
 export function modal({ header, body, footer, large }) {
-    if (!header && !body && !footer && !large) throw new Error('Missing modal parameters');
-    manageStyle();
+    return new Promise((resolve, reject) => {
+        if (!header && !body && !footer && !large) {
+            const message = 'Missing modal parameters';
+            reject(message);
+            throw new Error(message);
+        }
+        manageStyle();
 
-    const id = counter++;
-    const modalSize = large ? 'modal-large' : 'modal-small';
-    const item = document.createElement('div');
+        const id = counter++;
+        const modalSize = large ? 'modal-large' : 'modal-small';
+        const item = document.createElement('div');
 
-    item.innerHTML = `<div id="modal-${id}" class="modal-wrapper modal-prevent">
+        item.innerHTML = `<div id="modal-${id}" class="modal-wrapper modal-prevent">
                           <div class="modal-content ${modalSize} swing-in-top-fwd">
                               <div class="modal-header">
                                   <div class="modal-header-content"></div>
@@ -104,36 +109,38 @@ export function modal({ header, body, footer, large }) {
                           </div>
                       </div>`;
 
-    const modal = item.firstChild;
+        const modal = item.firstChild;
 
-    function close() {
-        const modals = document.querySelectorAll("[id^='modal-']");
+        function close(result) {
+            const modals = document.querySelectorAll("[id^='modal-']");
 
-        modals.forEach(modal => {
-            const parsedId = Number.parseInt(modal.id.substring(6, modal.id.length));
-            
-            if (parsedId >= id) {
-                const modalContent = modal.querySelector('.modal-content');
-                modalContent.classList.add('slide-out-top');
-                
-                setTimeout(() => {
-                    modal.remove();
-                    counter--;
-                    manageModalContainer();
-                }, 100);
-            }
-        });
-    };
+            modals.forEach(modal => {
+                const parsedId = Number.parseInt(modal.id.substring(6, modal.id.length));
 
-    if (header) convertToElement(header, modal, close, 'modal-header');
-    if (body) convertToElement(body, modal, close, 'modal-body');
-    if (footer) convertToElement(footer, modal, close, 'modal-footer');
+                if (parsedId >= id) {
+                    const modalContent = modal.querySelector('.modal-content');
+                    modalContent.classList.add('slide-out-top');
 
-    modal.style.top = `${id * 2 + 12}%`;
+                    setTimeout(() => {
+                        modal.remove();
+                        counter--;
+                        manageModalContainer();
+                        resolve(result);
+                    }, 100);
+                }
+            });
+        }
 
-    const icon = modal.querySelector('.modal-header-icon');
-    icon.addEventListener('click', () => { close(id); });
+        if (header) convertToElement(header, modal, close, 'modal-header');
+        if (body) convertToElement(body, modal, close, 'modal-body');
+        if (footer) convertToElement(footer, modal, close, 'modal-footer');
 
-    document.body.appendChild(modal);
-    manageModalContainer();
+        modal.style.top = `${id * 2 + 12}%`;
+
+        const icon = modal.querySelector('.modal-header-icon');
+        icon.addEventListener('click', () => { close(); });
+
+        document.body.appendChild(modal);
+        manageModalContainer();
+    });
 }
