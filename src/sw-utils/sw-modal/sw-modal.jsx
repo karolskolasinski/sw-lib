@@ -5,11 +5,11 @@ import sanitizeHtml from 'sanitize-html';
 let counter = 0;
 
 function manageStyle() {
-    const style = document.querySelector('#modal-style');
+    const style = document.querySelector('#style-modal');
     if (!style) {
         const style = document.createElement('style');
         style.innerHTML = cssFile;
-        style.id = 'modal-style';
+        style.id = 'style-modal';
         document.head.appendChild(style);
         return;
     }
@@ -42,26 +42,35 @@ function manageModalContainer() {
     manageStyle();
 }
 
-const close = function(flag) {
-    if (flag) {
-        const modal = document.querySelector(`#modal-${counter - 1}`);
-        const modalContent = modal.querySelector('.modal-content');
-        modalContent.classList.add('slide-out-top');
+const close = function(id) {
+    if (typeof id === 'number' && id >= 0) {
+        const modals = document.querySelectorAll("[id^='modal-']");
 
-        setTimeout(() => {
-            modal.remove();
-            counter--;
-            manageModalContainer();
-        }, 100);
+        modals.forEach(modal => {
+            const parsedId = Number.parseInt(modal.id.substring(6, modal.id.length));
+
+            if (parsedId >= id) {
+                const modalContent = modal.querySelector('.modal-content');
+                modalContent.classList.add('slide-out-top');
+
+                setTimeout(() => {
+                    modal.remove();
+                    counter--;
+                    manageModalContainer();
+                }, 100);
+            }
+        });
+    } else {
+        throw new Error('The id is not a number.');
     }
 };
 
-function convertToElement(toConvert, modal, selector) {
+function convertToElement(toConvert, modal, id, selector) {
     let item;
     if (typeof toConvert === 'string') {
         item = toConvert;
     } else if (typeof toConvert === 'function') {
-        item = toConvert({ close });
+        item = toConvert({ close, id });
     }
 
     const element = modal.querySelector(`.${selector}-content`);
@@ -115,14 +124,14 @@ export function modal({ header, body, footer, large }) {
 
     const modal = item.firstChild;
 
-    if (header) convertToElement(header, modal, 'modal-header');
-    if (body) convertToElement(body, modal, 'modal-body');
-    if (footer) convertToElement(footer, modal, 'modal-footer');
+    if (header) convertToElement(header, modal, id, 'modal-header');
+    if (body) convertToElement(body, modal, id, 'modal-body');
+    if (footer) convertToElement(footer, modal, id, 'modal-footer');
 
     modal.style.top = `${id * 2 + 12}%`;
 
     const icon = modal.querySelector('.modal-header-icon');
-    icon.addEventListener('click', () => close(true));
+    icon.addEventListener('click', () => { close(id); });
 
     document.body.appendChild(modal);
     manageModalContainer();

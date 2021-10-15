@@ -1,16 +1,34 @@
 import { h, render, Component } from 'preact';
 import '../src/index';
-import { flashMessage } from '../src';
+import { modal } from '../src';
 
 class Main extends Component {
     render() {
         return (
             <>
                 <h2 style="cursor: pointer" onClick={() => {
-                    flashMessage('Info flash message', 'info');
-                    flashMessage('Success flash message', 'success');
-                    flashMessage('Warning flash message', 'warning');
-                    flashMessage('Error flash message', 'error');
+                    modal({
+                        header: ({ close, id }) => '<h2 onclick="alert("aaaaaa")" class="test">Welcome</h2>',
+                        body: ({ close, id }) => <div className="test2">Welcome one our website
+                            <div>TEST</div>
+                        </div>,
+                        footer: ({ close, id }) => <sw-button onClick={() => close(id)}>OK</sw-button>,
+                        large: true,
+                    });
+
+                    modal({
+                        header: <h2>Next</h2>,
+                        body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nLorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse labore laborum non nostrum quidem quisquam suscipit ullam, voluptatem. Eligendi et explicabo inventore porro provident repellendus sit. Accusantium alias beatae blanditiis consequatur dolorem doloremque, dolores ducimus et eum fuga labore officiis pariatur quasi qui quod quos rem repudiandae velit, vitae?',
+                        footer: ({ close, id }) => <sw-button onClick={() => close(id)}>OK</sw-button>,
+                        large: false,
+                    });
+
+                    modal({
+                        header: ({ close, id }) => 'Welcomessssss',
+                        body: ({ close, id }) => <p>Welcome one our website</p>,
+                        footer: ({ close, id }) => <sw-button onClick={() => close(id)}>OK</sw-button>,
+                    });
+
                 }}>Click here to test flash messages</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam distinctio, excepturi iste nostrum
                     odit quibusdam quisquam sunt tempore ullam voluptates. Aperiam commodi debitis doloremque, error et
