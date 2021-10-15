@@ -29,7 +29,7 @@ class Main extends Component {
                         footer: ({ close, id }) => <sw-button onClick={() => close(id)}>OK</sw-button>,
                     });
 
-                }}>Click here to test flash messages</h2>
+                }}>Click HERE!!!</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam distinctio, excepturi iste nostrum
                     odit quibusdam quisquam sunt tempore ullam voluptates. Aperiam commodi debitis doloremque, error et
                     hic in mollitia nemo numquam rem, tempora ut vel? Debitis dolorem excepturi illo non odit provident
