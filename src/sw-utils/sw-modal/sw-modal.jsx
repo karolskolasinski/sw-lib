@@ -86,9 +86,9 @@ function convertToElement(toConvert, modal, id, selector) {
 /**
  * @typedef {function(flag:boolean):void} Close
  *
- * @param {string | function({ close:Close }):string | function({ close:Close }):JSX | JSX} header
- * @param {string | function({ close:Close }):string | function({ close:Close }):JSX | JSX} body
- * @param {string | function({ close:Close }):string | function({ close:Close }):JSX | JSX} footer
+ * @param {string | function({ close:Close, id:number }):string | function({ close:Close, id:number }):JSX | JSX} header
+ * @param {string | function({ close:Close, id:number }):string | function({ close:Close, id:number }):JSX | JSX} body
+ * @param {string | function({ close:Close, id:number }):string | function({ close:Close, id:number }):JSX | JSX} footer
  * @param {boolean} large
  * @throws {Error} when there is no modal parameters specified
  * @return {Promise<>}
