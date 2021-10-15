@@ -8393,7 +8393,7 @@ and ensure you are accounting for this risk.
     const element = modal2.querySelector(`.${selector}-content`);
     if (typeof item === "string") {
       element.innerHTML = (0, import_sanitize_html.default)(item);
-      item = element;
+      return element;
     }
     S(item ? item : toConvert, element);
   }

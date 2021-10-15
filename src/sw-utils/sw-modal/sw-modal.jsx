@@ -77,7 +77,7 @@ function convertToElement(toConvert, modal, id, selector) {
 
     if (typeof item === 'string') {
         element.innerHTML = sanitizeHtml(item);
-        item = element;
+        return element;
     }
 
     render(item ? item : toConvert, element);
