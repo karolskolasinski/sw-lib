@@ -33,7 +33,7 @@ class Main extends Component {
                     console.log(a, b);
                 }}>Click HERE!!!</h2>
 
-                <h3 onClick={async () => {
+                <h3 style="cursor: pointer" onClick={async () => {
                     const alert = await modalAlert({
                         title: 'Danger!',
                         text: 'You are not allowed to view this content!',
@@ -45,7 +45,7 @@ class Main extends Component {
                 }}>Modal Alert CLICK ME!</h3>
 
 
-                <h3 onClick={async () => {
+                <h3 style="cursor: pointer" onClick={async () => {
                     const name = await modalPrompt({
                         title: 'Please answer',
                         text: 'Please enter your name',
@@ -58,7 +58,7 @@ class Main extends Component {
                 }}>Modal Prompt CLICK ME!</h3>
 
 
-                <h3 onClick={async () => {
+                <h3 style="cursor: pointer" onClick={async () => {
                     const userAccepted = await modalConfirm({
                         title: 'License',
                         text: 'Do you accept the license?',
