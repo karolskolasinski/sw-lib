@@ -63,9 +63,9 @@ You can style the component changing the following options in the `:host` select
 To use the sw-modal call the `modal()` function, which takes an object as an argument. The object should contain the
 following keys:
 
-- `header` - can be a `string` or a `function({ close }):string` or a `function({ close }):JSX` or `JSX`
-- `body` - can be a `string` or a `function({ close }):string` or a `function({ close }):JSX` or `JSX`
-- `footer` - can be a `string` or a `function({ close }):string` or a `function({ close }):JSX` or `JSX`
+- `header` - can be a `string` or a `function({ close, id }):string` or a `function({ close, id }):JSX` or `JSX`
+- `body` - can be a `string` or a `function({ close, id }):string` or a `function({ close, id }):JSX` or `JSX`
+- `footer` - can be a `string` or a `function({ close, id }):string` or a `function({ close, id }):JSX` or `JSX`
 - `large` - `boolean`
 
 The object cannot be specified without any parameters.
@@ -76,7 +76,7 @@ Example of use:
 const result = await modal({
     header: 'Welcome',
     body: <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>,
-    footer: () => <sw-button>OK</sw-button>,
+    footer: ({ close, id }) => <sw-button onClick={() => close(id)}>OK</sw-button>,
     large: true
 })
 ```
