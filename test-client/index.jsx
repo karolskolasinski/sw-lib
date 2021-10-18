@@ -37,7 +37,7 @@ class Main extends Component {
                     const alert = await modalAlert({
                         title: 'Danger!',
                         text: 'You are not allowed to view this content!',
-                        buttonLabel: 'O.K.',
+                        buttonLabel: 'OK',
                         icon: 'cross'
                     });
 

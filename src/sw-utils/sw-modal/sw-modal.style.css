@@ -62,7 +62,11 @@
 
 .modal-footer {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
+}
+
+.modal-footer-content > :not(:last-child) {
+    padding-right: 1em;
 }
 
 .modal-prevent {
