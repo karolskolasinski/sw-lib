@@ -28,7 +28,6 @@ function displayFlashMessage(flashMessage) {
 
     const messageContainer = document.querySelector('.message-container');
     messageContainer.appendChild(flashMessage);
-
 }
 
 export function flashMessage(message, level) {

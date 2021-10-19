@@ -1,0 +1,39 @@
+.input-wrapper {
+    position: relative;
+    margin: 1.5rem 0;
+}
+
+input {
+    width: 100%;
+    padding: .4rem;
+    font-size: 1rem;
+    border: 0;
+    border-bottom: 1px solid lightgray;
+    background: var(--background-color);
+}
+
+input[type=text], input[type=password] {
+    margin-bottom: .5rem;
+}
+
+label:not(.toggle) {
+    position: absolute;
+    top: .5rem;
+    left: .4rem;
+    transition: .2s ease-out all;
+    cursor: text;
+    height: 1rem;
+}
+
+input:focus + label,
+input:not(:placeholder-shown) + label {
+    top: -1.5rem;
+    font-size: .85rem;
+    color: gray;
+}
+
+input:focus-visible {
+    outline: 0;
+    border-bottom-color: var(--primary-color-100);
+    box-shadow: 0 1px 0 0 var(--primary-color-100);
+}
