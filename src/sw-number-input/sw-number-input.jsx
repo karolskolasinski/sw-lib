@@ -12,7 +12,7 @@ export default class SwNumberInput extends Component {
                        type="number"
                        required={required === 'true'}
                        placeholder=" "
-                       disabled={disabled}
+                       disabled={disabled !== 'false' && !!disabled}
                        value={value}
                        min={min && min}
                        max={max && max}

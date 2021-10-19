@@ -1,12 +1,12 @@
 button {
     color: var(--foreground-color);
     background: var(--primary-color-70);
-    padding: .4rem;
     font-size: 1rem;
     cursor: pointer;
     border: none;
     border-radius: 3px;
     white-space: nowrap;
+    line-height: 2;
 }
 
 button:disabled,

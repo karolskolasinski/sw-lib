@@ -35,7 +35,8 @@
     },
     "dependencies": {
         "preact": "^10.5.14",
-        "preact-custom-element": "^4.2.1"
+        "preact-custom-element": "^4.2.1",
+        "sanitize-html": "^2.5.1"
     },
     "jest": {
         "preset": "jest-preset-preact",

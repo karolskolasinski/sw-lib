@@ -7,6 +7,7 @@ import SwPagination from './sw-pagination/sw-pagination.jsx';
 import SwTable from './sw-table/sw-table.jsx';
 
 export * from './sw-utils/sw-flash-message/sw-flash-message.jsx';
+export * from './sw-utils/sw-modal/sw-modal.jsx';
 
 register(SwButton, 'sw-button', ['icon', 'disabled'], { shadow: true });
 register(SwNumberInput, 'sw-number-input',
