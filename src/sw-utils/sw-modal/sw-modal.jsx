@@ -82,7 +82,6 @@ export function modal({ header, body, footer, large }) {
             reject(message);
             throw new Error(message);
         }
-        manageStyle();
 
         const id = counter++;
         const modalSize = large ? 'modal-large' : 'modal-small';
@@ -141,6 +140,7 @@ export function modal({ header, body, footer, large }) {
         icon.addEventListener('click', () => { close(); });
 
         document.body.appendChild(modal);
+        manageStyle();
         manageModalContainer();
     });
 }
@@ -149,12 +149,13 @@ export function modalAlert({ title, text, buttonLabel, icon }) {
     return modal({
         header: title,
         body: text,
-        footer: ({ close }) => <sw-button onClick={() => close('modalAlert')}>{buttonLabel}</sw-button>,
+        footer: ({ close }) => <sw-button onClick={() => close()}>{buttonLabel}</sw-button>,
         large: false
     });
 }
 
 export function modalPrompt({ title, text, placeholder, initialValue, icon }) {
+    let content;
     return modal({
         header: title,
         body: () => <>
@@ -163,9 +164,10 @@ export function modalPrompt({ title, text, placeholder, initialValue, icon }) {
                            required={true}
                            placeholder={placeholder}
                            value={initialValue}
+                           onchangeEvent={(detail) => content = detail.detail.value}
             />
         </>,
-        footer: ({ close }) => <sw-button onClick={() => close('modalPrompt')}>Submit</sw-button>,
+        footer: ({ close }) => <sw-button onClick={() => close(content)}>Submit</sw-button>,
         large: false
     });
 }
@@ -175,8 +177,8 @@ export function modalConfirm({ title, text, okLabel, cancelLabel, icon }) {
         header: title,
         body: text,
         footer: ({ close }) => <>
-            <sw-button onClick={() => close('ok')}>{okLabel}</sw-button>
-            <sw-button onClick={() => close('cancel')}>{cancelLabel}</sw-button>
+            <sw-button onClick={() => close(true)}>{okLabel}</sw-button>
+            <sw-button onClick={() => close(false)}>{cancelLabel}</sw-button>
         </>,
         large: false
     });
