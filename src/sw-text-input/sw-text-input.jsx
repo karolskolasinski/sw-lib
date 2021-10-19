@@ -13,7 +13,7 @@ export default class SwTextInput extends Component {
                        type="text"
                        required={required === 'true'}
                        placeholder=" "
-                       disabled={disabled}
+                       disabled={disabled !== 'false' && !!disabled}
                        value={value}
                        onInput={e => this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
                                detail: { name: name, value: e.target.value },
