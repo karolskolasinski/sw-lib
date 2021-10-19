@@ -1,4 +1,4 @@
-# auth-client
+# sw-lib
 
 ## Table of Contents
 
@@ -37,10 +37,10 @@ Example of use:
 
 You can style the component changing the following options in the `:host` selector:
 
-- `--foreground-color` -
-- `--primary-color-70` -
-- `--primary-color-40` -
-- `--primary-color-100` -
+- `--foreground-color`
+- `--primary-color-70`
+- `--primary-color-40`
+- `--primary-color-100`
 
 
 - Example of use:
@@ -72,7 +72,7 @@ The object cannot be specified without any parameters.
 
 Example of use:
 
-```js
+```jsx
 const result = await modal({
     header: 'Welcome',
     body: <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>,
