@@ -10,8 +10,8 @@ export default class SwButton extends Component {
             <style>{style}</style>
 
             <button type="button"
-                    role="button"
-                    disabled={disabled !== 'false' && !!disabled}>{child}
+                role="button"
+                disabled={disabled !== 'false' && !!disabled}>{child}
             </button>
         </>;
     }

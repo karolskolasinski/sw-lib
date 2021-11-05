@@ -8,19 +8,20 @@ export default class SwTextInput extends Component {
 
             <div className="input-wrapper">
                 <input ref={node => this.ref = node}
-                       id={name}
-                       name={name}
-                       type="text"
-                       required={required === 'true'}
-                       placeholder=" "
-                       disabled={disabled !== 'false' && !!disabled}
-                       value={value}
-                       onInput={e => this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
-                               detail: { name: name, value: e.target.value },
-                               bubbles: true
-                           }
-                       ))}
-                       aria-labelledby={placeholder}
+                    id={name}
+                    name={name}
+                    type="text"
+                    required={required === 'true'}
+                    placeholder=" "
+                    disabled={disabled !== 'false' && !!disabled}
+                    value={value}
+                    onInput={e => this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent',
+                        {
+                            detail: { name: name, value: e.target.value },
+                            bubbles: true
+                        }
+                    ))}
+                    aria-labelledby={placeholder}
                 />
                 <label htmlFor={name}>{placeholder}</label>
             </div>

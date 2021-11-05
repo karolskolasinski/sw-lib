@@ -19,7 +19,7 @@ export default class SwPagination extends Component {
             <div ref={node => this.ref = node} className="wrapper">
                 {currentPage > 1 ?
                     <span className="previous"
-                          onClick={() => this.pageChange(currentPage - 1)}>Previous page</span> : ''}
+                        onClick={() => this.pageChange(currentPage - 1)}>&lt; Previous page</span> : ''}
 
 
                 {numberOfPages > 1 && currentPage !== 1 ?
@@ -58,7 +58,7 @@ export default class SwPagination extends Component {
 
 
                 {numberOfPages > 1 && numberOfPages - currentPage !== 0 ?
-                    <span className="next" onClick={() => this.pageChange(currentPage + 1)}>Next page</span>
+                    <span className="next" onClick={() => this.pageChange(currentPage + 1)}>Next page &gt;</span>
                     : ''}
             </div>
         </>;
