@@ -2,7 +2,7 @@ import { Component } from 'preact';
 import style from './sw-table.style.css';
 
 export default class SwTable extends Component {
-    render({ config: { source, fields} }) {
+    render({ config: { source, fields } }) {
         if (source && typeof source === 'string') {
             source = JSON.parse(source);
         }
@@ -17,17 +17,18 @@ export default class SwTable extends Component {
 
                 <table>
                     <thead>
-                    <tr>
-                        {fields?.map(field => <th>{field?.label}</th>)}
-                    </tr>
+                        <tr>
+                            {fields?.map(field => <th>{field?.label}</th>)}
+                        </tr>
                     </thead>
                     <tbody>
-                    {source?.map(item => <tr>{fields?.map(field => field.component
-                            ? <td className="components" nowrap>{field?.component(item)}</td>
-                            : <td nowrap>{item[field?.field]}</td>
+                        {source?.map(item =>
+                            <tr>{fields?.map(field => field.component
+                                ? <td className="components" nowrap>{field?.component(item)}</td>
+                                : <td nowrap>{item[field?.field]}</td>
+                            )}
+                            </tr>
                         )}
-                        </tr>
-                    )}
                     </tbody>
                 </table>
             </>;

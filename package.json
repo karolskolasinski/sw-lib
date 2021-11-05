@@ -34,6 +34,7 @@
         "moment": "^2.29.1"
     },
     "dependencies": {
+        "lodash": "^4.17.21",
         "preact": "^10.5.14",
         "preact-custom-element": "^4.2.1",
         "sanitize-html": "^2.5.1"
