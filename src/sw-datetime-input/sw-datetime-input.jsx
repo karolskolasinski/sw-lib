@@ -20,14 +20,12 @@ export default class SwDatetimeInput extends Component {
                     aria-labelledby={placeholder}
                     onBlur={e => {
                         const newVal = datetimeToInteger(e.target.value, time && this.timeVal)
-                        // if (!isNaN(newVal)) {
-                            this.dateVal = e.target.value;
-                            this.value = newVal;
-                            return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
-                                detail: { name: name, value: this.value },
-                                bubbles: true
-                            }));
-                        // }
+                        this.dateVal = e.target.value;
+                        this.value = newVal;
+                        return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
+                            detail: { name: name, value: this.value },
+                            bubbles: true
+                        }));
                     }}
                     />}
                 {time && <input 
@@ -41,14 +39,12 @@ export default class SwDatetimeInput extends Component {
                     aria-labelledby={placeholder}
                     onBlur={e => {
                         const newVal = date ? datetimeToInteger(this.dateVal, time && e.target.value) : timeToInteger(e.target.value);
-                        //if (!isNaN(newVal)) {
-                            this.timeVal = e.target.value;
-                            this.value = newVal;
-                            return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
-                                detail: { name: name, value: this.value },
-                                bubbles: true
-                            }));
-                        //}
+                        this.timeVal = e.target.value;
+                        this.value = newVal;
+                        return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
+                            detail: { name: name, value: this.value },
+                            bubbles: true
+                        }));
                     }}
                 />}
                 <label htmlFor={name}>{placeholder}</label>
