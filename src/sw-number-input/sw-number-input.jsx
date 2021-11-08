@@ -37,6 +37,13 @@ export default class SwNumberInput extends Component {
                             });
                         }
 
+                        if (required === 'true' && !e.target.value.length) {
+                            await this.setState({
+                                validationError: 'Please enter a number.',
+                                value: e.target.value,
+                            });
+                        }
+
                         if (e.target.value < minValue) {
                             await this.setState({
                                 minError: `Value must be grater than or equal to ${min}.`,
@@ -63,7 +70,8 @@ export default class SwNumberInput extends Component {
                             await this.setState({ maxError: null, value: e.target.value });
                         }
 
-                        if (!this.state.stepError && !this.state.minError && !this.state.maxError) {
+                        if (!this.state.validationError && !this.state.stepError && !this.state.minError
+                            && !this.state.maxError) {
                             this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent',
                                 {
                                     detail: { name: name, value: e.target.value },
