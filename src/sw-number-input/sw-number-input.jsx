@@ -28,50 +28,15 @@ export default class SwNumberInput extends Component {
                     min={min && minValue}
                     max={max && maxValue}
                     step={(step) && step === '1' ? 0.1 : step === '2' ? 0.01 : 1}
-                    onInput={async e => {
-                        const decimalCount = this.decimalCount(e.target.value);
-                        if (decimalCount !== 0 && decimalCount !== 1 && decimalCount !== 2) {
-                            await this.setState({
-                                stepError: `${e.target.value} is not valid. Correct floating-point number is ${step}.`,
-                                value: e.target.value,
-                            });
-                        }
+                    onBlur={async e => {
+                        console.log(e.target.validationMessage);
+                        await this.setState({
+                            errorMessage: e.target.validationMessage !== e.target.value && e.target.validationMessage,
+                            value: e.target.value,
+                        });
 
-                        if (required === 'true' && !e.target.value.length) {
-                            await this.setState({
-                                validationError: 'Please enter a number.',
-                                value: e.target.value,
-                            });
-                        }
-
-                        if (e.target.value < minValue) {
-                            await this.setState({
-                                minError: `Value must be grater than or equal to ${min}.`,
-                                value: e.target.value,
-                            });
-                        }
-
-                        if (e.target.value > maxValue) {
-                            await this.setState({
-                                maxError: `Value must be less than or equal to ${max}.`,
-                                value: e.target.value,
-                            });
-                        }
-
-                        if (decimalCount === 0 || decimalCount === 1 || decimalCount === 2) {
-                            await this.setState({ stepError: null, value: e.target.value });
-                        }
-
-                        if (e.target.value >= minValue) {
-                            await this.setState({ minError: null, value: e.target.value });
-                        }
-
-                        if (e.target.value <= maxValue) {
-                            await this.setState({ maxError: null, value: e.target.value });
-                        }
-
-                        if (!this.state.validationError && !this.state.stepError && !this.state.minError
-                            && !this.state.maxError) {
+                        if (e.target.validity.valid) {
+                            console.log(e.target.value);
                             this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent',
                                 {
                                     detail: { name: name, value: e.target.value },
@@ -84,9 +49,7 @@ export default class SwNumberInput extends Component {
                 />
                 <label htmlFor={name}>{placeholder}</label>
             </div>
-            {this.state.stepError && <p className="error">{this.state.stepError}</p>}
-            {this.state.minError && <p className="error">{this.state.minError}</p>}
-            {this.state.maxError && <p className="error">{this.state.maxError}</p>}
+            {this.state.errorMessage && <p className="error">{this.state.errorMessage}</p>}
         </>;
     }
 }
