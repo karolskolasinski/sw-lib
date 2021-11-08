@@ -29,7 +29,6 @@ export default class SwNumberInput extends Component {
                     max={max && maxValue}
                     step={(step) && step === '1' ? 0.1 : step === '2' ? 0.01 : 1}
                     onBlur={async e => {
-                        console.log(e.target.validationMessage);
                         await this.setState({
                             errorMessage: e.target.validationMessage !== e.target.value && e.target.validationMessage,
                             value: e.target.value,
