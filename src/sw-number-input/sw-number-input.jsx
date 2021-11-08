@@ -1,10 +1,6 @@
 import { Component } from 'preact';
 import style from '../common/sw-input/sw-input.style.css';
 
-let minChild;
-let maxChild;
-let stepChild;
-
 export default class SwNumberInput extends Component {
     decimalCount(num) {
         const numStr = String(num);
@@ -32,36 +28,49 @@ export default class SwNumberInput extends Component {
                     min={min && minValue}
                     max={max && maxValue}
                     step={(step) && step === '1' ? 0.1 : step === '2' ? 0.01 : 1}
-                    onInput={e => {
+                    onInput={async e => {
                         const decimalCount = this.decimalCount(e.target.value);
                         if (decimalCount !== 0 && decimalCount !== 1 && decimalCount !== 2) {
-                            this.setState({
+                            await this.setState({
                                 stepError: `${e.target.value} is not valid. Correct floating-point number is ${step}.`,
                                 value: e.target.value,
                             });
-                            return;
-                        } else if (e.target.value < minValue) {
-                            this.setState({
+                        }
+
+                        if (e.target.value < minValue) {
+                            await this.setState({
                                 minError: `Value must be grater than or equal to ${min}.`,
                                 value: e.target.value,
                             });
-                            return;
-                        } else if (e.target.value > maxValue) {
-                            this.setState({
+                        }
+
+                        if (e.target.value > maxValue) {
+                            await this.setState({
                                 maxError: `Value must be less than or equal to ${max}.`,
                                 value: e.target.value,
                             });
-                            return;
-                        } else if (decimalCount === 0 && decimalCount === 1 || decimalCount === 2 && e.target.value >= minValue || e.target.value <= maxValue) {
-                            this.setState({ stepError: null, minError: null, maxError: null, value: e.target.value });
                         }
 
-                        this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent',
-                            {
-                                detail: { name: name, value: e.target.value },
-                                bubbles: true,
-                            },
-                        ));
+                        if (decimalCount === 0 || decimalCount === 1 || decimalCount === 2) {
+                            await this.setState({ stepError: null, value: e.target.value });
+                        }
+
+                        if (e.target.value >= minValue) {
+                            await this.setState({ minError: null, value: e.target.value });
+                        }
+
+                        if (e.target.value <= maxValue) {
+                            await this.setState({ maxError: null, value: e.target.value });
+                        }
+
+                        if (!this.state.stepError && !this.state.minError && !this.state.maxError) {
+                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent',
+                                {
+                                    detail: { name: name, value: e.target.value },
+                                    bubbles: true,
+                                },
+                            ));
+                        }
                     }}
                     aria-labelledby={placeholder}
                 />
