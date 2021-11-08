@@ -28,58 +28,32 @@ export default class SwNumberInput extends Component {
                     required={required === 'true'}
                     placeholder=" "
                     disabled={disabled !== 'false' && !!disabled}
-                    value={value}
+                    value={this.state.value ?? value}
                     min={min && minValue}
                     max={max && maxValue}
                     step={(step) && step === '1' ? 0.1 : step === '2' ? 0.01 : 1}
                     onInput={e => {
                         const decimalCount = this.decimalCount(e.target.value);
-                        if (decimalCount !== 0 && decimalCount !== 1 && decimalCount !== 2 && !this.ref.getRootNode().host.shadowRoot.querySelector(`#${name + step}step`)) {
-                            const err = `Please enter a valid value. Correct floating-point number is ${step}.`;
-                            const input = this.ref.getRootNode().host.shadowRoot.querySelector('.input-wrapper');
-
-                            const p = document.createElement('p');
-                            p.classList.add('error');
-                            p.id = `${name + step}step`;
-                            p.innerHTML = err;
-                            stepChild = p;
-                            input.appendChild(p);
+                        if (decimalCount !== 0 && decimalCount !== 1 && decimalCount !== 2) {
+                            this.setState({
+                                stepError: `${e.target.value} is not valid. Correct floating-point number is ${step}.`,
+                                value: e.target.value,
+                            });
                             return;
-                        } else if ((decimalCount === 0 || decimalCount === 1 || decimalCount === 2) && stepChild) {
-                            const input = this.ref.getRootNode().host.shadowRoot.querySelector('.input-wrapper');
-                            input.removeChild(stepChild);
-                            stepChild = null;
-                        }
-                        if (e.target.value < minValue && !this.ref.getRootNode().host.shadowRoot.querySelector(`#${name + min}min`)) {
-                            const err = `Value must be grater than or equal to ${min}.`;
-                            const input = this.ref.getRootNode().host.shadowRoot.querySelector('.input-wrapper');
-
-                            const p = document.createElement('p');
-                            p.classList.add('error');
-                            p.id = `${name + min}min`;
-                            p.innerHTML = err;
-                            minChild = p;
-                            input.appendChild(p);
+                        } else if (e.target.value < minValue) {
+                            this.setState({
+                                minError: `Value must be grater than or equal to ${min}.`,
+                                value: e.target.value,
+                            });
                             return;
-                        } else if (e.target.value > maxValue && !this.ref.getRootNode().host.shadowRoot.querySelector(`#${name + max}max`)) {
-                            const err = `Value must be less than or equal to ${max}.`;
-                            const input = this.ref.getRootNode().host.shadowRoot.querySelector('.input-wrapper');
-
-                            const p = document.createElement('p');
-                            p.classList.add('error');
-                            p.id = `${name + max} max`;
-                            p.innerHTML = err;
-                            maxChild = p;
-                            input.appendChild(p);
+                        } else if (e.target.value > maxValue) {
+                            this.setState({
+                                maxError: `Value must be less than or equal to ${max}.`,
+                                value: e.target.value,
+                            });
                             return;
-                        } else if (e.target.value >= minValue && minChild) {
-                            const input = this.ref.getRootNode().host.shadowRoot.querySelector('.input-wrapper');
-                            input.removeChild(minChild);
-                            minChild = null;
-                        } else if (e.target.value <= maxValue && maxChild) {
-                            const input = this.ref.getRootNode().host.shadowRoot.querySelector('.input-wrapper');
-                            input.removeChild(maxChild);
-                            maxChild = null;
+                        } else if (decimalCount === 0 && decimalCount === 1 || decimalCount === 2 && e.target.value >= minValue || e.target.value <= maxValue) {
+                            this.setState({ stepError: null, minError: null, maxError: null, value: e.target.value });
                         }
 
                         this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent',
@@ -92,6 +66,9 @@ export default class SwNumberInput extends Component {
                     aria-labelledby={placeholder}
                 />
                 <label htmlFor={name}>{placeholder}</label>
+                {this.state.stepError && <p className="error">{this.state.stepError}</p>}
+                {this.state.minError && <p className="error">{this.state.minError}</p>}
+                {this.state.maxError && <p className="error">{this.state.maxError}</p>}
             </div>
         </>;
     }
