@@ -35,7 +35,6 @@ export default class SwNumberInput extends Component {
                         });
 
                         if (e.target.validity.valid) {
-                            console.log(e.target.value);
                             this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent',
                                 {
                                     detail: { name: name, value: e.target.value },
