@@ -2,14 +2,6 @@ import { Component } from 'preact';
 import style from '../common/sw-input/sw-input.style.css';
 
 export default class SwNumberInput extends Component {
-    decimalCount(num) {
-        const numStr = String(num);
-        if (numStr.includes('.')) {
-            return numStr.split('.')[1].length;
-        }
-        return 0;
-    }
-
     render({ name, required, placeholder, disabled, value, min, max, step }) {
         const minValue = Number.parseInt(min);
         const maxValue = Number.parseInt(max);
