@@ -20,10 +20,8 @@ export default class SwDatetimeInput extends Component {
                     aria-labelledby={placeholder}
                     onInput={e => {
                         const newVal = datetimeToInteger(e.target.value, time && this.timeVal)
-                        console.log({ name,newVal,'->': new Date(newVal) });
                         if (!isNaN(newVal)) {
                             this.dateVal = e.target.value;
-                            console.log('I GIT!')
                             this.value = newVal;
                             return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
                                 detail: { name: name, value: this.value },
@@ -42,13 +40,9 @@ export default class SwDatetimeInput extends Component {
                     step={step}
                     aria-labelledby={placeholder}
                     onInput={e => {
-                        //console.log('...::: TYPE',typeof e.target.value)
-                        //console.log('timeVal:',name, this.timeVal);
                         const newVal = date ? datetimeToInteger(this.dateVal, time && e.target.value) : timeToInteger(e.target.value);
-                        console.log({ name,newVal });
                         if (!isNaN(newVal)) {
                             this.timeVal = e.target.value;
-                            console.log('I GIT!')
                             this.value = newVal;
                             return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
                                 detail: { name: name, value: this.value },
@@ -70,7 +64,6 @@ function dateStringify(int) {
     const yyyy = String(date.getFullYear()).padStart(4,0);
     const mm = String(date.getMonth()+1).padStart(2, 0);
     const dd = String(date.getDate()).padStart(2, 0);
-    // console.log('Date stringification:', int, '=>',[yyyy, mm, dd].join('-'));
     return [yyyy, mm, dd].join('-');
 }
 
@@ -86,7 +79,6 @@ function timeStringify(int, withDate) {
         arr.push(String(time.getUTCMinutes()).padStart(2, 0));
         arr.push(String(time.getUTCSeconds()).padStart(2, 0));
     }
-    // console.log('timeStringify',int,arr.join(':'))
     return arr.join(':');
 }
 
@@ -94,7 +86,6 @@ function timeToInteger(timeString) {
     let arr = timeString.split(':');
     arr = arr.map(val => Number(val || 0));
     const seconds = arr[0] * 60 * 60 + arr[1] * 60 + (arr[2] || 0);
-    console.log(timeString,'->',seconds,'secs',arr)
     return 1000 * seconds;
 }
 
@@ -104,7 +95,6 @@ function normalizeDateString(dateString) {
         arr[0] = arr[0].padStart(4, 0);
         arr[1] = arr[1].padStart(2, 0);
         arr[2] = arr[2].padStart(2, 0);
-        console.log(arr);
         return arr.join('-');
     } catch {
         return ''
@@ -113,6 +103,5 @@ function normalizeDateString(dateString) {
 
 function datetimeToInteger(dateString, timeString) {
     const newString = normalizeDateString(dateString) + (timeString ? 'T' + timeString : '');
-    console.log({newString});
     return new Date(newString).valueOf();
 }
