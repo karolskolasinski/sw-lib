@@ -18,16 +18,16 @@ export default class SwDatetimeInput extends Component {
                     disabled={(disabled===true || disabled ==='true') && true}
                     value={this.dateVal}
                     aria-labelledby={placeholder}
-                    onInput={e => {
+                    onBlur={e => {
                         const newVal = datetimeToInteger(e.target.value, time && this.timeVal)
-                        if (!isNaN(newVal)) {
+                        // if (!isNaN(newVal)) {
                             this.dateVal = e.target.value;
                             this.value = newVal;
                             return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
                                 detail: { name: name, value: this.value },
                                 bubbles: true
                             }));
-                        }
+                        // }
                     }}
                     />}
                 {time && <input 
@@ -39,16 +39,16 @@ export default class SwDatetimeInput extends Component {
                     value={this.timeVal}
                     step={step}
                     aria-labelledby={placeholder}
-                    onInput={e => {
+                    onBlur={e => {
                         const newVal = date ? datetimeToInteger(this.dateVal, time && e.target.value) : timeToInteger(e.target.value);
-                        if (!isNaN(newVal)) {
+                        //if (!isNaN(newVal)) {
                             this.timeVal = e.target.value;
                             this.value = newVal;
                             return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
                                 detail: { name: name, value: this.value },
                                 bubbles: true
                             }));
-                        }
+                        //}
                     }}
                 />}
                 <label htmlFor={name}>{placeholder}</label>
@@ -60,6 +60,9 @@ export default class SwDatetimeInput extends Component {
 
 
 function dateStringify(int) {
+    if (int === '') {
+        return
+    }
     const date = new Date(Number(int));
     const yyyy = String(date.getFullYear()).padStart(4,0);
     const mm = String(date.getMonth()+1).padStart(2, 0);
@@ -68,6 +71,9 @@ function dateStringify(int) {
 }
 
 function timeStringify(int, withDate) {
+    if (int === '') {
+        return
+    }
     const time = new Date(Number(int));
     const arr = []
     if (withDate) {
@@ -84,7 +90,7 @@ function timeStringify(int, withDate) {
 
 function timeToInteger(timeString) {
     let arr = timeString.split(':');
-    arr = arr.map(val => Number(val || 0));
+    arr = arr.map(val => Number(val));
     const seconds = arr[0] * 60 * 60 + arr[1] * 60 + (arr[2] || 0);
     return 1000 * seconds;
 }
