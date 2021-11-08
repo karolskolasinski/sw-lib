@@ -83,10 +83,10 @@ export default class SwNumberInput extends Component {
                     aria-labelledby={placeholder}
                 />
                 <label htmlFor={name}>{placeholder}</label>
-                {this.state.stepError && <p className="error">{this.state.stepError}</p>}
-                {this.state.minError && <p className="error">{this.state.minError}</p>}
-                {this.state.maxError && <p className="error">{this.state.maxError}</p>}
             </div>
+            {this.state.stepError && <p className="error">{this.state.stepError}</p>}
+            {this.state.minError && <p className="error">{this.state.minError}</p>}
+            {this.state.maxError && <p className="error">{this.state.maxError}</p>}
         </>;
     }
 }
