@@ -53,8 +53,6 @@ export default class SwDatetimeInput extends Component {
     }
 }
 
-
-
 function dateStringify(int) {
     if (int === '') {
         return
@@ -91,19 +89,7 @@ function timeToInteger(timeString) {
     return 1000 * seconds;
 }
 
-function normalizeDateString(dateString) {
-    try {
-        let arr = dateString.split('-');
-        arr[0] = arr[0].padStart(4, 0);
-        arr[1] = arr[1].padStart(2, 0);
-        arr[2] = arr[2].padStart(2, 0);
-        return arr.join('-');
-    } catch {
-        return ''
-    }
-}
-
 function datetimeToInteger(dateString, timeString) {
-    const newString = normalizeDateString(dateString) + (timeString ? 'T' + timeString : '');
+    const newString = dateString + (timeString ? 'T' + timeString : '');
     return new Date(newString).valueOf();
 }
