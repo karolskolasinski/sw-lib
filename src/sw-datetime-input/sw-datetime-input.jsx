@@ -10,7 +10,7 @@ export default class SwDatetimeInput extends Component {
 
             <div className="input-wrapper" ref={node => this.ref = node}>
                 {date && <input
-                    id={name+ ".date"} 
+                    id={name + '.date'}
                     type="date"
                     required={required === 'true'}
                     placeholder=" "
@@ -18,7 +18,7 @@ export default class SwDatetimeInput extends Component {
                     value={dateVal}
                     aria-labelledby={placeholder}
                     onBlur={e => {
-                        const newVal = datetimeToInteger(e.target.value, time && timeVal)
+                        const newVal = datetimeToInteger(e.target.value, time && timeVal);
                         dateVal = e.target.value;
                         this.value = newVal;
                         return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
@@ -26,9 +26,9 @@ export default class SwDatetimeInput extends Component {
                             bubbles: true
                         }));
                     }}
-                    />}
-                {time && <input 
-                    id={name+".time"}
+                />}
+                {time && <input
+                    id={name + '.time'}
                     type="time"
                     required={required === 'true'}
                     placeholder=" "
@@ -54,21 +54,21 @@ export default class SwDatetimeInput extends Component {
 
 function dateStringify(int) {
     if (int === '') {
-        return
+        return;
     }
     const date = new Date(Number(int));
-    const yyyy = String(date.getFullYear()).padStart(4,0);
-    const mm = String(date.getMonth()+1).padStart(2, 0);
+    const yyyy = String(date.getFullYear()).padStart(4, 0);
+    const mm = String(date.getMonth() + 1).padStart(2, 0);
     const dd = String(date.getDate()).padStart(2, 0);
     return [yyyy, mm, dd].join('-');
 }
 
 function timeStringify(int, withDate) {
     if (int === '') {
-        return
+        return;
     }
     const time = new Date(Number(int));
-    const arr = []
+    const arr = [];
     if (withDate) {
         arr.push(String(time.getHours()).padStart(2, 0));
         arr.push(String(time.getMinutes()).padStart(2, 0));

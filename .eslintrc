@@ -1,6 +1,24 @@
 {
-    "extends": "@7willows/eslint-config-7w",
+    "extends": [
+        "@7willows/eslint-config-7w"
+    ],
+    "rules": {
+        "no-console": "off",
+        "no-unused-vars": "off"
+    },
     "globals": {
         "root": "readonly"
-    }
+    },
+    "overrides": [
+        {
+            "files": [
+                "*.jsx"
+            ],
+            "parserOptions": {
+                "ecmaFeatures": {
+                    "jsx": true
+                }
+            }
+        }
+    ]
 }
