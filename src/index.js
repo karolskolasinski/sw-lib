@@ -11,7 +11,7 @@ export * from './sw-utils/sw-modal/sw-modal.jsx';
 
 register(SwButton, 'sw-button', ['icon', 'disabled'], { shadow: true });
 register(SwTextInput, 'sw-text-input', ['name', 'required', 'placeholder', 'disabled', 'value'], { shadow: true });
-register(SwDatetimeInput, 'sw-datetime-input', ['name', 'required', 'placeholder', 'disabled', 'value','step'], { shadow: true });
+register(SwDatetimeInput, 'sw-datetime-input', ['name', 'required', 'placeholder', 'disabled', 'value', 'step'], { shadow: true });
 register(SwLoader, 'sw-loader', [], { shadow: true });
 register(SwPagination, 'sw-pagination', ['current-page', 'number-of-pages'], { shadow: true });
 register(SwTable, 'sw-table', ['config'], { shadow: true });

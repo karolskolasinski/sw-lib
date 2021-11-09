@@ -3,24 +3,23 @@ import style from './sw-datetime-input.style.css';
 
 export default class SwDatetimeInput extends Component {
     render({ name, required, placeholder, disabled, value, date, time, step }) {
-        this.dateVal = dateStringify(value);
-        this.timeVal = timeStringify(value, date);
-        const that = this;
+        let dateVal = dateStringify(value);
+        let timeVal = timeStringify(value, date);
         return <>
             <style>{style}</style>
 
-            <div className="input-wrapper" ref={node => this.ref = node} customProp>
+            <div className="input-wrapper" ref={node => this.ref = node}>
                 {date && <input
                     id={name+ ".date"} 
                     type="date"
                     required={required === 'true'}
                     placeholder=" "
-                    disabled={(disabled===true || disabled ==='true') && true}
-                    value={this.dateVal}
+                    disabled={disabled !== 'false' && !!disabled}
+                    value={dateVal}
                     aria-labelledby={placeholder}
                     onBlur={e => {
-                        const newVal = datetimeToInteger(e.target.value, time && this.timeVal)
-                        this.dateVal = e.target.value;
+                        const newVal = datetimeToInteger(e.target.value, time && timeVal)
+                        dateVal = e.target.value;
                         this.value = newVal;
                         return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
                             detail: { name: name, value: this.value },
@@ -33,13 +32,13 @@ export default class SwDatetimeInput extends Component {
                     type="time"
                     required={required === 'true'}
                     placeholder=" "
-                    disabled={(disabled===true || disabled ==='true')&& true}
-                    value={this.timeVal}
+                    disabled={disabled !== 'false' && !!disabled}
+                    value={timeVal}
                     step={step}
                     aria-labelledby={placeholder}
                     onBlur={e => {
-                        const newVal = date ? datetimeToInteger(this.dateVal, time && e.target.value) : timeToInteger(e.target.value);
-                        this.timeVal = e.target.value;
+                        const newVal = date ? datetimeToInteger(dateVal, time && e.target.value) : timeToInteger(e.target.value);
+                        timeVal = e.target.value;
                         this.value = newVal;
                         return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
                             detail: { name: name, value: this.value },
