@@ -1,10 +1,10 @@
 import { h, render, Component } from 'preact';
 import '../src/index';
-import { modal, modalAlert, modalConfirm, modalPrompt } from '../src';
+import { flashMessage, modal, modalAlert, modalPrompt, modalConfirm } from '../src';
 
 const users = [
     { id: '1', name: 'Jan Kowalski' },
-    { id: '2', name: 'John Smith' }
+    { id: '2', name: 'John Smith' },
 ];
 
 
@@ -17,7 +17,7 @@ async function searchForUsers(searchPhrase) {
 const article = {
     id: 'abc',
     title: 'aaa',
-    userId: '1'
+    userId: '1',
 };
 
 async function getUser(userId) {
@@ -37,12 +37,34 @@ class Main extends Component {
     render() {
         return (
             <>
+                <sw-datetime-input name="datbezEventaeAndTime" onchangeEvent={e => {
+                    console.log('Taki stan chciałem zapisać:', e.detail.value);
+                    console.log('a taki jest obecny state:', this.state);
+                    this.setState({ 'val': e.detail.value });
+                }} date={true} time={true} customProp="lalala" val={this.state.val || 1635347290788} />
+
+                <sw-datetime-input name="dateAndTime" date={true} time={true}
+                    onchangeEvent={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala"
+                    value="1635347290788" />
+
+                <sw-datetime-input name="dateOnly" date={true}
+                    onchangeEvent={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala"
+                    value="-62101382400000" />
+
+                <sw-datetime-input name="timeOnly" time={true}
+                    onchangeEvent={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala"
+                    val={1243258883777} />
+
+                <sw-datetime-input name="timeOnly" time={true}
+                    onchangeEvent={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala" val={1243258883777}
+                    secs={true} />
+
                 <sw-select config={{
                     name: 'test',
                     sourceFn: searchForUsers,
                     labelField: 'name',
                     initialOptions: [this.state.initialUser],
-                    minimumCharLengthTrigger: 2
+                    minimumCharLengthTrigger: 2,
                 }} onchange={setUser} />
 
                 <h2 style="cursor: pointer" onClick={async () => {
@@ -78,7 +100,7 @@ class Main extends Component {
                         title: 'Danger!',
                         text: 'You are not allowed to view this content!',
                         buttonLabel: 'OK',
-                        icon: 'cross'
+                        icon: 'cross',
                     });
 
                     console.log(alert);
@@ -91,12 +113,11 @@ class Main extends Component {
                         text: 'Please enter your name',
                         placeholder: 'name',
                         initialValue: '',
-                        icon: 'user'
+                        icon: 'user',
                     });
 
                     console.log(name);
                 }}>Modal Prompt CLICK ME!</h3>
-
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam distinctio, excepturi iste nostrum
                     odit quibusdam quisquam sunt tempore ullam voluptates. Aperiam commodi debitis doloremque, error et
                     hic in mollitia nemo numquam rem, tempora ut vel? Debitis dolorem excepturi illo non odit provident
@@ -115,17 +136,17 @@ class Main extends Component {
                 <sw-select config={{
                     name: 'lalalaA',
                     initialOptions: ['quisquam sapiente veritatis. Aliquid explicabo id molestiae quaerat repellendus ullam',
-                        'dwa', 'trzy', 'cztery', 'dwa', 'trzy', 'cztery']
+                        'dwa', 'trzy', 'cztery', 'dwa', 'trzy', 'cztery'],
                 }} />
                 <sw-select config={{
                     name: 'lalalaA',
                     initialOptions: ['quisquam sapiente veritatis. Aliquid explicabo id molestiae quaerat repellendus ullam',
-                        'dwa', 'trzy', 'cztery', 'dwa', 'trzy', 'cztery']
+                        'dwa', 'trzy', 'cztery', 'dwa', 'trzy', 'cztery'],
                 }} />
                 <sw-select config={{
                     name: 'lalalaA',
                     initialOptions: ['quisquam sapiente veritatis. Aliquid explicabo id molestiae quaerat repellendus ullam',
-                        'dwa', 'trzy', 'cztery', 'dwa', 'trzy', 'cztery']
+                        'dwa', 'trzy', 'cztery', 'dwa', 'trzy', 'cztery'],
                 }} />
                 <p>in laudantium officia quam, quas quasi quidem, sequi
                     vero. Alias animi aperiam consectetur distinctio dolore ea eligendi fugiat itaque magnam maxime
@@ -166,7 +187,7 @@ class Main extends Component {
                 <sw-select config={{
                     name: 'BBBBBB',
                     initialOptions: ['quisquam sapiente veritatis. Aliquid explicabo id molestiae quaerat repellendus ullam',
-                        'dwa', 'trzy', 'cztery', 'dwa', 'trzy', 'cztery']
+                        'dwa', 'trzy', 'cztery', 'dwa', 'trzy', 'cztery'],
                 }} />
                 <h3 style="cursor: pointer" onClick={async () => {
                     const userAccepted = await modalConfirm({
@@ -174,7 +195,7 @@ class Main extends Component {
                         text: 'Do you accept the license?',
                         okLabel: 'Yes',
                         cancelLabel: 'No',
-                        icon: 'question-mark'
+                        icon: 'question-mark',
                     });
 
                     console.log(userAccepted);
