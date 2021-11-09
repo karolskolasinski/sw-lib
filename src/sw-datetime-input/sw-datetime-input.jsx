@@ -1,10 +1,10 @@
 import { Component } from 'preact';
-import style from './sw-datetime-input.style.css';
+import style from '../common/sw-input/sw-input.style.css';
 
 export default class SwDatetimeInput extends Component {
     render({ name, required, placeholder, disabled, value, date, time, step }) {
-        let dateVal = dateStringify(value);
-        let timeVal = timeStringify(value, date);
+        const dateVal = dateStringify(value);
+        const timeVal = timeStringify(value, date);
         return <>
             <style>{style}</style>
 
@@ -15,16 +15,21 @@ export default class SwDatetimeInput extends Component {
                     required={required === 'true'}
                     placeholder=" "
                     disabled={disabled !== 'false' && !!disabled}
-                    value={dateVal}
+                    value={this.state.dateVal ?? dateVal}
                     aria-labelledby={placeholder}
-                    onBlur={e => {
-                        const newVal = datetimeToInteger(e.target.value, time && timeVal);
-                        dateVal = e.target.value;
-                        this.value = newVal;
-                        return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
-                            detail: { name: name, value: this.value },
-                            bubbles: true
-                        }));
+                    onBlur={async e => {
+                        const newVal = datetimeToInteger(e.target.value, time, this.state.timeVal);
+                        await this.setState({
+                            dateVal: e.target.value,
+                            value: newVal,
+                            errorMessage: e.target.validationMessage !== e.target.value && e.target.validationMessage,
+                        });
+                        if (e.target.validity.valid) {
+                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
+                                detail: { name: name, value: this.state.value },
+                                bubbles: true
+                            }));
+                        }
                     }}
                 />}
                 {time && <input
@@ -33,20 +38,36 @@ export default class SwDatetimeInput extends Component {
                     required={required === 'true'}
                     placeholder=" "
                     disabled={disabled !== 'false' && !!disabled}
-                    value={timeVal}
+                    value={this.state.timeVal ?? timeVal}
                     step={step}
                     aria-labelledby={placeholder}
-                    onBlur={e => {
-                        const newVal = date ? datetimeToInteger(dateVal, time && e.target.value) : timeToInteger(e.target.value);
-                        timeVal = e.target.value;
-                        this.value = newVal;
-                        return this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
-                            detail: { name: name, value: this.value },
-                            bubbles: true
-                        }));
+                    onBlur={async e => {
+                        const newVal = date ?
+                            datetimeToInteger(this.state.dateVal, time, e.target.value) :
+                            timeToInteger(e.target.value);
+                        await this.setState({
+                            timeVal: e.target.value,
+                            value: newVal,
+                            errorMessage: e.target.validationMessage !== e.target.value && e.target.validationMessage,
+                        });
+                        if (e.target.validity.valid) {
+                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
+                                detail: { name: name, value: this.state.value },
+                                bubbles: true
+                            }));
+                        }
                     }}
                 />}
                 <label htmlFor={name}>{placeholder}</label>
+                {this.state.errorMessage && <p className="error">{this.state.errorMessage}</p>}
+                {
+                    date && time && !(this.state.dateVal ?? dateVal) && (this.state.timeVal ?? timeVal)
+                    && <p className="error">Podano błędną datę</p>
+                }
+                {
+                    date && time && (this.state.dateVal ?? dateVal) && !(this.state.timeVal ?? timeVal)
+                    && <p className="error">Podano błędną godzinę</p>
+                }
             </div>
         </>;
     }
@@ -88,7 +109,10 @@ function timeToInteger(timeString) {
     return 1000 * seconds;
 }
 
-function datetimeToInteger(dateString, timeString) {
+function datetimeToInteger(dateString, withTime, timeString) {
+    if (withTime && !timeString) {
+        return null;
+    }
     const newString = dateString + (timeString ? 'T' + timeString : '');
     return new Date(newString).valueOf();
 }
