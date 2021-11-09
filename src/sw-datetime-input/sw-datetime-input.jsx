@@ -60,14 +60,10 @@ export default class SwDatetimeInput extends Component {
                 />}
                 <label htmlFor={name}>{placeholder}</label>
                 {this.state.errorMessage && <p className="error">{this.state.errorMessage}</p>}
-                {
-                    date && time && !(this.state.dateVal ?? dateVal) && (this.state.timeVal ?? timeVal)
-                    && <p className="error">Podano błędną datę</p>
-                }
-                {
-                    date && time && (this.state.dateVal ?? dateVal) && !(this.state.timeVal ?? timeVal)
-                    && <p className="error">Podano błędną godzinę</p>
-                }
+                {date && time && !(this.state.dateVal ?? dateVal) && (this.state.timeVal ?? timeVal)
+                    && <p className="error">Podaj datę</p>}
+                {date && time && (this.state.dateVal ?? dateVal) && !(this.state.timeVal ?? timeVal)
+                    && <p className="error">Podaj godzinę</p>}
             </div>
         </>;
     }
