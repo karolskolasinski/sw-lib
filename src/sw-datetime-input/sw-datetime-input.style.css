@@ -1,0 +1,16 @@
+.datetime-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapper {
+    display: flex;
+}
+
+.placeholder {
+    display: block;
+    height: 1rem;
+    top: -1.5rem;
+    font-size: .85rem;
+    color: gray;
+}

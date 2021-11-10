@@ -1,5 +1,6 @@
 import { Component } from 'preact';
 import style from '../common/sw-input/sw-input.style.css';
+import datetimeStyle from './sw-datetime-input.style.css';
 
 export default class SwDatetimeInput extends Component {
     render({ name, required, placeholder, disabled, value, date, time, step }) {
@@ -7,10 +8,12 @@ export default class SwDatetimeInput extends Component {
         const timeVal = timeStringify(value, date);
         return <>
             <style>{style}</style>
+            <style>{datetimeStyle}</style>
 
-            <div className="input-wrapper" ref={node => this.ref = node}>
+            <div ref={node => this.ref = node}>
+                <span className="placeholder">{placeholder}</span>
                 {date && <input
-                    id={name + '.date'}
+                    id={name + '-date'}
                     type="date"
                     required={required === 'true'}
                     placeholder=" "
@@ -33,7 +36,7 @@ export default class SwDatetimeInput extends Component {
                     }}
                 />}
                 {time && <input
-                    id={name + '.time'}
+                    id={name + '-time'}
                     type="time"
                     required={required === 'true'}
                     placeholder=" "
@@ -58,7 +61,6 @@ export default class SwDatetimeInput extends Component {
                         }
                     }}
                 />}
-                <label htmlFor={name}>{placeholder}</label>
                 {this.state.errorMessage && <p className="error">{this.state.errorMessage}</p>}
                 {date && time && !(this.state.dateVal ?? dateVal) && (this.state.timeVal ?? timeVal)
                     && <p className="error">Podaj datę</p>}
