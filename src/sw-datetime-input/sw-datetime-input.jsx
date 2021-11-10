@@ -6,7 +6,7 @@ export default class SwDatetimeInput extends Component {
     render({ name, required, placeholder, disabled, value, date, time, step }) {
         const dateVal = dateStringify(value);
         const timeVal = timeStringify(value, date);
-        return <>
+        return <div className="input-wrapper">
             <style>{style}</style>
             <style>{datetimeStyle}</style>
 
@@ -67,7 +67,7 @@ export default class SwDatetimeInput extends Component {
                 {date && time && (this.state.dateVal ?? dateVal) && !(this.state.timeVal ?? timeVal)
                     && <p className="error">Podaj godzinę</p>}
             </div>
-        </>;
+        </div>;
     }
 }
 
