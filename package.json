@@ -1,6 +1,6 @@
 {
     "name": "@7willows/sw-lib",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "license": "UNLICENSED",
     "main": "dist/build.js",
     "scripts": {
@@ -30,11 +30,11 @@
         "eslint": "^7.32.0",
         "jest": "^27.1.1",
         "jest-preset-preact": "^4.0.5",
-        "live-server": "^1.2.1",
-        "moment": "^2.29.1"
+        "live-server": "^1.2.1"
     },
     "dependencies": {
         "lodash": "^4.17.21",
+        "moment": "^2.29.1",
         "preact": "^10.5.14",
         "preact-custom-element": "^4.2.1",
         "sanitize-html": "^2.5.1"
