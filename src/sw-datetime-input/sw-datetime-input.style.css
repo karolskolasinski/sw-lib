@@ -1,11 +1,3 @@
-.wrapper {
+.datetime-wrapper {
     display: flex;
-}
-
-.placeholder {
-    display: block;
-    top: -1.5rem;
-    font-size: .85rem;
-    color: gray;
-    margin-top: -1.5em;
 }

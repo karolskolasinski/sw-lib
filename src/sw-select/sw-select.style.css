@@ -1,12 +1,19 @@
+*, ::before, ::after {
+    box-sizing: border-box;
+    font: inherit;
+    color: inherit;
+}
+
 .select-wrapper {
     position: relative;
 }
 
 label {
     position: absolute;
-    top: -1.5em;
+    top: -1.4em;
+    left: 0;
+    cursor: text;
     font-size: .85em;
-    color: gray;
 }
 
 .button {

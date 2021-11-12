@@ -3,15 +3,28 @@ import style from '../common/sw-input/sw-input.style.css';
 import datetimeStyle from './sw-datetime-input.style.css';
 
 export default class SwDatetimeInput extends Component {
+    async processNevVal(e, newVal, name) {
+        await this.setState({
+            dateVal: e.target.value,
+            value: newVal,
+            errorMessage: e.target.validationMessage !== e.target.value && e.target.validationMessage,
+        });
+        if (e.target.validity.valid) {
+            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
+                detail: { name: name, value: this.state.value },
+                bubbles: true,
+            }));
+        }
+    }
+
     render({ name, required, placeholder, disabled, value, date, time, step }) {
         const dateVal = dateStringify(value);
         const timeVal = timeStringify(value, date);
-        return <div className="input-wrapper">
+        return <div className="input-wrapper" ref={node => this.ref = node}>
             <style>{style}</style>
             <style>{datetimeStyle}</style>
 
-            <div ref={node => this.ref = node}>
-                <span className="placeholder">{placeholder}</span>
+            <div className="datetime-wrapper">
                 {date && <input
                     id={name + '-date'}
                     type="date"
@@ -22,17 +35,7 @@ export default class SwDatetimeInput extends Component {
                     aria-labelledby={placeholder}
                     onBlur={async e => {
                         const newVal = datetimeToInteger(e.target.value, time, this.state.timeVal);
-                        await this.setState({
-                            dateVal: e.target.value,
-                            value: newVal,
-                            errorMessage: e.target.validationMessage !== e.target.value && e.target.validationMessage,
-                        });
-                        if (e.target.validity.valid) {
-                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
-                                detail: { name: name, value: this.state.value },
-                                bubbles: true
-                            }));
-                        }
+                        await this.processNevVal(e, newVal, name);
                     }}
                 />}
                 {time && <input
@@ -48,24 +51,19 @@ export default class SwDatetimeInput extends Component {
                         const newVal = date ?
                             datetimeToInteger(this.state.dateVal, time, e.target.value) :
                             timeToInteger(e.target.value);
-                        await this.setState({
-                            timeVal: e.target.value,
-                            value: newVal,
-                            errorMessage: e.target.validationMessage !== e.target.value && e.target.validationMessage,
-                        });
-                        if (e.target.validity.valid) {
-                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
-                                detail: { name: name, value: this.state.value },
-                                bubbles: true
-                            }));
-                        }
+                        await this.processNevVal(e, newVal, name);
                     }}
                 />}
+
+                <label htmlFor={name}>{placeholder}</label>
+
                 {this.state.errorMessage && <p className="error">{this.state.errorMessage}</p>}
+
                 {date && time && !(this.state.dateVal ?? dateVal) && (this.state.timeVal ?? timeVal)
-                    && <p className="error">Podaj datę</p>}
+                && <p className="error">Podaj datę</p>}
+
                 {date && time && (this.state.dateVal ?? dateVal) && !(this.state.timeVal ?? timeVal)
-                    && <p className="error">Podaj godzinę</p>}
+                && <p className="error">Podaj godzinę</p>}
             </div>
         </div>;
     }

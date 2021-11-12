@@ -97,7 +97,7 @@ export default class SwSelect extends Component {
         this.setState({ selectedOption: option.name ?? option });
         this.ref.getRootNode().host.dispatchEvent(new CustomEvent('change', {
             detail: option,
-            bubbles: true
+            bubbles: true,
         }));
     }
 
@@ -115,41 +115,39 @@ export default class SwSelect extends Component {
         }
         if (!sourceFn) sourceFn = this.sourceFnDefault(options);
 
-        return <>
+        return <div className="select-wrapper" ref={node => this.ref = node}>
             <style>{style}</style>
 
-            <div className="select-wrapper" ref={node => this.ref = node}>
-                <label htmlFor={name}>{name}</label>
-                <button className="button"
-                    onClick={() => {
-                        this.toggleDropdown();
-                        this.setDisplayDropdownPosition();
-                    }}>{this.state.selectedOption || selected || 'Please select an option ▼'}</button>
+            <button className="button"
+                onClick={() => {
+                    this.toggleDropdown();
+                    this.setDisplayDropdownPosition();
+                }}>{this.state.selectedOption || selected || 'Please select an option ▼'}</button>
 
-                <div className={`dropdown
+            <div className={`dropdown
                     ${this.state.isDropdownVisible && 'show'} 
                     ${this.state.shouldDisplayAbove && 'show-above'}`}>
-                    <input className="input"
-                        type="text"
-                        placeholder="Start typing..."
-                        id={name}
-                        onKeyUp={event => this.keyAction(event)}
-                        onInput={event => this.onSearchChange(sourceFn,
-                            minimumCharLengthTrigger,
-                            event,
-                            initialOptions)} />
+                <input className="input"
+                    type="text"
+                    placeholder="Start typing..."
+                    id={name}
+                    onKeyUp={event => this.keyAction(event)}
+                    onInput={event => this.onSearchChange(sourceFn,
+                        minimumCharLengthTrigger,
+                        event,
+                        initialOptions)} />
 
-                    <div className="results">
-                        {options[0] && (options ?? []).map(option => {
-                            return <span className="option"
-                                onClick={() => this.onOptionClick(option)}>
-                                {this.renderLabel(option, labelField)}</span>;
-                        })}
-                    </div>
-
-                    {this.state.error && <p className="error">{this.state.error}</p>}
+                <div className="results">
+                    {options[0] && (options ?? []).map(option => {
+                        return <span className="option"
+                            onClick={() => this.onOptionClick(option)}>{this.renderLabel(option, labelField)}</span>;
+                    })}
                 </div>
+
+                {this.state.error && <p className="error">{this.state.error}</p>}
             </div>
-        </>;
+
+            <label htmlFor={name}>{name}</label>
+        </div>;
     }
 }
