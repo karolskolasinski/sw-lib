@@ -8,7 +8,7 @@ export default class SwSelect extends Component {
     constructor() {
         super();
         this.toggleDropdownEventListener = this.toggleDropdownEventListener.bind(this);
-        this.throttleSearch = _.throttle(async (sourceFn, value) => {
+        this.throttleSearch = _.debounce(async (sourceFn, value) => {
             try {
                 const options = await sourceFn(value);
 
