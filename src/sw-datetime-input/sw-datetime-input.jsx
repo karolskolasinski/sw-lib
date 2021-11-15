@@ -78,7 +78,7 @@ export default class SwDatetimeInput extends Component {
 
 function dateStringify(intAsStr) {
     if (intAsStr === '') {
-        return;
+        return null;
     }
     const date = new Date(Number(intAsStr));
     const yyyy = String(date.getFullYear()).padStart(4, 0);
@@ -89,7 +89,7 @@ function dateStringify(intAsStr) {
 
 function timeStringify(intAsStr, withDate) {
     if (intAsStr === '') {
-        return;
+        return null;
     }
     const time = new Date(Number(intAsStr));
     const arr = [];
