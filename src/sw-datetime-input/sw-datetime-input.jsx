@@ -3,19 +3,6 @@ import style from '../common/sw-input/sw-input.style.css';
 import datetimeStyle from './sw-datetime-input.style.css';
 
 export default class SwDatetimeInput extends Component {
-    async processNevVal(e, newVal, name) {
-        await this.setState({
-            dateVal: e.target.value,
-            value: newVal,
-            errorMessage: e.target.validationMessage !== e.target.value && e.target.validationMessage,
-        });
-        if (e.target.validity.valid) {
-            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
-                detail: { name: name, value: this.state.value },
-                bubbles: true,
-            }));
-        }
-    }
 
     render({ name, required, placeholder, disabled, value, date, time, step }) {
         const dateVal = dateStringify(value);
@@ -35,8 +22,21 @@ export default class SwDatetimeInput extends Component {
                     value={this.state.dateVal ?? dateVal}
                     aria-labelledby={placeholder}
                     onBlur={async e => {
-                        const newVal = datetimeToInteger(e.target.value, time, this.state.timeVal);
-                        await this.processNevVal(e, newVal, name);
+                        const { newVal, datetimeErr } = datetimeToInteger(e.target.value, time, this.state.timeVal ?? timeVal, this);
+                        await this.setState({
+                            dateVal: e.target.value,
+                            timeVal: this.state.timeVal ?? timeVal,
+                            dateErr: e.target.validationMessage !== e.target.value && e.target.validationMessage,
+                            value: newVal,
+                            datetimeErr
+                        });
+                        if (e.target.validity.valid) {
+                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
+                                detail: { name: name, value: this.state.value },
+                                bubbles: true
+                            }));
+                        }
+
                     }}
                 />}
                 {time && <input
@@ -49,14 +49,27 @@ export default class SwDatetimeInput extends Component {
                     step={step}
                     aria-labelledby={placeholder}
                     onBlur={async e => {
-                        const newVal = date ?
-                            datetimeToInteger(this.state.dateVal, time, e.target.value) :
+                        const { newVal, datetimeErr } = date ?
+                            datetimeToInteger(this.state.dateVal ?? dateVal, time, e.target.value, this) :
                             timeToInteger(e.target.value);
-                        await this.processNevVal(e, newVal, name);
+                        await this.setState({
+                            timeVal: e.target.value,
+                            dateVal: this.state.dateVal ?? dateVal,
+                            timeErr: e.target.validationMessage !== e.target.value && e.target.validationMessage,
+                            value: newVal,
+                            datetimeErr
+                        });
+                        if (e.target.validity.valid) {
+                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
+                                detail: { name: name, value: this.state.value },
+                                bubbles: true
+                            }));
+                        }
                     }}
                 />}
-
-                <label htmlFor={name}>{placeholder}</label>
+                {this.state.dateErr && <p className="error">{this.state.dateErr}</p>}
+                {this.state.timeErr && <p className="error">{this.state.timeErr}</p>}
+                {this.state.datetimeErr && <p className="error">{this.state.datetimeErr}</p>}
             </div>
 
             {this.state.errorMessage && <p className="error">{this.state.errorMessage}</p>}
@@ -70,22 +83,22 @@ export default class SwDatetimeInput extends Component {
     }
 }
 
-function dateStringify(int) {
-    if (int === '') {
+function dateStringify(intAsStr) {
+    if (intAsStr === '') {
         return;
     }
-    const date = new Date(Number(int));
+    const date = new Date(Number(intAsStr));
     const yyyy = String(date.getFullYear()).padStart(4, 0);
     const mm = String(date.getMonth() + 1).padStart(2, 0);
     const dd = String(date.getDate()).padStart(2, 0);
     return [yyyy, mm, dd].join('-');
 }
 
-function timeStringify(int, withDate) {
-    if (int === '') {
+function timeStringify(intAsStr, withDate) {
+    if (intAsStr === '') {
         return;
     }
-    const time = new Date(Number(int));
+    const time = new Date(Number(intAsStr));
     const arr = [];
     if (withDate) {
         arr.push(String(time.getHours()).padStart(2, 0));
@@ -103,13 +116,16 @@ function timeToInteger(timeString) {
     let arr = timeString.split(':');
     arr = arr.map(val => Number(val));
     const seconds = arr[0] * 60 * 60 + arr[1] * 60 + (arr[2] || 0);
-    return 1000 * seconds;
+    return { newVal: 1000 * seconds, datetimeErr: '' };
 }
 
 function datetimeToInteger(dateString, withTime, timeString) {
-    if (withTime && !timeString) {
-        return null;
+    if (!dateString && (!withTime || !timeString)) {
+        return { newVal: null, datetimeErr: '' };
+    }
+    if (withTime && (!dateString || !timeString)) {
+        return { newVal: null, datetimeErr: 'Nieprawidłowa data/godzina' };
     }
     const newString = dateString + (timeString ? 'T' + timeString : '');
-    return new Date(newString).valueOf();
+    return { datetimeErr: '', newVal: new Date(newString).valueOf() };
 }
