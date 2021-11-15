@@ -6,7 +6,7 @@ export default class SwNumberInput extends Component {
         const minValue = Number.parseInt(min);
         const maxValue = Number.parseInt(max);
 
-        return <div className="input-wrapper" ref={node => this.ref = node}>
+        return <>
             <style>{style}</style>
             <div className="input-wrapper">
                 <input ref={node => this.ref = node}
@@ -26,7 +26,22 @@ export default class SwNumberInput extends Component {
                             value: e.target.value,
                         });
 
+                        if (e.target.validity.valid) {
+                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent',
+                                {
+                                    detail: { name: name, value: e.target.value },
+                                    bubbles: true,
+                                },
+                            ));
+                        }
+                    }}
+                    aria-labelledby={placeholder}
+                />
+
+                <label htmlFor={name}>{placeholder}</label>
+            </div>
+
             {this.state.errorMessage && <p className="error">{this.state.errorMessage}</p>}
-        </div>;
+        </>;
     }
 }
