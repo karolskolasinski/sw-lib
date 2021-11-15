@@ -67,18 +67,11 @@ export default class SwDatetimeInput extends Component {
                         }
                     }}
                 />}
-                {this.state.dateErr && <p className="error">{this.state.dateErr}</p>}
-                {this.state.timeErr && <p className="error">{this.state.timeErr}</p>}
-                {this.state.datetimeErr && <p className="error">{this.state.datetimeErr}</p>}
             </div>
 
-            {this.state.errorMessage && <p className="error">{this.state.errorMessage}</p>}
-
-            {date && time && !(this.state.dateVal ?? dateVal) && (this.state.timeVal ?? timeVal)
-            && <p className="error">Podaj datę</p>}
-
-            {date && time && (this.state.dateVal ?? dateVal) && !(this.state.timeVal ?? timeVal)
-            && <p className="error">Podaj godzinę</p>}
+            {this.state.dateErr && <p className="error">{this.state.dateErr}</p>}
+            {this.state.timeErr && <p className="error">{this.state.timeErr}</p>}
+            {this.state.datetimeErr && <p className="error">{this.state.datetimeErr}</p>}
         </div>;
     }
 }
