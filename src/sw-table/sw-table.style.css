@@ -20,9 +20,9 @@ tbody tr:nth-child(odd) {
 }
 
 th, td {
-    padding: .5rem;
+    padding: .5em;
 }
 
 td.components *:not(:first-child) {
-    margin-left: 2rem;
+    margin-left: 2em;
 }

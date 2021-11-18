@@ -58,6 +58,7 @@
 .modal-body-content {
     max-height: 20em;
     overflow-y: auto;
+    padding: 1em;
 }
 
 .modal-footer {
