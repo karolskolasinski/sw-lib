@@ -13596,15 +13596,15 @@ and ensure you are accounting for this risk.
   init_preact_module();
 
   // src/common/sw-input/sw-input.style.css
-  var sw_input_style_default = ".error {\n    color: var(--error-color);\n}\n\np.error {\n    margin: .3rem 0 0 0;\n}\n\n.input-wrapper {\n    position: relative;\n    margin: 1.5rem 0;\n}\n\ninput {\n    width: 100%;\n    padding: .4rem .4rem .4rem 0;\n    font-size: 1rem;\n    border: 0;\n    border-bottom: 1px solid lightgray;\n    background: var(--background-color);\n}\n\ninput[type=text], input[type=password] {\n    margin-bottom: .5rem;\n}\n\ninput[type=date], input[type=time] {\n    width: fit-content;\n}\n\nlabel:not(.toggle) {\n    position: absolute;\n    top: .5rem;\n    transition: .2s ease-out all;\n    cursor: text;\n    height: 1rem;\n}\n\ninput:focus + label,\ninput:not(:placeholder-shown) + label {\n    top: -1.5rem;\n    font-size: .85rem;\n    color: gray;\n}\n\ninput:hover,\ninput:focus-visible {\n    outline: 0;\n    border-bottom-color: var(--primary-color-100);\n    box-shadow: 0 1px 0 0 var(--primary-color-100);\n}\n";
+  var sw_input_style_default = "*, ::before, ::after {\n    box-sizing: border-box;\n    font: inherit;\n    color: inherit;\n}\n\n.error {\n    color: var(--error-color);\n}\n\np.error {\n    margin: .3rem 0 0 0;\n}\n\n.input-wrapper {\n    position: relative;\n}\n\ninput {\n    padding: .4em 0;\n    border: 0;\n    border-bottom: 1px solid lightgray;\n    width: 100%;\n    font-size: 1em;\n    background: none;\n}\n\nlabel {\n    position: absolute;\n    top: .4em;\n    left: 0;\n    cursor: text;\n    font-size: 1em;\n    transition: .2s ease-out all;\n}\n\ninput:focus + label,\ninput:not(:placeholder-shown) + label {\n    top: -1.4em;\n    font-size: .85em;\n}\n\ninput:-webkit-autofill:not(:focus),\ntextarea:-webkit-autofill:not(:focus) {\n    border-bottom-color: lightgray;\n    -webkit-box-shadow: none;\n}\n\ninput:-webkit-autofill,\ninput:-webkit-autofill:hover,\ninput:-webkit-autofill:focus,\ntextarea:-webkit-autofill,\ntextarea:-webkit-autofill:hover,\ntextarea:-webkit-autofill:focus {\n    border-bottom-color: var(--primary-color-100);\n    -webkit-box-shadow: 0 1px 0 0 var(--primary-color-100);\n    transition: background-color 5000s ease-in-out 0s;\n}\n\ninput:hover,\ninput:focus-visible {\n    outline: 0;\n    border-bottom-color: var(--primary-color-100);\n    box-shadow: 0 1px 0 0 var(--primary-color-100);\n}\n";
 
   // src/sw-text-input/sw-text-input.jsx
   var SwTextInput = class extends _ {
     render({ name, required, placeholder, disabled, value }) {
-      return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("style", null, sw_input_style_default), /* @__PURE__ */ v("div", {
-        className: "input-wrapper"
-      }, /* @__PURE__ */ v("input", {
-        ref: (node) => this.ref = node,
+      return /* @__PURE__ */ v("div", {
+        className: "input-wrapper",
+        ref: (node) => this.ref = node
+      }, /* @__PURE__ */ v("style", null, sw_input_style_default), /* @__PURE__ */ v("input", {
         id: name,
         name,
         type: "text",
@@ -13619,22 +13619,29 @@ and ensure you are accounting for this risk.
         "aria-labelledby": placeholder
       }), /* @__PURE__ */ v("label", {
         htmlFor: name
-      }, placeholder)));
+      }, placeholder));
     }
   };
 
   // src/sw-datetime-input/sw-datetime-input.jsx
   init_preact_shim();
   init_preact_module();
+
+  // src/sw-datetime-input/sw-datetime-input.style.css
+  var sw_datetime_input_style_default = ".datetime-wrapper {\n    display: flex;\n}\n";
+
+  // src/sw-datetime-input/sw-datetime-input.jsx
   var SwDatetimeInput = class extends _ {
     render({ name, required, placeholder, disabled, value, date, time, step }) {
       const dateVal = dateStringify(value);
       const timeVal = timeStringify(value, date);
-      return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("style", null, sw_input_style_default), /* @__PURE__ */ v("div", {
+      return /* @__PURE__ */ v("div", {
         className: "input-wrapper",
         ref: (node) => this.ref = node
+      }, /* @__PURE__ */ v("style", null, sw_input_style_default), /* @__PURE__ */ v("style", null, sw_datetime_input_style_default), /* @__PURE__ */ v("div", {
+        className: "datetime-wrapper"
       }, date && /* @__PURE__ */ v("input", {
-        id: name + ".date",
+        id: name + "-date",
         type: "date",
         required: required === "true",
         placeholder: " ",
@@ -13642,11 +13649,13 @@ and ensure you are accounting for this risk.
         value: this.state.dateVal ?? dateVal,
         "aria-labelledby": placeholder,
         onBlur: async (e2) => {
-          const newVal = datetimeToInteger(e2.target.value, time, this.state.timeVal);
+          const { newVal, datetimeErr } = datetimeToInteger(e2.target.value, time, this.state.timeVal ?? timeVal, this);
           await this.setState({
             dateVal: e2.target.value,
+            timeVal: this.state.timeVal ?? timeVal,
+            dateErr: e2.target.validationMessage !== e2.target.value && e2.target.validationMessage,
             value: newVal,
-            errorMessage: e2.target.validationMessage !== e2.target.value && e2.target.validationMessage
+            datetimeErr
           });
           if (e2.target.validity.valid) {
             this.ref.getRootNode().host.dispatchEvent(new CustomEvent("changeEvent", {
@@ -13656,7 +13665,7 @@ and ensure you are accounting for this risk.
           }
         }
       }), time && /* @__PURE__ */ v("input", {
-        id: name + ".time",
+        id: name + "-time",
         type: "time",
         required: required === "true",
         placeholder: " ",
@@ -13665,11 +13674,13 @@ and ensure you are accounting for this risk.
         step,
         "aria-labelledby": placeholder,
         onBlur: async (e2) => {
-          const newVal = date ? datetimeToInteger(this.state.dateVal, time, e2.target.value) : timeToInteger(e2.target.value);
+          const { newVal, datetimeErr } = date ? datetimeToInteger(this.state.dateVal ?? dateVal, time, e2.target.value, this) : timeToInteger(e2.target.value);
           await this.setState({
             timeVal: e2.target.value,
+            dateVal: this.state.dateVal ?? dateVal,
+            timeErr: e2.target.validationMessage !== e2.target.value && e2.target.validationMessage,
             value: newVal,
-            errorMessage: e2.target.validationMessage !== e2.target.value && e2.target.validationMessage
+            datetimeErr
           });
           if (e2.target.validity.valid) {
             this.ref.getRootNode().host.dispatchEvent(new CustomEvent("changeEvent", {
@@ -13678,32 +13689,30 @@ and ensure you are accounting for this risk.
             }));
           }
         }
-      }), /* @__PURE__ */ v("label", {
-        htmlFor: name
-      }, placeholder), this.state.errorMessage && /* @__PURE__ */ v("p", {
+      })), this.state.dateErr && /* @__PURE__ */ v("p", {
         className: "error"
-      }, this.state.errorMessage), date && time && !(this.state.dateVal ?? dateVal) && (this.state.timeVal ?? timeVal) && /* @__PURE__ */ v("p", {
+      }, this.state.dateErr), this.state.timeErr && /* @__PURE__ */ v("p", {
         className: "error"
-      }, "Podaj dat\u0119"), date && time && (this.state.dateVal ?? dateVal) && !(this.state.timeVal ?? timeVal) && /* @__PURE__ */ v("p", {
+      }, this.state.timeErr), this.state.datetimeErr && /* @__PURE__ */ v("p", {
         className: "error"
-      }, "Podaj godzin\u0119")));
+      }, this.state.datetimeErr));
     }
   };
-  function dateStringify(int) {
-    if (int === "") {
-      return;
+  function dateStringify(intAsStr) {
+    if (intAsStr === "") {
+      return null;
     }
-    const date = new Date(Number(int));
+    const date = new Date(Number(intAsStr));
     const yyyy = String(date.getFullYear()).padStart(4, 0);
     const mm = String(date.getMonth() + 1).padStart(2, 0);
     const dd = String(date.getDate()).padStart(2, 0);
     return [yyyy, mm, dd].join("-");
   }
-  function timeStringify(int, withDate) {
-    if (int === "") {
-      return;
+  function timeStringify(intAsStr, withDate) {
+    if (intAsStr === "") {
+      return null;
     }
-    const time = new Date(Number(int));
+    const time = new Date(Number(intAsStr));
     const arr = [];
     if (withDate) {
       arr.push(String(time.getHours()).padStart(2, 0));
@@ -13720,14 +13729,17 @@ and ensure you are accounting for this risk.
     let arr = timeString.split(":");
     arr = arr.map((val) => Number(val));
     const seconds = arr[0] * 60 * 60 + arr[1] * 60 + (arr[2] || 0);
-    return 1e3 * seconds;
+    return { newVal: 1e3 * seconds, datetimeErr: "" };
   }
   function datetimeToInteger(dateString, withTime, timeString) {
-    if (withTime && !timeString) {
-      return null;
+    if (!dateString && (!withTime || !timeString)) {
+      return { newVal: null, datetimeErr: "" };
+    }
+    if (withTime && (!dateString || !timeString)) {
+      return { newVal: null, datetimeErr: "Nieprawid\u0142owa data/godzina" };
     }
     const newString = dateString + (timeString ? "T" + timeString : "");
-    return new Date(newString).valueOf();
+    return { datetimeErr: "", newVal: new Date(newString).valueOf() };
   }
 
   // src/sw-loader/sw-loader.jsx
@@ -13810,7 +13822,7 @@ and ensure you are accounting for this risk.
   init_preact_module();
 
   // src/sw-select/sw-select.style.css
-  var sw_select_style_default = ".select-wrapper {\n    position: relative;\n    margin: 1.5rem 0;\n}\n\nlabel {\n    position: absolute;\n    top: -1.5em;\n    font-size: .85em;\n    color: gray;\n}\n\n.button {\n    background-color: var(--background-color);\n    border: none;\n    text-align: left;\n    padding: .4em 0;\n    font-size: 1em;\n    width: 100%;\n    cursor: pointer;\n    border-bottom: 1px solid lightgray;\n}\n\nbutton:hover,\nbutton:focus,\nbutton:focus-visible {\n    outline: none;\n    border-bottom-color: var(--primary-color-100);\n    box-shadow: 0 1px 0 0 var(--primary-color-100);\n}\n\n.dropdown {\n    display: none;\n    margin-top: .4em;\n    width: 100%;\n    position: absolute;\n    border: 1px solid lightgray;\n    z-index: 1;\n    background: var(--background-color);\n    border-radius: var(--radius)\n}\n\n.dropdown input {\n    padding: .4em;\n    margin: .4em;\n}\n\n.results {\n    display: flex;\n    flex-direction: column;\n    max-height: 200px;\n    overflow: auto;\n}\n\n.results > * {\n    padding: .4em;\n    margin: .4em;\n}\n\n.option-hover,\n.option:hover {\n    cursor: pointer;\n    background-color: #ddd;\n}\n\n.show {\n    display: flex;\n    flex-direction: column;\n}\n\n.show-above {\n    bottom: 3.5em;\n}\n\n\n.input {\n    font-size: 1em;\n    outline: 0;\n    border: 0;\n    border-bottom: 1px solid lightgray;\n    background: var(--background-color);\n}\n\ninput:hover,\ninput:focus,\ninput:focus-visible {\n    outline: none;\n    border-bottom-color: var(--primary-color-100);\n    box-shadow: 0 1px 0 0 var(--primary-color-100);\n}\n";
+  var sw_select_style_default = "*, ::before, ::after {\n    box-sizing: border-box;\n    font: inherit;\n    color: inherit;\n}\n\n.select-wrapper {\n    position: relative;\n}\n\nlabel {\n    position: absolute;\n    top: -1.4em;\n    left: 0;\n    cursor: text;\n    font-size: .85em;\n}\n\n.button {\n    background-color: var(--background-color);\n    border: none;\n    text-align: left;\n    padding: .4em 0;\n    font-size: 1em;\n    width: 100%;\n    cursor: pointer;\n    border-bottom: 1px solid lightgray;\n}\n\nbutton:hover,\nbutton:focus,\nbutton:focus-visible {\n    outline: none;\n    border-bottom-color: var(--primary-color-100);\n    box-shadow: 0 1px 0 0 var(--primary-color-100);\n}\n\n.dropdown {\n    display: none;\n    margin-top: .4em;\n    width: 100%;\n    position: absolute;\n    border: 1px solid lightgray;\n    z-index: 1;\n    background: var(--background-color);\n    border-radius: var(--radius)\n}\n\n.dropdown input {\n    padding: .4em;\n    margin: .4em;\n}\n\n.results {\n    display: flex;\n    flex-direction: column;\n    max-height: 200px;\n    overflow: auto;\n}\n\n.results > * {\n    padding: .4em;\n    margin: .4em;\n}\n\n.option-hover,\n.option:hover {\n    cursor: pointer;\n    background-color: #ddd;\n}\n\n.show {\n    display: flex;\n    flex-direction: column;\n}\n\n.show-above {\n    bottom: 3.5em;\n}\n\n\n.input {\n    font-size: 1em;\n    outline: 0;\n    border: 0;\n    border-bottom: 1px solid lightgray;\n    background: var(--background-color);\n}\n\ninput:hover,\ninput:focus,\ninput:focus-visible {\n    outline: none;\n    border-bottom-color: var(--primary-color-100);\n    box-shadow: 0 1px 0 0 var(--primary-color-100);\n}\n";
 
   // src/sw-select/sw-select.jsx
   var import_lodash = __toModule(require_lodash());
@@ -13819,7 +13831,7 @@ and ensure you are accounting for this risk.
     constructor() {
       super();
       this.toggleDropdownEventListener = this.toggleDropdownEventListener.bind(this);
-      this.throttleSearch = import_lodash.default.throttle(async (sourceFn, value) => {
+      this.debounceSearch = import_lodash.default.debounce(async (sourceFn, value) => {
         try {
           const options = await sourceFn(value);
           this.setState({
@@ -13843,9 +13855,15 @@ and ensure you are accounting for this risk.
       document.removeEventListener("click", this.toggleDropdownEventListener);
     }
     toggleDropdownEventListener(e2) {
-      const classList = e2.path[0].classList;
       const dropdown = this.ref.getRootNode().host.shadowRoot.querySelector(".show");
-      if (dropdown && !classList.contains("button") && !classList.contains("dropdown") && !classList.contains("input") && !classList.contains("results") && !classList.contains("option")) {
+      let pathElement = e2.path[0];
+      const parents = [];
+      console.log(pathElement);
+      while (pathElement) {
+        parents.push(pathElement);
+        pathElement = pathElement.parentNode;
+      }
+      if (dropdown && !parents.includes(this.ref)) {
         this.toggleDropdown();
       }
     }
@@ -13882,7 +13900,7 @@ and ensure you are accounting for this risk.
         this.setState({ options: initialOptions });
         return;
       }
-      this.throttleSearch(sourceFn, value);
+      this.debounceSearch(sourceFn, value);
     }
     onOptionClick(option) {
       this.toggleDropdown();
@@ -13905,12 +13923,10 @@ and ensure you are accounting for this risk.
       }
       if (!sourceFn)
         sourceFn = this.sourceFnDefault(options);
-      return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("style", null, sw_select_style_default), /* @__PURE__ */ v("div", {
+      return /* @__PURE__ */ v("div", {
         className: "select-wrapper",
         ref: (node) => this.ref = node
-      }, /* @__PURE__ */ v("label", {
-        htmlFor: name
-      }, name), /* @__PURE__ */ v("button", {
+      }, /* @__PURE__ */ v("style", null, sw_select_style_default), /* @__PURE__ */ v("button", {
         className: "button",
         onClick: () => {
           this.toggleDropdown();
@@ -13924,7 +13940,6 @@ and ensure you are accounting for this risk.
         className: "input",
         type: "text",
         placeholder: "Start typing...",
-        id: name,
         onKeyUp: (event) => this.keyAction(event),
         onInput: (event) => this.onSearchChange(sourceFn, minimumCharLengthTrigger, event, initialOptions)
       }), /* @__PURE__ */ v("div", {
@@ -13936,7 +13951,9 @@ and ensure you are accounting for this risk.
         }, this.renderLabel(option, labelField));
       })), this.state.error && /* @__PURE__ */ v("p", {
         className: "error"
-      }, this.state.error))));
+      }, this.state.error)), /* @__PURE__ */ v("label", {
+        htmlFor: name
+      }, name));
     }
   };
 
@@ -13966,6 +13983,48 @@ and ensure you are accounting for this risk.
       } else {
         return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("style", null, sw_table_style_default), /* @__PURE__ */ v("sw-loader", null));
       }
+    }
+  };
+
+  // src/sw-number-input/sw-number-input.jsx
+  init_preact_shim();
+  init_preact_module();
+  var SwNumberInput = class extends _ {
+    render({ name, required, placeholder, disabled, value, min, max, step }) {
+      const minValue = Number.parseInt(min);
+      const maxValue = Number.parseInt(max);
+      return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("style", null, sw_input_style_default), /* @__PURE__ */ v("div", {
+        className: "input-wrapper"
+      }, /* @__PURE__ */ v("input", {
+        ref: (node) => this.ref = node,
+        id: name,
+        name,
+        type: "number",
+        required: required === "true",
+        placeholder: " ",
+        disabled: disabled !== "false" && !!disabled,
+        value: this.state.value ?? value,
+        min: min && minValue,
+        max: max && maxValue,
+        step: step && Number(step),
+        onBlur: async (e2) => {
+          await this.setState({
+            errorMessage: e2.target.validationMessage !== e2.target.value && e2.target.validationMessage,
+            value: e2.target.value
+          });
+          if (e2.target.validity.valid) {
+            this.ref.getRootNode().host.dispatchEvent(new CustomEvent("changeEvent", {
+              detail: { name, value: e2.target.value },
+              bubbles: true
+            }));
+          }
+        },
+        "aria-labelledby": placeholder
+      }), /* @__PURE__ */ v("label", {
+        htmlFor: name
+      }, placeholder)), this.state.errorMessage && /* @__PURE__ */ v("p", {
+        className: "error"
+      }, this.state.errorMessage));
     }
   };
 
@@ -14141,12 +14200,13 @@ and ensure you are accounting for this risk.
 
   // src/index.js
   preact_custom_element_esm_default(SwButton, "sw-button", ["icon", "disabled"], { shadow: true });
-  preact_custom_element_esm_default(SwTextInput, "sw-text-input", ["name", "required", "placeholder", "disabled", "value"], { shadow: true });
   preact_custom_element_esm_default(SwDatetimeInput, "sw-datetime-input", ["name", "required", "placeholder", "disabled", "value", "step"], { shadow: true });
   preact_custom_element_esm_default(SwLoader, "sw-loader", [], { shadow: true });
+  preact_custom_element_esm_default(SwNumberInput, "sw-number-input", ["name", "required", "placeholder", "disabled", "value", "min", "max", "step"], { shadow: true });
   preact_custom_element_esm_default(SwPagination, "sw-pagination", ["current-page", "number-of-pages"], { shadow: true });
   preact_custom_element_esm_default(SwSelect, "sw-select", ["config"], { shadow: true });
   preact_custom_element_esm_default(SwTable, "sw-table", ["config"], { shadow: true });
+  preact_custom_element_esm_default(SwTextInput, "sw-text-input", ["name", "required", "placeholder", "disabled", "value"], { shadow: true });
 
   // test-client/index.jsx
   var users = [

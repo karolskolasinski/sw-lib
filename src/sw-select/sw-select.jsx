@@ -8,7 +8,7 @@ export default class SwSelect extends Component {
     constructor() {
         super();
         this.toggleDropdownEventListener = this.toggleDropdownEventListener.bind(this);
-        this.throttleSearch = _.debounce(async (sourceFn, value) => {
+        this.debounceSearch = _.debounce(async (sourceFn, value) => {
             try {
                 const options = await sourceFn(value);
 
@@ -36,15 +36,16 @@ export default class SwSelect extends Component {
     }
 
     toggleDropdownEventListener(e) {
-        const classList = e.path[0].classList;
         const dropdown = this.ref.getRootNode().host.shadowRoot.querySelector('.show');
+        let pathElement = e.path[0];
+        const parents = [];
 
-        if (dropdown
-            && !classList.contains('button')
-            && !classList.contains('dropdown')
-            && !classList.contains('input')
-            && !classList.contains('results')
-            && !classList.contains('option')) {
+        while (pathElement) {
+            parents.push(pathElement);
+            pathElement = pathElement.parentNode;
+        }
+
+        if (dropdown && !parents.includes(this.ref)) {
             this.toggleDropdown();
         }
     }
@@ -89,7 +90,7 @@ export default class SwSelect extends Component {
             return;
         }
 
-        this.throttleSearch(sourceFn, value);
+        this.debounceSearch(sourceFn, value);
     }
 
     onOptionClick(option) {
@@ -130,7 +131,6 @@ export default class SwSelect extends Component {
                 <input className="input"
                     type="text"
                     placeholder="Start typing..."
-                    id={name}
                     onKeyUp={event => this.keyAction(event)}
                     onInput={event => this.onSearchChange(sourceFn,
                         minimumCharLengthTrigger,
@@ -140,7 +140,8 @@ export default class SwSelect extends Component {
                 <div className="results">
                     {options[0] && (options ?? []).map(option => {
                         return <span className="option"
-                            onClick={() => this.onOptionClick(option)}>{this.renderLabel(option, labelField)}</span>;
+                            onClick={() => this.onOptionClick(option)}>{this.renderLabel(option, labelField)}
+                        </span>;
                     })}
                 </div>
 
