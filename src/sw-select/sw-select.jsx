@@ -96,7 +96,7 @@ export default class SwSelect extends Component {
     onOptionClick(option) {
         this.toggleDropdown();
         this.setState({ selectedOption: option.name ?? option });
-        this.ref.getRootNode().host.dispatchEvent(new CustomEvent('change', {
+        this.ref.getRootNode().host.dispatchEvent(new CustomEvent('update', {
             detail: option,
             bubbles: true,
         }));

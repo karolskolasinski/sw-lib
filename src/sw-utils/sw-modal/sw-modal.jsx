@@ -164,7 +164,7 @@ export function modalPrompt({ title, text, placeholder, initialValue, icon }) {
                 required={true}
                 placeholder={placeholder}
                 value={initialValue}
-                onchangeEvent={(detail) => content = detail.detail.value}
+                onupdate={(detail) => content = detail.detail.value}
             />
         </>,
         footer: ({ close }) => <sw-button onClick={() => close(content)}>Submit</sw-button>,
