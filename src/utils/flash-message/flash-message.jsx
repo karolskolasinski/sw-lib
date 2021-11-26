@@ -1,4 +1,4 @@
-import cssFile from './sw-flash-message.style.css';
+import cssFile from './flash-message.style.css';
 
 let isStyleFileAdded = false;
 

@@ -1,27 +1,64 @@
 import register from 'preact-custom-element';
-import SwButton from './sw-button/sw-button.jsx';
-import SwTextInput from './sw-text-input/sw-text-input.jsx';
-import SwDatetimeInput from './sw-datetime-input/sw-datetime-input.jsx';
-import SwLoader from './sw-loader/sw-loader.jsx';
-import SwPagination from './sw-pagination/sw-pagination.jsx';
-import SwSelect from './sw-select/sw-select.jsx';
-import SwTable from './sw-table/sw-table.jsx';
-import SwNumberInput from './sw-number-input/sw-number-input';
+import SwButton from './web-components/sw-button/sw-button.jsx';
+import SwTextInput from './web-components/sw-text-input/sw-text-input.jsx';
+import SwDatetimeInput from './web-components/sw-datetime-input/sw-datetime-input.jsx';
+import SwLoader from './web-components/sw-loader/sw-loader.jsx';
+import SwPagination from './web-components/sw-pagination/sw-pagination.jsx';
+import SwSelect from './web-components/sw-select/sw-select.jsx';
+import SwTable from './web-components/sw-table/sw-table.jsx';
+import SwNumberInput from './web-components/sw-number-input/sw-number-input';
 
-export * from './sw-utils/sw-flash-message/sw-flash-message.jsx';
-export * from './sw-utils/sw-modal/sw-modal.jsx';
+export * from './utils/flash-message/flash-message.jsx';
+export * from './utils/modal/modal.jsx';
+export * as router from './utils/router/router';
 
-register(SwButton, 'sw-button', ['icon', 'disabled'], { shadow: true });
-register(SwDatetimeInput,
-    'sw-datetime-input',
-    ['name', 'required', 'placeholder', 'disabled', 'value', 'step'],
-    { shadow: true });
-register(SwLoader, 'sw-loader', [], { shadow: true });
-register(SwNumberInput,
-    'sw-number-input',
-    ['name', 'required', 'placeholder', 'disabled', 'value', 'min', 'max', 'step'],
-    { shadow: true });
-register(SwPagination, 'sw-pagination', ['current-page', 'number-of-pages'], { shadow: true });
-register(SwSelect, 'sw-select', ['config'], { shadow: true });
-register(SwTable, 'sw-table', ['config'], { shadow: true });
-register(SwTextInput, 'sw-text-input', ['name', 'required', 'placeholder', 'disabled', 'value'], { shadow: true });
+const areElementsRegistered = !!customElements.get('sw-button');
+
+if (!areElementsRegistered) {
+    register(
+        SwButton,
+        'sw-button',
+        ['icon', 'disabled', 'href'],
+        { shadow: true },
+    );
+    register(
+        SwDatetimeInput,
+        'sw-datetime-input',
+        ['name', 'required', 'placeholder', 'disabled', 'value', 'step'],
+        { shadow: true },
+    );
+    register(
+        SwLoader,
+        'sw-loader',
+        [],
+        { shadow: true },
+    );
+    register(SwNumberInput,
+        'sw-number-input',
+        ['name', 'required', 'placeholder', 'disabled', 'value', 'min', 'max', 'step'],
+        { shadow: true },
+    );
+    register(SwPagination,
+        'sw-pagination',
+        ['current-page', 'number-of-pages', 'route-name'],
+        { shadow: true },
+    );
+    register(
+        SwSelect,
+        'sw-select',
+        ['config'],
+        { shadow: true },
+    );
+    register(
+        SwTable,
+        'sw-table',
+        ['config'],
+        { shadow: true },
+    );
+    register(
+        SwTextInput,
+        'sw-text-input',
+        ['name', 'required', 'placeholder', 'disabled', 'value'],
+        { shadow: true },
+    );
+}

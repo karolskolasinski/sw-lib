@@ -1,0 +1,32 @@
+*, ::before, ::after {
+    box-sizing: border-box;
+    font: inherit;
+    color: inherit;
+}
+
+.button {
+    color: var(--foreground-color);
+    background: var(--primary-color-70);
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 3px;
+    white-space: nowrap;
+    padding: .4em;
+    text-decoration: none;
+}
+
+.button:hover {
+    background: var(--primary-color-100);
+}
+
+.button:disabled,
+.button:disabled:hover {
+    background: var(--primary-color-40);
+    cursor: not-allowed;
+}
+
+.button:active {
+    background: var(--primary-color-100);
+    box-shadow: 0 0 2px 1px var(--primary-color-100);
+}

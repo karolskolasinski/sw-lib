@@ -1,4 +1,4 @@
-import cssFile from './sw-modal.style.css';
+import cssFile from './modal.style.css';
 import { render } from 'preact';
 import sanitizeHtml from 'sanitize-html';
 
