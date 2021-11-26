@@ -14,7 +14,7 @@ export default class SwTextInput extends Component {
                 placeholder=" "
                 disabled={disabled !== 'false' && !!disabled}
                 value={value}
-                onInput={e => this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent',
+                onInput={e => this.ref.getRootNode().host.dispatchEvent(new CustomEvent('update',
                     {
                         detail: { name: name, value: e.target.value },
                         bubbles: true,

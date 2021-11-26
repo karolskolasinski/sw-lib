@@ -31,7 +31,7 @@ export default class SwDatetimeInput extends Component {
                             datetimeErr
                         });
                         if (e.target.validity.valid) {
-                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
+                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('update', {
                                 detail: { name: name, value: this.state.value },
                                 bubbles: true
                             }));
@@ -60,7 +60,7 @@ export default class SwDatetimeInput extends Component {
                             datetimeErr
                         });
                         if (e.target.validity.valid) {
-                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
+                            this.ref.getRootNode().host.dispatchEvent(new CustomEvent('update', {
                                 detail: { name: name, value: this.state.value },
                                 bubbles: true
                             }));
