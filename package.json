@@ -12,6 +12,7 @@
         "test": "jest",
         "dev": "concurrently --kill-others \"live-server test-client\" \"npm run build:watch:dev\""
     },
+    "types": "index.d.ts",
     "repository": {
         "type": "git",
         "url": "git+ssh://git@gitlab.com/7willows/sw-lib.git"

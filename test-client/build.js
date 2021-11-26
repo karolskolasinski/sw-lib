@@ -13577,16 +13577,21 @@ and ensure you are accounting for this risk.
   init_preact_module();
 
   // src/sw-button/sw-button.style.css
-  var sw_button_style_default = "button {\n    color: var(--foreground-color);\n    background: var(--primary-color-70);\n    font-size: 1rem;\n    cursor: pointer;\n    border: none;\n    border-radius: 3px;\n    white-space: nowrap;\n    line-height: 2;\n}\n\nbutton:disabled,\nbutton:disabled:hover {\n    background: var(--primary-color-40);\n}\n\nbutton:hover {\n    background: var(--primary-color-100);\n}\n\nbutton:active {\n    background: var(--primary-color-100);\n    box-shadow: 0 0 2px 1px var(--primary-color-100);\n}\n";
+  var sw_button_style_default = "*, ::before, ::after {\n    box-sizing: border-box;\n    font: inherit;\n    color: inherit;\n}\n\n.button {\n    color: var(--foreground-color);\n    background: var(--primary-color-70);\n    font-size: 1em;\n    cursor: pointer;\n    border: none;\n    border-radius: 3px;\n    white-space: nowrap;\n    padding: .4em;\n    text-decoration: none;\n}\n\n.button:hover {\n    background: var(--primary-color-100);\n}\n\n.button:disabled,\n.button:disabled:hover {\n    background: var(--primary-color-40);\n    cursor: not-allowed;\n}\n\n.button:active {\n    background: var(--primary-color-100);\n    box-shadow: 0 0 2px 1px var(--primary-color-100);\n}\n";
 
   // src/sw-button/sw-button.jsx
   var SwButton = class extends _ {
-    render({ icon, disabled }) {
+    render({ icon, disabled, href }) {
       const child = this.props.children.props.children;
-      return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("style", null, sw_button_style_default), /* @__PURE__ */ v("button", {
+      const isDisabled = disabled !== "false" && !!disabled;
+      return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("style", null, sw_button_style_default), !isDisabled && href ? /* @__PURE__ */ v("a", {
+        className: "button",
+        href
+      }, child) : /* @__PURE__ */ v("button", {
+        className: "button",
         type: "button",
         role: "button",
-        disabled: disabled !== "false" && !!disabled
+        disabled: isDisabled
       }, child));
     }
   };
@@ -13596,7 +13601,7 @@ and ensure you are accounting for this risk.
   init_preact_module();
 
   // src/common/sw-input/sw-input.style.css
-  var sw_input_style_default = "*, ::before, ::after {\n    box-sizing: border-box;\n    font: inherit;\n    color: inherit;\n}\n\n.error {\n    color: var(--error-color);\n}\n\np.error {\n    margin: .3rem 0 0 0;\n}\n\n.input-wrapper {\n    position: relative;\n}\n\ninput {\n    padding: .4em 0;\n    border: 0;\n    border-bottom: 1px solid lightgray;\n    width: 100%;\n    font-size: 1em;\n    background: none;\n}\n\nlabel {\n    position: absolute;\n    top: .4em;\n    left: 0;\n    cursor: text;\n    font-size: 1em;\n    transition: .2s ease-out all;\n}\n\ninput:focus + label,\ninput:not(:placeholder-shown) + label {\n    top: -1.4em;\n    font-size: .85em;\n}\n\ninput:-webkit-autofill:not(:focus),\ntextarea:-webkit-autofill:not(:focus) {\n    border-bottom-color: lightgray;\n    -webkit-box-shadow: none;\n}\n\ninput:-webkit-autofill,\ninput:-webkit-autofill:hover,\ninput:-webkit-autofill:focus,\ntextarea:-webkit-autofill,\ntextarea:-webkit-autofill:hover,\ntextarea:-webkit-autofill:focus {\n    border-bottom-color: var(--primary-color-100);\n    -webkit-box-shadow: 0 1px 0 0 var(--primary-color-100);\n    transition: background-color 5000s ease-in-out 0s;\n}\n\ninput:hover,\ninput:focus-visible {\n    outline: 0;\n    border-bottom-color: var(--primary-color-100);\n    box-shadow: 0 1px 0 0 var(--primary-color-100);\n}\n";
+  var sw_input_style_default = "*, ::before, ::after {\n    box-sizing: border-box;\n    font: inherit;\n    color: inherit;\n}\n\n.error {\n    color: var(--error-color);\n}\n\np.error {\n    margin: .3em 0 0 0;\n}\n\n.input-wrapper {\n    position: relative;\n}\n\ninput {\n    padding: .4em 0;\n    border: 0;\n    border-bottom: 1px solid lightgray;\n    width: 100%;\n    font-size: 1em;\n    background: none;\n}\n\nlabel {\n    position: absolute;\n    top: .4em;\n    left: 0;\n    cursor: text;\n    font-size: 1em;\n    transition: .2s ease-out all;\n}\n\ninput:focus + label,\ninput:not(:placeholder-shown) + label {\n    top: -1.4em;\n    font-size: .85em;\n}\n\ninput:-webkit-autofill:not(:focus),\ntextarea:-webkit-autofill:not(:focus) {\n    border-bottom-color: lightgray;\n    -webkit-box-shadow: none;\n}\n\ninput:-webkit-autofill,\ninput:-webkit-autofill:hover,\ninput:-webkit-autofill:focus,\ntextarea:-webkit-autofill,\ntextarea:-webkit-autofill:hover,\ntextarea:-webkit-autofill:focus {\n    border-bottom-color: var(--primary-color-100);\n    -webkit-box-shadow: 0 1px 0 0 var(--primary-color-100);\n    transition: background-color 5000s ease-in-out 0s;\n}\n\ninput:hover,\ninput:focus-visible {\n    outline: 0;\n    border-bottom-color: var(--primary-color-100);\n    box-shadow: 0 1px 0 0 var(--primary-color-100);\n}\n";
 
   // src/sw-text-input/sw-text-input.jsx
   var SwTextInput = class extends _ {
@@ -13632,6 +13637,16 @@ and ensure you are accounting for this risk.
 
   // src/sw-datetime-input/sw-datetime-input.jsx
   var SwDatetimeInput = class extends _ {
+    dispatchEvent(name) {
+      this.ref.getRootNode().host.dispatchEvent(new CustomEvent("changeEvent", {
+        detail: {
+          name,
+          value: this.state.value,
+          error: this.state?.timeErr || this.state?.dateErr || this.state?.datetimeErr
+        },
+        bubbles: true
+      }));
+    }
     render({ name, required, placeholder, disabled, value, date, time, step }) {
       const dateVal = dateStringify(value);
       const timeVal = timeStringify(value, date);
@@ -13649,7 +13664,10 @@ and ensure you are accounting for this risk.
         value: this.state.dateVal ?? dateVal,
         "aria-labelledby": placeholder,
         onBlur: async (e2) => {
-          const { newVal, datetimeErr } = datetimeToInteger(e2.target.value, time, this.state.timeVal ?? timeVal, this);
+          const {
+            newVal,
+            datetimeErr
+          } = datetimeToInteger(e2.target.value, time, this.state.timeVal ?? timeVal, this);
           await this.setState({
             dateVal: e2.target.value,
             timeVal: this.state.timeVal ?? timeVal,
@@ -13657,12 +13675,7 @@ and ensure you are accounting for this risk.
             value: newVal,
             datetimeErr
           });
-          if (e2.target.validity.valid) {
-            this.ref.getRootNode().host.dispatchEvent(new CustomEvent("changeEvent", {
-              detail: { name, value: this.state.value },
-              bubbles: true
-            }));
-          }
+          this.dispatchEvent(name);
         }
       }), time && /* @__PURE__ */ v("input", {
         id: name + "-time",
@@ -13682,20 +13695,9 @@ and ensure you are accounting for this risk.
             value: newVal,
             datetimeErr
           });
-          if (e2.target.validity.valid) {
-            this.ref.getRootNode().host.dispatchEvent(new CustomEvent("changeEvent", {
-              detail: { name, value: this.state.value },
-              bubbles: true
-            }));
-          }
+          this.dispatchEvent(name);
         }
-      })), this.state.dateErr && /* @__PURE__ */ v("p", {
-        className: "error"
-      }, this.state.dateErr), this.state.timeErr && /* @__PURE__ */ v("p", {
-        className: "error"
-      }, this.state.timeErr), this.state.datetimeErr && /* @__PURE__ */ v("p", {
-        className: "error"
-      }, this.state.datetimeErr));
+      })));
     }
   };
   function dateStringify(intAsStr) {
@@ -13765,7 +13767,71 @@ and ensure you are accounting for this risk.
   init_preact_module();
 
   // src/sw-pagination/sw-pagination.style.css
-  var sw_pagination_style_default = "a {\n    text-decoration: none;\n}\n\n.wrapper {\n    display: flex;\n    align-items: center;\n    justify-content: flex-end;\n    padding-top: 2rem;\n}\n\ndiv.wrapper a,\ndiv.wrapper span {\n    margin: 0 .5rem;\n}\n\n#next {\n    margin-left: .5rem;\n}\n\n.currentPage {\n    color: var(--primary-color-100)\n}\n\n.previous, .next {\n    font-weight: bold;\n    text-transform: uppercase;\n    letter-spacing: .125rem;\n}\n\nspan:not(span.currentPage, span.caption) {\n    cursor: pointer;\n}\n";
+  var sw_pagination_style_default = "*, ::before, ::after {\n    box-sizing: border-box;\n    font: inherit;\n    color: inherit;\n}\n\na {\n    text-decoration: none;\n}\n\n.wrapper {\n    display: flex;\n    align-items: center;\n    justify-content: flex-end;\n    padding-top: 2em;\n}\n\ndiv.wrapper a,\ndiv.wrapper span {\n    margin: 0 .5em;\n}\n\n#next {\n    margin-left: .5em;\n}\n\n.currentPage {\n    color: var(--primary-color-100)\n}\n\n.previous,\n.next {\n    font-weight: bold;\n    text-transform: uppercase;\n}\n\nspan:not(span.currentPage, span.caption) {\n    cursor: pointer;\n}\n";
+
+  // src/sw-utils/router.js
+  init_preact_shim();
+  var routes = [];
+  function routeMatchUrl(route, url) {
+    const testParts = url.split("/").filter((x2) => x2);
+    if (testParts.length !== route.parts.length) {
+      return false;
+    }
+    for (let i3 = 0; i3 < testParts.length; i3 += 1) {
+      const routePart = route.parts[i3].toUrl({}).toString();
+      if (testParts[i3] !== routePart && routePart !== void 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+  function findDefaultRoute() {
+    const defaultRoute = routes.find((r3) => r3.isDefault);
+    if (!defaultRoute) {
+      throw new Error("no default route specified");
+    }
+    defaultRoute.params = getRouteParams(defaultRoute);
+    return defaultRoute;
+  }
+  function findRouteByName(routeName) {
+    const route = routes.find((r3) => r3.name === routeName) ?? findDefaultRoute();
+    route.params = getRouteParams(route);
+    return route;
+  }
+  function findRouteByUrl(url) {
+    url = (url ?? "").split("#")[1] ?? "";
+    const route = routes.find((route2) => routeMatchUrl(route2, url)) ?? findDefaultRoute();
+    route.params = getRouteParams(route);
+    return route;
+  }
+  function getCurrentRoute() {
+    return findRouteByUrl(window.location.href);
+  }
+  function getRouteUrl(routeName, params) {
+    const route = findRouteByName(routeName);
+    return window.location.pathname + "#" + getRoutePath(route, params);
+  }
+  function getRouteParams(route) {
+    const pathSplit = window.location.hash.slice(1).split("/");
+    let params = {};
+    for (let i3 = 0; i3 < route.parts.length; i3 += 1) {
+      const part = route.parts[i3];
+      params = { ...params, ...part.fromUrl(pathSplit[i3]) };
+    }
+    return params;
+  }
+  function getRoutePath(route, params) {
+    return route.parts.map((part) => part.toUrl(params)).join("/");
+  }
+  var eventListeners = {};
+  function trigger(event) {
+    (eventListeners[event.type] ?? []).forEach((listener) => listener(event));
+  }
+  window.addEventListener("hashchange", () => {
+    const route = getCurrentRoute();
+    const event = new CustomEvent("routeChange", { detail: route });
+    trigger(event);
+  });
 
   // src/sw-pagination/sw-pagination.jsx
   var SwPagination = class extends _ {
@@ -13775,45 +13841,30 @@ and ensure you are accounting for this risk.
         bubbles: true
       }));
     }
-    render({ currentPage, numberOfPages }) {
+    generateTheATag(page, innerText, className) {
+      return /* @__PURE__ */ v("a", {
+        href: getRouteUrl(this.href, { page }),
+        className: className && className,
+        onClick: () => this.pageChange(page)
+      }, innerText);
+    }
+    render({ currentPage, numberOfPages, href }) {
       currentPage = Number.parseInt(currentPage);
       numberOfPages = Number.parseInt(numberOfPages);
+      if (href)
+        this.href = href;
       return /* @__PURE__ */ v(d, null, /* @__PURE__ */ v("style", null, sw_pagination_style_default), /* @__PURE__ */ v("div", {
         ref: (node) => this.ref = node,
         className: "wrapper"
-      }, currentPage > 1 ? /* @__PURE__ */ v("span", {
-        className: "previous",
-        onClick: () => this.pageChange(currentPage - 1)
-      }, "< Previous page") : "", numberOfPages > 1 && currentPage !== 1 ? /* @__PURE__ */ v("span", {
-        onClick: () => this.pageChange(1)
-      }, "1") : "", numberOfPages > 7 && currentPage > 4 || numberOfPages === 7 && currentPage > 5 ? /* @__PURE__ */ v("span", {
+      }, currentPage > 1 && this.generateTheATag(currentPage - 1, "< Previous page", "previous"), numberOfPages > 1 && currentPage !== 1 && this.generateTheATag(1, "1"), numberOfPages > 7 && currentPage > 4 || numberOfPages === 7 && currentPage > 5 && /* @__PURE__ */ v("span", {
         className: "caption"
-      }, "...") : "", currentPage - 4 > 0 && currentPage + 1 > numberOfPages && currentPage !== 5 ? /* @__PURE__ */ v("span", {
-        onClick: () => this.pageChange(currentPage - 4)
-      }, currentPage - 4) : "", currentPage - 3 > 0 && currentPage + 2 > numberOfPages && currentPage !== 4 ? /* @__PURE__ */ v("span", {
-        onClick: () => this.pageChange(currentPage - 3)
-      }, currentPage - 3) : "", currentPage - 2 > 0 && currentPage !== 3 ? /* @__PURE__ */ v("span", {
-        onClick: () => this.pageChange(currentPage - 2)
-      }, currentPage - 2) : "", currentPage - 1 > 0 && currentPage !== 2 ? /* @__PURE__ */ v("span", {
-        onClick: () => this.pageChange(currentPage - 1)
-      }, currentPage - 1) : "", /* @__PURE__ */ v("span", {
+      }, "..."), currentPage - 4 > 0 && currentPage + 1 > numberOfPages && currentPage !== 5 && this.generateTheATag(currentPage - 4, currentPage - 4), currentPage - 3 > 0 && currentPage + 2 > numberOfPages && currentPage !== 4 && this.generateTheATag(currentPage - 3, currentPage - 3), currentPage - 2 > 0 && currentPage !== 3 && this.generateTheATag(currentPage - 2, currentPage - 2), currentPage - 1 > 0 && currentPage !== 2 && this.generateTheATag(currentPage - 1, currentPage - 1), /* @__PURE__ */ v("span", {
         className: "currentPage"
-      }, currentPage), currentPage + 1 <= numberOfPages ? /* @__PURE__ */ v("span", {
-        onClick: () => this.pageChange(currentPage + 1)
-      }, currentPage + 1) : "", currentPage + 2 <= numberOfPages ? /* @__PURE__ */ v("span", {
-        onClick: () => this.pageChange(currentPage + 2)
-      }, currentPage + 2) : "", currentPage + 3 <= numberOfPages && currentPage - 4 < 4 && currentPage < 4 ? /* @__PURE__ */ v("span", {
-        onClick: () => this.pageChange(currentPage + 3)
-      }, currentPage + 3) : "", currentPage + 4 <= numberOfPages && currentPage - 4 < 4 && currentPage < 3 ? /* @__PURE__ */ v("span", {
-        onClick: () => this.pageChange(currentPage + 4)
-      }, currentPage + 4) : "", /* @__PURE__ */ v("span", {
+      }, currentPage), currentPage + 1 <= numberOfPages && this.generateTheATag(currentPage + 1, currentPage + 1), currentPage + 2 <= numberOfPages && this.generateTheATag(currentPage + 2, currentPage + 2), currentPage + 3 <= numberOfPages && currentPage - 4 < 4 && currentPage < 4 && this.generateTheATag(currentPage + 3, currentPage + 3), currentPage + 4 <= numberOfPages && currentPage - 4 < 4 && currentPage < 3 && this.generateTheATag(currentPage + 4, currentPage + 4), /* @__PURE__ */ v("span", {
         className: "caption"
       }, "of"), /* @__PURE__ */ v("span", {
         className: "caption"
-      }, numberOfPages), numberOfPages > 1 && numberOfPages - currentPage !== 0 ? /* @__PURE__ */ v("span", {
-        className: "next",
-        onClick: () => this.pageChange(currentPage + 1)
-      }, "Next page >") : ""));
+      }, numberOfPages), numberOfPages > 1 && numberOfPages - currentPage !== 0 && this.generateTheATag(currentPage + 1, "Next page >", "next")));
     }
   };
 
@@ -13858,7 +13909,6 @@ and ensure you are accounting for this risk.
       const dropdown = this.ref.getRootNode().host.shadowRoot.querySelector(".show");
       let pathElement = e2.path[0];
       const parents = [];
-      console.log(pathElement);
       while (pathElement) {
         parents.push(pathElement);
         pathElement = pathElement.parentNode;
@@ -13962,7 +14012,7 @@ and ensure you are accounting for this risk.
   init_preact_module();
 
   // src/sw-table/sw-table.style.css
-  var sw_table_style_default = "table {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n    text-align: left;\n    background: #fbfbfb;\n}\n\nthead {\n    font-style: italic;\n    color: darkgray;\n}\n\ntbody tr:nth-child(even) {\n    background: white;\n}\n\ntbody tr:nth-child(odd) {\n    border-bottom: 1px solid #eeeeee;\n}\n\nth, td {\n    padding: .5rem;\n}\n\ntd.components *:not(:first-child) {\n    margin-left: 2rem;\n}\n";
+  var sw_table_style_default = "table {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n    text-align: left;\n    background: #fbfbfb;\n}\n\nthead {\n    font-style: italic;\n    color: darkgray;\n}\n\ntbody tr:nth-child(even) {\n    background: white;\n}\n\ntbody tr:nth-child(odd) {\n    border-bottom: 1px solid #eeeeee;\n}\n\nth, td {\n    padding: .5em;\n}\n\ntd.components *:not(:first-child) {\n    margin-left: 2em;\n}\n";
 
   // src/sw-table/sw-table.jsx
   var SwTable = class extends _ {
@@ -14007,37 +14057,37 @@ and ensure you are accounting for this risk.
         min: min && minValue,
         max: max && maxValue,
         step: step && Number(step),
+        "aria-labelledby": placeholder,
         onBlur: async (e2) => {
           await this.setState({
             errorMessage: e2.target.validationMessage !== e2.target.value && e2.target.validationMessage,
             value: e2.target.value
           });
-          if (e2.target.validity.valid) {
-            this.ref.getRootNode().host.dispatchEvent(new CustomEvent("changeEvent", {
-              detail: { name, value: e2.target.value },
-              bubbles: true
-            }));
-          }
-        },
-        "aria-labelledby": placeholder
+          this.ref.getRootNode().host.dispatchEvent(new CustomEvent("changeEvent", {
+            detail: {
+              name,
+              value: e2.target.value,
+              error: this.state.errorMessage
+            },
+            bubbles: true
+          }));
+        }
       }), /* @__PURE__ */ v("label", {
         htmlFor: name
-      }, placeholder)), this.state.errorMessage && /* @__PURE__ */ v("p", {
-        className: "error"
-      }, this.state.errorMessage));
+      }, placeholder)));
     }
   };
 
-  // src/sw-utils/sw-flash-message/sw-flash-message.jsx
+  // src/sw-utils/sw-flash-message/flash-message.jsx
   init_preact_shim();
 
-  // src/sw-utils/sw-modal/sw-modal.jsx
+  // src/sw-utils/sw-modal/modal.jsx
   init_preact_shim();
 
-  // src/sw-utils/sw-modal/sw-modal.style.css
-  var sw_modal_style_default = ".modal-container {\n    position: fixed;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 1;\n    background-color: black;\n    opacity: 0.5;\n}\n\n.modal-wrapper {\n    position: fixed;\n    top: 12%;\n    left: 50%;\n    transform: translate(-50%);\n    z-index: 10;\n}\n\n.modal-content {\n    background: var(--background-color);\n    border-radius: var(--radius);\n    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;\n}\n\n.modal-content > :not(:last-child) {\n    border-bottom: 1px dotted lightgray;\n}\n\n.modal-large {\n    width: 62em;\n}\n\n.modal-small {\n    width: 30em;\n}\n\n.modal-body,\n.modal-footer {\n    padding: 2em;\n}\n\n.modal-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n}\n\n.modal-header-content {\n    padding: 2em;\n}\n\n.modal-header-icon {\n    padding: 2em;\n    cursor: pointer;\n}\n\n.modal-body-content {\n    max-height: 20em;\n    overflow-y: auto;\n}\n\n.modal-footer {\n    display: flex;\n    justify-content: flex-end;\n}\n\n.modal-footer-content > :not(:last-child) {\n    padding-right: 1em;\n}\n\n.modal-prevent {\n    pointer-events: none;\n    filter: blur(1px) brightness(95%);\n}\n\nbody > :not(.modal-wrapper, .modal-container) {\n    display: inherit;\n    filter: blur(1px);\n}\n\n/* ----------------------------------------------\n * Generated by Animista on 2021-10-8 15:29:47\n * Licensed under FreeBSD License.\n * See http://animista.net/license for more info.\n * w: http://animista.net, t: @cssanimista\n * ---------------------------------------------- */\n\n/**\n * ----------------------------------------\n * animation swing-in-top-fwd\n * ----------------------------------------\n */\n.swing-in-top-fwd {\n    -webkit-animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;\n    animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;\n}\n\n@-webkit-keyframes swing-in-top-fwd {\n    0% {\n        -webkit-transform: rotateX(-100deg);\n        transform: rotateX(-100deg);\n        -webkit-transform-origin: top;\n        transform-origin: top;\n        opacity: 0;\n    }\n    100% {\n        -webkit-transform: rotateX(0deg);\n        transform: rotateX(0deg);\n        -webkit-transform-origin: top;\n        transform-origin: top;\n        opacity: 1;\n    }\n}\n\n@keyframes swing-in-top-fwd {\n    0% {\n        -webkit-transform: rotateX(-100deg);\n        transform: rotateX(-100deg);\n        -webkit-transform-origin: top;\n        transform-origin: top;\n        opacity: 0;\n    }\n    100% {\n        -webkit-transform: rotateX(0deg);\n        transform: rotateX(0deg);\n        -webkit-transform-origin: top;\n        transform-origin: top;\n        opacity: 1;\n    }\n}\n\n/* ----------------------------------------------\n * Generated by Animista on 2021-10-11 12:56:33\n * Licensed under FreeBSD License.\n * See http://animista.net/license for more info.\n * w: http://animista.net, t: @cssanimista\n * ---------------------------------------------- */\n\n/**\n * ----------------------------------------\n * animation slide-out-top\n * ----------------------------------------\n */\n.slide-out-top {\n    -webkit-animation: slide-out-top 0.1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;\n    animation: slide-out-top 0.1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;\n}\n\n@-webkit-keyframes slide-out-top {\n    0% {\n        -webkit-transform: translateY(0);\n        transform: translateY(0);\n        opacity: 1;\n    }\n    100% {\n        -webkit-transform: translateY(-1000px);\n        transform: translateY(-1000px);\n        opacity: 0;\n    }\n}\n\n@keyframes slide-out-top {\n    0% {\n        -webkit-transform: translateY(0);\n        transform: translateY(0);\n        opacity: 1;\n    }\n    100% {\n        -webkit-transform: translateY(-1000px);\n        transform: translateY(-1000px);\n        opacity: 0;\n    }\n}\n";
+  // src/sw-utils/sw-modal/modal.style.css
+  var sw_modal_style_default = ".modal-container {\n    position: fixed;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 1;\n    background-color: black;\n    opacity: 0.5;\n}\n\n.modal-wrapper {\n    position: fixed;\n    top: 12%;\n    left: 50%;\n    transform: translate(-50%);\n    z-index: 10;\n}\n\n.modal-content {\n    background: var(--background-color);\n    border-radius: var(--radius);\n    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;\n}\n\n.modal-content > :not(:last-child) {\n    border-bottom: 1px dotted lightgray;\n}\n\n.modal-large {\n    width: 62em;\n}\n\n.modal-small {\n    width: 30em;\n}\n\n.modal-body,\n.modal-footer {\n    padding: 2em;\n}\n\n.modal-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n}\n\n.modal-header-content {\n    padding: 2em;\n}\n\n.modal-header-icon {\n    padding: 2em;\n    cursor: pointer;\n}\n\n.modal-body-content {\n    max-height: 20em;\n    overflow-y: auto;\n    padding: 1em;\n}\n\n.modal-footer {\n    display: flex;\n    justify-content: flex-end;\n}\n\n.modal-footer-content > :not(:last-child) {\n    padding-right: 1em;\n}\n\n.modal-prevent {\n    pointer-events: none;\n    filter: blur(1px) brightness(95%);\n}\n\nbody > :not(.modal-wrapper, .modal-container) {\n    display: inherit;\n    filter: blur(1px);\n}\n\n/* ----------------------------------------------\n * Generated by Animista on 2021-10-8 15:29:47\n * Licensed under FreeBSD License.\n * See http://animista.net/license for more info.\n * w: http://animista.net, t: @cssanimista\n * ---------------------------------------------- */\n\n/**\n * ----------------------------------------\n * animation swing-in-top-fwd\n * ----------------------------------------\n */\n.swing-in-top-fwd {\n    -webkit-animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;\n    animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;\n}\n\n@-webkit-keyframes swing-in-top-fwd {\n    0% {\n        -webkit-transform: rotateX(-100deg);\n        transform: rotateX(-100deg);\n        -webkit-transform-origin: top;\n        transform-origin: top;\n        opacity: 0;\n    }\n    100% {\n        -webkit-transform: rotateX(0deg);\n        transform: rotateX(0deg);\n        -webkit-transform-origin: top;\n        transform-origin: top;\n        opacity: 1;\n    }\n}\n\n@keyframes swing-in-top-fwd {\n    0% {\n        -webkit-transform: rotateX(-100deg);\n        transform: rotateX(-100deg);\n        -webkit-transform-origin: top;\n        transform-origin: top;\n        opacity: 0;\n    }\n    100% {\n        -webkit-transform: rotateX(0deg);\n        transform: rotateX(0deg);\n        -webkit-transform-origin: top;\n        transform-origin: top;\n        opacity: 1;\n    }\n}\n\n/* ----------------------------------------------\n * Generated by Animista on 2021-10-11 12:56:33\n * Licensed under FreeBSD License.\n * See http://animista.net/license for more info.\n * w: http://animista.net, t: @cssanimista\n * ---------------------------------------------- */\n\n/**\n * ----------------------------------------\n * animation slide-out-top\n * ----------------------------------------\n */\n.slide-out-top {\n    -webkit-animation: slide-out-top 0.1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;\n    animation: slide-out-top 0.1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;\n}\n\n@-webkit-keyframes slide-out-top {\n    0% {\n        -webkit-transform: translateY(0);\n        transform: translateY(0);\n        opacity: 1;\n    }\n    100% {\n        -webkit-transform: translateY(-1000px);\n        transform: translateY(-1000px);\n        opacity: 0;\n    }\n}\n\n@keyframes slide-out-top {\n    0% {\n        -webkit-transform: translateY(0);\n        transform: translateY(0);\n        opacity: 1;\n    }\n    100% {\n        -webkit-transform: translateY(-1000px);\n        transform: translateY(-1000px);\n        opacity: 0;\n    }\n}\n";
 
-  // src/sw-utils/sw-modal/sw-modal.jsx
+  // src/sw-utils/sw-modal/modal.jsx
   init_preact_module();
   var import_sanitize_html = __toModule(require_sanitize_html());
   var counter2 = 0;
@@ -14199,14 +14249,17 @@ and ensure you are accounting for this risk.
   }
 
   // src/index.js
-  preact_custom_element_esm_default(SwButton, "sw-button", ["icon", "disabled"], { shadow: true });
-  preact_custom_element_esm_default(SwDatetimeInput, "sw-datetime-input", ["name", "required", "placeholder", "disabled", "value", "step"], { shadow: true });
-  preact_custom_element_esm_default(SwLoader, "sw-loader", [], { shadow: true });
-  preact_custom_element_esm_default(SwNumberInput, "sw-number-input", ["name", "required", "placeholder", "disabled", "value", "min", "max", "step"], { shadow: true });
-  preact_custom_element_esm_default(SwPagination, "sw-pagination", ["current-page", "number-of-pages"], { shadow: true });
-  preact_custom_element_esm_default(SwSelect, "sw-select", ["config"], { shadow: true });
-  preact_custom_element_esm_default(SwTable, "sw-table", ["config"], { shadow: true });
-  preact_custom_element_esm_default(SwTextInput, "sw-text-input", ["name", "required", "placeholder", "disabled", "value"], { shadow: true });
+  var areElementsRegistered = !!customElements.get("sw-button");
+  if (!areElementsRegistered) {
+    preact_custom_element_esm_default(SwButton, "sw-button", ["icon", "disabled", "href"], { shadow: true });
+    preact_custom_element_esm_default(SwDatetimeInput, "sw-datetime-input", ["name", "required", "placeholder", "disabled", "value", "step"], { shadow: true });
+    preact_custom_element_esm_default(SwLoader, "sw-loader", [], { shadow: true });
+    preact_custom_element_esm_default(SwNumberInput, "sw-number-input", ["name", "required", "placeholder", "disabled", "value", "min", "max", "step"], { shadow: true });
+    preact_custom_element_esm_default(SwPagination, "sw-pagination", ["current-page", "number-of-pages", "href"], { shadow: true });
+    preact_custom_element_esm_default(SwSelect, "sw-select", ["config"], { shadow: true });
+    preact_custom_element_esm_default(SwTable, "sw-table", ["config"], { shadow: true });
+    preact_custom_element_esm_default(SwTextInput, "sw-text-input", ["name", "required", "placeholder", "disabled", "value"], { shadow: true });
+  }
 
   // test-client/index.jsx
   var users = [

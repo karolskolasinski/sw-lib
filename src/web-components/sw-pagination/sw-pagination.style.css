@@ -1,3 +1,9 @@
+*, ::before, ::after {
+    box-sizing: border-box;
+    font: inherit;
+    color: inherit;
+}
+
 a {
     text-decoration: none;
 }
@@ -22,10 +28,10 @@ div.wrapper span {
     color: var(--primary-color-100)
 }
 
-.previous, .next {
+.previous,
+.next {
     font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: .125em;
 }
 
 span:not(span.currentPage, span.caption) {

@@ -8,6 +8,7 @@ export default class SwNumberInput extends Component {
 
         return <>
             <style>{style}</style>
+
             <div className="input-wrapper">
                 <input ref={node => this.ref = node}
                     id={name}
@@ -20,6 +21,7 @@ export default class SwNumberInput extends Component {
                     min={min && minValue}
                     max={max && maxValue}
                     step={step && Number(step)}
+                    aria-labelledby={placeholder}
                     onBlur={async e => {
                         await this.setState({
                             errorMessage: e.target.validationMessage !== e.target.value && e.target.validationMessage,
@@ -29,19 +31,15 @@ export default class SwNumberInput extends Component {
                         if (e.target.validity.valid) {
                             this.ref.getRootNode().host.dispatchEvent(new CustomEvent('update',
                                 {
-                                    detail: { name: name, value: e.target.value },
+                                    detail: { name: name, value: e.target.value, error: this.state.validationMessage },
                                     bubbles: true,
                                 },
                             ));
                         }
-                    }}
-                    aria-labelledby={placeholder}
-                />
+                    }} />
 
                 <label htmlFor={name}>{placeholder}</label>
             </div>
-
-            {this.state.errorMessage && <p className="error">{this.state.errorMessage}</p>}
         </>;
     }
 }
