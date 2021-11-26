@@ -10,7 +10,8 @@
         "build:watch": "npm run build -- --watch",
         "build:watch:dev": "npm run build:dev -- --watch",
         "test": "jest",
-        "dev": "concurrently --kill-others \"live-server test-client\" \"npm run build:watch:dev\""
+        "dev": "concurrently --kill-others \"live-server test-client\" \"npm run build:watch:dev\"",
+        "lint": "eslint src/"
     },
     "types": "index.d.ts",
     "repository": {

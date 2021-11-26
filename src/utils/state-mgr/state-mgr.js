@@ -72,18 +72,22 @@ function getOrCall(item, ...args) {
 }
 
 function toVNode(item, dispatcher) {
-    let el, content, opts, mapFunc;
+    let mapFunc, content;
+
     if (item.mapFunc && item.view) {
         mapFunc = item.mapFunc;
         item = item.view;
     }
 
-    [el, opts, content] = item;
+    const el = item[0];
+    let opts = item[1];
+    mapFunc = item[2];
+
     if (!content) {
         if (Array.isArray(opts)) {
             content = opts;
             opts = {};
-        } else if (opts instanceof Object && opts !== null) {
+        } else if (opts instanceof Object) {
             content = [];
         } else {
             content = opts;
@@ -151,7 +155,7 @@ export function unmapMsg(msgPromise, Wrapper) {
 function parseElement(el) {
     const nodeName = el.split('.')[0] || 'div';
     const { classes, id } = el
-        .split(/(#[a-zA-Z0-9\-\_]+)|(\.[a-zA-Z0-9\-\_]*)/g) // split into "#abc" and ".abc" parts
+        .split(/(#[a-zA-Z0-9\-_]+)|(\.[a-zA-Z0-9\-_]*)/g) // split into "#abc" and ".abc" parts
         .filter(x => x)
         .reduce((acc, item) => {
             if (item[0] === '#') {
