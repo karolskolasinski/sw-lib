@@ -11,6 +11,7 @@ import SwNumberInput from './web-components/sw-number-input/sw-number-input';
 export * from './utils/flash-message/flash-message.jsx';
 export * from './utils/modal/modal.jsx';
 export * as router from './utils/router/router';
+export * as stateMgr from './utils/state-mgr/state-mgr';
 
 const areElementsRegistered = !!customElements.get('sw-button');
 
