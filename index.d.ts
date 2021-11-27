@@ -24,29 +24,31 @@ export namespace router {
 }
 
 export namespace stateMgr {
-    
+
+    export type Cmd<Msg> = Promise<Msg> | Msg | null;
+
     export type Options<Msg> = Record<string, any | Msg | ((...args: any[]) => Msg)>;
-        
+
     export type Dispatcher = (msg: any) => (event: Event) => Promise<void>;
-    
+
     export type View<Msg>
         = [string, Options<Msg>, View<Msg>[] | string]
         | [string, View<Msg>[] | Options<Msg> | string]
         | [string]
         | { mapFunc: any, view: View<Msg> }
-    
+
     export function component<State, Msg>({
         init,
         update,
         view
     }: {
-        init: (dispatcher: Dispatcher) => [State, Promise<Msg> | Msg | null],
-        update: (state: State, msg: Msg) => [State, Promise<Msg> | null | Msg] | void,
+        init: (dispatcher: Dispatcher) => [State, Cmd<Msg>],
+        update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
         view: (state: State) => View<Msg>
     }): VNode<any>;
 
     export function mapMsg<T, P>(mapFunc: (msg: T) => P, view: View<T>): View<P>;
 
-    export function unmapMsg<T, W>(msgPromise: Promise<T> | T | null, Wrapper: W) : Promise<W>;
+    export function unmapMsg<T, W>(msgPromise: Promise<T> | T | null, Wrapper: W): Promise<W>;
 }
 
