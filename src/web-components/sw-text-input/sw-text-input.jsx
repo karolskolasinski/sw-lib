@@ -26,7 +26,7 @@ export default class SwTextInput extends Component {
                             value: e.target.value,
                         });
 
-                        this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent',
+                        this.ref.getRootNode().host.dispatchEvent(new CustomEvent('update',
                             {
                                 detail: { name: name, value: e.target.value, error: this.state.validationMessage },
                                 bubbles: true,

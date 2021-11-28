@@ -37,26 +37,26 @@ class Main extends Component {
     render() {
         return (
             <>
-                <sw-datetime-input name="datbezEventaeAndTime" onchangeEvent={e => {
+                <sw-datetime-input name="datbezEventaeAndTime" onupdate={e => {
                     console.log('Taki stan chciałem zapisać:', e.detail.value);
                     console.log('a taki jest obecny state:', this.state);
                     this.setState({ 'val': e.detail.value });
                 }} date={true} time={true} customProp="lalala" val={this.state.val || 1635347290788} />
 
                 <sw-datetime-input name="dateAndTime" date={true} time={true}
-                    onchangeEvent={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala"
+                    onupdate={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala"
                     value="1635347290788" />
 
                 <sw-datetime-input name="dateOnly" date={true}
-                    onchangeEvent={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala"
+                    onupdate={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala"
                     value="-62101382400000" />
 
                 <sw-datetime-input name="timeOnly" time={true}
-                    onchangeEvent={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala"
+                    onupdate={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala"
                     val={1243258883777} />
 
                 <sw-datetime-input name="timeOnly" time={true}
-                    onchangeEvent={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala" val={1243258883777}
+                    onupdate={e => { console.log('HANDLED EVENT: ', e); }} customProp="lalala" val={1243258883777}
                     secs={true} />
 
                 <sw-select config={{
