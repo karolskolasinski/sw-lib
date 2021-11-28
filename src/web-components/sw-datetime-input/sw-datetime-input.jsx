@@ -4,7 +4,7 @@ import datetimeStyle from './sw-datetime-input.style.css';
 
 export default class SwDatetimeInput extends Component {
     dispatchEvent(name) {
-        this.ref.getRootNode().host.dispatchEvent(new CustomEvent('changeEvent', {
+        this.ref.getRootNode().host.dispatchEvent(new CustomEvent('update', {
             detail: {
                 name,
                 value: this.state.value,
