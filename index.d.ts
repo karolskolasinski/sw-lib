@@ -25,11 +25,17 @@ export namespace router {
 
 export namespace stateMgr {
 
-    export type Cmd<Msg> = Promise<Msg> | Msg | null;
+    export type Cmd<Msg> = Promise<Msg> | Msg | null | Event;
+
+    export type Props = Record<string, unknown>;
 
     export type Options<Msg> = Record<string, any | Msg | ((...args: any[]) => Msg)>;
 
     export type Dispatcher = (msg: any) => (event: Event) => Promise<void>;
+
+    interface PropChange<Msg> {
+        new(propName: string, propValue: unknown): Msg
+    }
 
     export type View<Msg>
         = [string, Options<Msg>, View<Msg>[] | string]
@@ -40,12 +46,14 @@ export namespace stateMgr {
     export function component<State, Msg>({
         init,
         update,
-        view
+        view,
+        PropChange
     }: {
         init: (dispatcher: Dispatcher) => [State, Cmd<Msg>],
         update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
-        view: (state: State) => View<Msg>
-    }): VNode<any>;
+        view: (state: State) => View<Msg>,
+        PropChange?: PropChange<Msg>
+    }): (props: Props) => VNode<any>;
 
     export function mapMsg<T, P>(mapFunc: (msg: T) => P, view: View<T>): View<P>;
 

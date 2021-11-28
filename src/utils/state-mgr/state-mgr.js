@@ -1,6 +1,7 @@
 import { Component, h } from 'preact';
+import * as _ from 'lodash';
 
-export function component({ init, update, view }) {
+export function component({ init, update, view, PropChange }) {
     let preactSetState;
     let state;
 
@@ -13,7 +14,7 @@ export function component({ init, update, view }) {
         return state;
     }
 
-    function runUpdate(msg) {
+    function runUpdate(cmp, msg) {
         const updateResult = update(getState(), msg);
         if (updateResult === undefined) {
             throw new Error('update should cover all cases');
@@ -21,10 +22,21 @@ export function component({ init, update, view }) {
         const [newState, next] = updateResult;
         setState(newState);
 
-        runNext(next);
+        runNext(cmp, next);
     }
 
-    function runNext(next) {
+    function runNext(cmp, next) {
+        if (next instanceof Event) {
+            const host = cmp.ref.getRootNode().host;
+
+            if (!host) {
+                cmp.ref.dispatchEvent(next);
+            } else {
+                host.dispatchEvent(next);
+            }
+
+            return;
+        }
         Promise.resolve(next)
             .then(maybeMsg => {
                 if (maybeMsg !== null) {
@@ -37,10 +49,10 @@ export function component({ init, update, view }) {
             });
     }
 
-    const dispatcher = (msgFactory) => {
+    const dispatcher = (cmp, msgFactory) => {
         return async function(event) {
             const msg = getOrCall(msgFactory, event);
-            runUpdate(msg);
+            runUpdate(cmp, msg);
         };
     };
 
@@ -51,16 +63,38 @@ export function component({ init, update, view }) {
             const [state, next] = init(dispatcher);
             setState(state);
             runNext(next);
+            this.initialRenderComplete = false;
         }
 
-        render() {
+        shouldComponentUpdate(nextProps) {
+            if (!PropChange) {
+                return;
+            }
+            const allPropNames = _.uniq(Object.keys(this.props).concat(Object.keys(nextProps)));
+
+            allPropNames.forEach((propName) => {
+                if (!_.isEqual(this.props[propName], nextProps[propName])) {
+                    runUpdate(this, new PropChange(propName, nextProps[propName]));
+                }
+            });
+        }
+
+        render(props) {
+            if (!this.initialRenderComplete && PropChange) {
+                this.initialRenderComplete = true;
+                Object.keys(props).forEach(propName => {
+                    runUpdate(this, new PropChange(propName, props[propName]));
+                });
+            }
             const state = getState();
             const arr = view(state);
-            return toVNode(arr, dispatcher);
+            const rendered = toVNode(arr, dispatcher.bind(null, this));
+            rendered.ref = ref => this.ref = ref;
+            return rendered;
         }
     }
 
-    return h(App, null);
+    return App;
 }
 
 function getOrCall(item, ...args) {
@@ -72,7 +106,7 @@ function getOrCall(item, ...args) {
 }
 
 function toVNode(item, dispatcher) {
-    let mapFunc, content;
+    let mapFunc;
 
     if (item.mapFunc && item.view) {
         mapFunc = item.mapFunc;
@@ -81,7 +115,7 @@ function toVNode(item, dispatcher) {
 
     const el = item[0];
     let opts = item[1];
-    mapFunc = item[2];
+    let content = item[2];
 
     if (!content) {
         if (Array.isArray(opts)) {
