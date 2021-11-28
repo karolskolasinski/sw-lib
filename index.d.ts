@@ -33,8 +33,8 @@ export namespace stateMgr {
 
     export type Dispatcher = (msg: any) => (event: Event) => Promise<void>;
 
-    interface PropChange<Msg> {
-        new(propName: string, propValue: unknown): Msg
+    interface AttributeChange<Msg> {
+        new(name: string, value: unknown): Msg
     }
 
     export type View<Msg>
@@ -47,12 +47,12 @@ export namespace stateMgr {
         init,
         update,
         view,
-        PropChange
+        AttributeChange
     }: {
         init: (dispatcher: Dispatcher) => [State, Cmd<Msg>],
         update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
         view: (state: State) => View<Msg>,
-        PropChange?: PropChange<Msg>
+        AttributeChange?: AttributeChange<Msg>
     }): (props: Props) => VNode<any>;
 
     export function mapMsg<T, P>(mapFunc: (msg: T) => P, view: View<T>): View<P>;
@@ -60,3 +60,21 @@ export namespace stateMgr {
     export function unmapMsg<T, W>(msgPromise: Promise<T> | T | null, Wrapper: W): Promise<W>;
 }
 
+export interface ModalClose {
+    (flag: boolean): void;
+}
+
+type ModalPart
+    = string
+    | ((close: ModalClose, id: number) => string)
+    | ((close: ModalClose, id: number) => VNode<any>)
+    | VNode<any>;
+
+export interface ModalOptions {
+    header: ModalPart;
+    body: ModalPart;
+    footer: ModalPart;
+    large?: boolean;
+}
+
+export function modal(opts: ModalOptions): Promise<any>;

@@ -8,8 +8,7 @@ export default class SwTextInput extends Component {
 
         return <>
             <style>{style}</style>
-
-            <div className="input-wrapper" ref={node => this.ref = node}>
+              <div className="input-wrapper" ref={node => this.ref = node}>
                 <input id={name}
                     name={name}
                     type="text"

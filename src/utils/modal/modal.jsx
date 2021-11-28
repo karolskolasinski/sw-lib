@@ -73,7 +73,7 @@ function convertToElement(toConvert, modal, close, selector) {
  * @param {string | function({ close:Close, id:number }):string | function({ close:Close, id:number }):JSX | JSX} footer
  * @param {boolean} large
  * @throws {Error} when there is no modal parameters specified
- * @return {Promise<>}
+ * @return {Promise<any>}
  */
 export function modal({ header, body, footer, large }) {
     return new Promise((resolve, reject) => {

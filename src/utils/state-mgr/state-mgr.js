@@ -1,28 +1,27 @@
 import { Component, h } from 'preact';
 import * as _ from 'lodash';
 
-export function component({ init, update, view, PropChange }) {
-    let preactSetState;
-    let state;
-
-    function setState(s) {
-        state = s;
-        preactSetState({ states: [s] });
+export function component({ init, update, view, AttributeChange }) {
+    function setState(cmp, s) {
+        cmp.swState = s;
+        cmp.setState({ states: [s] });
     }
 
-    function getState() {
-        return state;
+    function getState(cmp) {
+        return cmp.swState;
     }
 
     function runUpdate(cmp, msg) {
-        const updateResult = update(getState(), msg);
+        const updateResult = update(getState(cmp), msg);
         if (updateResult === undefined) {
             throw new Error('update should cover all cases');
         }
         const [newState, next] = updateResult;
-        setState(newState);
+        setState(cmp, newState);
 
-        runNext(cmp, next);
+        if (next !== null) {
+            runNext(cmp, next);
+        }
     }
 
     function runNext(cmp, next) {
@@ -40,7 +39,7 @@ export function component({ init, update, view, PropChange }) {
         Promise.resolve(next)
             .then(maybeMsg => {
                 if (maybeMsg !== null) {
-                    runUpdate(maybeMsg);
+                    runUpdate(cmp, maybeMsg);
                 }
             })
             .catch(err => {
@@ -59,34 +58,33 @@ export function component({ init, update, view, PropChange }) {
     class App extends Component {
         constructor() {
             super();
-            preactSetState = this.setState.bind(this);
             const [state, next] = init(dispatcher);
-            setState(state);
-            runNext(next);
+            setState(this, state);
+            runNext(this, next);
             this.initialRenderComplete = false;
         }
 
         shouldComponentUpdate(nextProps) {
-            if (!PropChange) {
+            if (!AttributeChange) {
                 return;
             }
             const allPropNames = _.uniq(Object.keys(this.props).concat(Object.keys(nextProps)));
 
             allPropNames.forEach((propName) => {
                 if (!_.isEqual(this.props[propName], nextProps[propName])) {
-                    runUpdate(this, new PropChange(propName, nextProps[propName]));
+                    runUpdate(this, new AttributeChange(propName, nextProps[propName]));
                 }
             });
         }
 
         render(props) {
-            if (!this.initialRenderComplete && PropChange) {
+            if (!this.initialRenderComplete && AttributeChange) {
                 this.initialRenderComplete = true;
                 Object.keys(props).forEach(propName => {
-                    runUpdate(this, new PropChange(propName, props[propName]));
+                    runUpdate(this, new AttributeChange(propName, props[propName]));
                 });
             }
-            const state = getState();
+            const state = getState(this);
             const arr = view(state);
             const rendered = toVNode(arr, dispatcher.bind(null, this));
             rendered.ref = ref => this.ref = ref;
