@@ -25,7 +25,7 @@ export namespace router {
 
 export namespace stateMgr {
 
-    export type Cmd<Msg> = Promise<Msg> | Msg | null | Event;
+    export type Cmd<Msg> = Promise<Msg> | Msg | null | Event | CustomEvent;
 
     export type Props = Record<string, unknown>;
 

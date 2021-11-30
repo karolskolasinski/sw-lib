@@ -18,14 +18,13 @@ export function component({ init, update, view, AttributeChange }) {
         }
         const [newState, next] = updateResult;
         setState(cmp, newState);
-
         if (next !== null) {
             runNext(cmp, next);
         }
     }
 
     function runNext(cmp, next) {
-        if (next instanceof Event) {
+        if (next instanceof Event || next instanceof CustomEvent) {
             const host = cmp.ref.getRootNode().host;
 
             if (!host) {
@@ -56,12 +55,14 @@ export function component({ init, update, view, AttributeChange }) {
     };
 
     class App extends Component {
+
         constructor() {
             super();
             const [state, next] = init(dispatcher);
             setState(this, state);
             runNext(this, next);
             this.initialRenderComplete = false;
+            this.realProps = {};
         }
 
         shouldComponentUpdate(nextProps) {
@@ -71,8 +72,9 @@ export function component({ init, update, view, AttributeChange }) {
             const allPropNames = _.uniq(Object.keys(this.props).concat(Object.keys(nextProps)));
 
             allPropNames.forEach((propName) => {
-                if (!_.isEqual(this.props[propName], nextProps[propName])) {
+                if (!_.isEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
                     runUpdate(this, new AttributeChange(propName, nextProps[propName]));
+                    this.realProps[propName] = nextProps[propName];
                 }
             });
         }
