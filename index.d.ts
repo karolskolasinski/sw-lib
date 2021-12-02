@@ -1,5 +1,7 @@
 import { VNode } from 'preact';
 
+export function flashMessage(msg: string, level?: 'info' | 'success' | 'warning' | 'error'): void;
+
 export namespace router {
 
     export interface Route {
