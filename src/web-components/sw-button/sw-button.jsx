@@ -3,8 +3,7 @@ import style from './sw-button.style.css';
 
 // todo: add an icon
 export default class SwButton extends Component {
-    render({ icon, disabled, href }) {
-        const child = this.props.children.props.children;
+    render({ icon, disabled, href, children }) {
         const isDisabled = disabled !== 'false' && !!disabled;
 
         return <>
@@ -12,12 +11,12 @@ export default class SwButton extends Component {
 
             {!isDisabled && href
                 ? <a className="button"
-                    href={href}>{child}
+                    href={href}>{children}
                 </a>
                 : <button className="button"
                     type="button"
                     role="button"
-                    disabled={isDisabled}>{child}
+                    disabled={isDisabled}>{children}
                 </button>
             }
         </>;
