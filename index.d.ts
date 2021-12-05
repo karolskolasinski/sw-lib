@@ -33,7 +33,7 @@ export namespace stateMgr {
 
     export type Options<Msg> = Record<string, any | Msg | ((...args: any[]) => Msg)>;
 
-    export type Dispatcher = (msg: any) => (event: Event) => Promise<void>;
+    export type Dispatch<Msg> = (msg: Msg) => void;
 
     interface AttributeChange<Msg> {
         new(name: string, value: unknown): Msg
@@ -52,7 +52,7 @@ export namespace stateMgr {
         AttributeChange,
         debug
     }: {
-        init: (dispatcher: Dispatcher) => [State, Cmd<Msg>],
+        init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
         update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
         view: (state: State) => View<Msg>,
         AttributeChange?: AttributeChange<Msg>,

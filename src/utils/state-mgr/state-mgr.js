@@ -69,7 +69,7 @@ export function component({ init, update, view, AttributeChange, debug = false }
 
         constructor() {
             super();
-            const [state, next] = init(dispatcher);
+            const [state, next] = init(msg => runUpdate(this, msg));
             if (debug) {
                 console.log('INIT complete', state);
             }
