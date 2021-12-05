@@ -8,10 +8,14 @@ import SwSelect from './web-components/sw-select/sw-select.jsx';
 import SwTable from './web-components/sw-table/sw-table.jsx';
 import SwNumberInput from './web-components/sw-number-input/sw-number-input';
 
+import * as routerOriginal from './utils/router/router';
+
+export var router = routerOriginal;
 export * from './utils/flash-message/flash-message.jsx';
 export * from './utils/modal/modal.jsx';
-export * as router from './utils/router/router';
 export * as stateMgr from './utils/state-mgr/state-mgr';
+
+window.router = routerOriginal;
 
 const areElementsRegistered = !!customElements.get('sw-button');
 
