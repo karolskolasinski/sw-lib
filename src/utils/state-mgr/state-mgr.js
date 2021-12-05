@@ -1,7 +1,7 @@
 import { Component, h } from 'preact';
 import * as _ from 'lodash';
 
-export function component({ init, update, view, AttributeChange }) {
+export function component({ init, update, view, AttributeChange, debug = false }) {
     function setState(cmp, s) {
         cmp.swState = s;
         cmp.setState({ states: [s] });
@@ -12,11 +12,18 @@ export function component({ init, update, view, AttributeChange }) {
     }
 
     function runUpdate(cmp, msg) {
+        if (debug) {
+            console.log('-------NEW MSG', msg);
+            console.log('before update', getState(cmp));
+        }
         const updateResult = update(getState(cmp), msg);
         if (updateResult === undefined) {
             throw new Error('update should cover all cases');
         }
         const [newState, next] = updateResult;
+        if (debug) {
+            console.log('after update', newState);
+        }
         setState(cmp, newState);
         if (next !== null) {
             runNext(cmp, next);
@@ -26,6 +33,10 @@ export function component({ init, update, view, AttributeChange }) {
     function runNext(cmp, next) {
         if (next instanceof Event || next instanceof CustomEvent) {
             const host = cmp.ref.getRootNode().host;
+
+            if (debug) {
+                console.log('DISPATCH', next);
+            }
 
             if (!host) {
                 cmp.ref.dispatchEvent(next);
@@ -59,6 +70,9 @@ export function component({ init, update, view, AttributeChange }) {
         constructor() {
             super();
             const [state, next] = init(dispatcher);
+            if (debug) {
+                console.log('INIT complete', state);
+            }
             setState(this, state);
             runNext(this, next);
             this.initialRenderComplete = false;

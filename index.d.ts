@@ -49,12 +49,14 @@ export namespace stateMgr {
         init,
         update,
         view,
-        AttributeChange
+        AttributeChange,
+        debug
     }: {
         init: (dispatcher: Dispatcher) => [State, Cmd<Msg>],
         update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
         view: (state: State) => View<Msg>,
-        AttributeChange?: AttributeChange<Msg>
+        AttributeChange?: AttributeChange<Msg>,
+        debug?: boolean
     }): (props: Props) => VNode<any>;
 
     export function mapMsg<T, P>(mapFunc: (msg: T) => P, view: View<T>): View<P>;
