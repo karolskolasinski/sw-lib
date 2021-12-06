@@ -2,13 +2,13 @@ import { Component } from 'preact';
 import style from '../common/sw-input/sw-input.style.css';
 
 export default class SwTextInput extends Component {
-    render({ name, required, placeholder, disabled, value, min, max }) {
+    render({ name, required, placeholder, disabled, value, min, max, showLabel }) {
         const minValue = Number.parseInt(min);
         const maxValue = Number.parseInt(max);
 
         return <>
             <style>{style}</style>
-              <div className="input-wrapper" ref={node => this.ref = node}>
+            <div className="input-wrapper" ref={node => this.ref = node}>
                 <input id={name}
                     name={name}
                     type="text"
@@ -34,7 +34,7 @@ export default class SwTextInput extends Component {
                     }}
                 />
 
-                <label htmlFor={name}>{placeholder}</label>
+                { showLabel && <label htmlFor={name}>{placeholder}</label>}
             </div>
         </>;
     }

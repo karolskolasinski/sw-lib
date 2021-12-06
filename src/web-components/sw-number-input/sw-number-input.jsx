@@ -2,7 +2,7 @@ import { Component } from 'preact';
 import style from '../common/sw-input/sw-input.style.css';
 
 export default class SwNumberInput extends Component {
-    render({ name, required, placeholder, disabled, value, min, max, step }) {
+    render({ name, required, placeholder, disabled, value, min, max, step, showLabel }) {
         const minValue = Number.parseInt(min);
         const maxValue = Number.parseInt(max);
 
@@ -38,7 +38,7 @@ export default class SwNumberInput extends Component {
                         }
                     }} />
 
-                <label htmlFor={name}>{placeholder}</label>
+                {showLabel && <label htmlFor={name}>{placeholder}</label>}
             </div>
         </>;
     }

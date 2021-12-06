@@ -29,7 +29,7 @@ if (!areElementsRegistered) {
     register(
         SwDatetimeInput,
         'sw-datetime-input',
-        ['name', 'required', 'placeholder', 'disabled', 'value', 'step'],
+        ['name', 'required', 'placeholder', 'disabled', 'value', 'step', 'show-label'],
         { shadow: true },
     );
     register(
@@ -40,7 +40,7 @@ if (!areElementsRegistered) {
     );
     register(SwNumberInput,
         'sw-number-input',
-        ['name', 'required', 'placeholder', 'disabled', 'value', 'min', 'max', 'step'],
+        ['name', 'required', 'placeholder', 'disabled', 'value', 'min', 'max', 'step', 'show-label'],
         { shadow: true },
     );
     register(SwPagination,
@@ -63,7 +63,7 @@ if (!areElementsRegistered) {
     register(
         SwTextInput,
         'sw-text-input',
-        ['name', 'required', 'placeholder', 'disabled', 'value'],
+        ['name', 'required', 'placeholder', 'disabled', 'value', 'show-label'],
         { shadow: true },
     );
 }
