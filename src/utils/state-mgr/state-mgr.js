@@ -1,5 +1,6 @@
 import { Component, h } from 'preact';
-import * as _ from 'lodash';
+import _ from 'lodash';
+import { toKebabCase, toCamelCase } from '../strings';
 
 export function component({ init, update, view, AttributeChange, debug = false }) {
     function setState(cmp, s) {
@@ -13,24 +14,24 @@ export function component({ init, update, view, AttributeChange, debug = false }
 
     function runUpdate(cmp, msg) {
         // TODO, to optimize remove requestAnimationFrame
-        requestAnimationFrame(() => {
-            if (debug) {
-                console.log('-------NEW MSG', msg);
-                console.log('before update', getState(cmp));
-            }
-            const updateResult = update(getState(cmp), msg);
-            if (updateResult === undefined) {
-                throw new Error('update should cover all cases');
-            }
-            const [newState, next] = updateResult;
-            if (debug) {
-                console.log('after update', newState);
-            }
-            setState(cmp, newState);
-            if (next !== null) {
-                runNext(cmp, next);
-            }
-        });
+        // requestAnimationFrame(() => {
+        if (debug) {
+            console.log('-------NEW MSG', msg);
+            console.log('before update', getState(cmp));
+        }
+        const updateResult = update(getState(cmp), msg);
+        if (updateResult === undefined) {
+            throw new Error('update should cover all cases');
+        }
+        const [newState, next] = updateResult;
+        if (debug) {
+            console.log('after update', newState);
+        }
+        setState(cmp, newState);
+        if (next !== null) {
+            runNext(cmp, next);
+        }
+        // });
     }
 
     function runNext(cmp, next) {
@@ -86,12 +87,13 @@ export function component({ init, update, view, AttributeChange, debug = false }
             if (!AttributeChange) {
                 return true;
             }
-            const allPropNames = _.uniq(Object.keys(this.props).concat(Object.keys(nextProps)));
+            const allPropNames = _.uniq(Object.keys(this.realProps).concat(Object.keys(nextProps)).map(toCamelCase));
 
             allPropNames.forEach((propName) => {
                 if (!_.isEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
-                    runUpdate(this, new AttributeChange(propName, nextProps[propName]));
+                    console.log(propName, this.realProps[propName], nextProps[propName]);
                     this.realProps[propName] = nextProps[propName];
+                    runUpdate(this, new AttributeChange(propName, nextProps[propName]));
                 }
             });
         }
@@ -100,7 +102,8 @@ export function component({ init, update, view, AttributeChange, debug = false }
             if (!this.initialRenderComplete && AttributeChange) {
                 this.initialRenderComplete = true;
                 Object.keys(props).forEach(propName => {
-                    runUpdate(this, new AttributeChange(propName, props[propName]));
+                    this.realProps[toCamelCase(propName)] = props[propName];
+                    runUpdate(this, new AttributeChange(toCamelCase(propName), props[propName]));
                 });
             }
             const state = getState(this);
@@ -156,17 +159,21 @@ function toVNode(item, dispatcher) {
         opts.className = allClasses.join(' ');
     }
 
+    const optsParsed = {};
     Object.keys(opts ?? {}).forEach(prop => {
+        const propKebab = prop === 'className' ? 'className' : toKebabCase(prop);
         if (prop.slice(0, 2) === 'on') {
             if (mapFunc) {
                 const originalPropValue = opts[prop];
-                opts[prop] = dispatcher((event) => {
+                optsParsed[propKebab] = dispatcher((event) => {
                     const msg = getOrCall(originalPropValue, event);
                     return mapFunc(msg);
                 });
             } else {
-                opts[prop] = dispatcher(opts[prop]);
+                optsParsed[propKebab] = dispatcher(opts[prop]);
             }
+        } else {
+            optsParsed[propKebab] = opts[prop];
         }
     });
 
@@ -185,7 +192,7 @@ function toVNode(item, dispatcher) {
             });
     }
 
-    return h(nodeName, opts, content);
+    return h(nodeName, optsParsed, content);
 }
 
 export function mapMsg(mapFunc, view) {

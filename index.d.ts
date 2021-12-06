@@ -5,6 +5,7 @@ export function flashMessage(msg: string, level?: 'info' | 'success' | 'warning'
 export namespace strings {
     export function toSpaceCase(str: string): string;
     export function toKebabCase(str: string): string;
+    export function toCamelCase(str: string): string;
     export function capitalizeFirstLetter(str: string): string;
 }
 

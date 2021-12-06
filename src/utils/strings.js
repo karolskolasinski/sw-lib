@@ -7,9 +7,18 @@ export function toSpaceCase(str) {
 }
 
 export function toKebabCase(str) {
-    return toSpaceCase(str).replace(/\s/, '-');
+    return toSpaceCase(str).split(/\s/).join('-');
+}
+
+export function toCamelCase(str) {
+    return lowercaseFirstLetter(toSpaceCase(str).split(/\s/).map(capitalizeFirstLetter).join(''));
+}
+
+export function lowercaseFirstLetter(str) {
+    return str.charAt(0).toLowerCase() + str.slice(1);
 }
 
 export function capitalizeFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
