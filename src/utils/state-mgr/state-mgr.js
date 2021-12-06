@@ -91,7 +91,6 @@ export function component({ init, update, view, AttributeChange, debug = false }
 
             allPropNames.forEach((propName) => {
                 if (!_.isEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
-                    console.log(propName, this.realProps[propName], nextProps[propName]);
                     this.realProps[propName] = nextProps[propName];
                     runUpdate(this, new AttributeChange(propName, nextProps[propName]));
                 }
