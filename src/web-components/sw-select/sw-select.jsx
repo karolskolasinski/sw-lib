@@ -109,7 +109,7 @@ export default class SwSelect extends Component {
         return option[labelField];
     }
 
-    render({ config, showLabel }) {
+    render({ config, showLabel = true }) {
         showLabel = showLabel !== undefined && showLabel !== 'false';
         const { name, labelField, initialOptions, selected, minimumCharLengthTrigger } = config;
         let { sourceFn } = config;

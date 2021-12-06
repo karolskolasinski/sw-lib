@@ -2,6 +2,17 @@ import { VNode } from 'preact';
 
 export function flashMessage(msg: string, level?: 'info' | 'success' | 'warning' | 'error'): void;
 
+export namespace strings {
+    export function toSpaceCase(str: string): string;
+    export function toKebabCase(str: string): string;
+    export function capitalizeFirstLetter(str: string): string;
+}
+
+export namespace dates {
+    export function formatDate(timestamp: number): string;
+    export function formatDateTime(timestamp: number): string;
+}
+
 export namespace router {
 
     export interface Route {

@@ -32,14 +32,16 @@
         "eslint": "^7.32.0",
         "jest": "^27.1.1",
         "jest-preset-preact": "^4.0.5",
-        "live-server": "^1.2.1"
-    },
-    "dependencies": {
+        "live-server": "^1.2.1",
         "lodash": "^4.17.21",
         "moment": "^2.29.1",
         "preact": "^10.5.14",
         "preact-custom-element": "^4.2.1",
-        "sanitize-html": "^2.5.1"
+        "sanitize-html": "^2.5.1",
+        "to-no-case": "^1.0.2"
+    },
+    "dependencies": {
+        
     },
     "jest": {
         "preset": "jest-preset-preact",

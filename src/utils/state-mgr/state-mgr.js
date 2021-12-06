@@ -12,22 +12,25 @@ export function component({ init, update, view, AttributeChange, debug = false }
     }
 
     function runUpdate(cmp, msg) {
-        if (debug) {
-            console.log('-------NEW MSG', msg);
-            console.log('before update', getState(cmp));
-        }
-        const updateResult = update(getState(cmp), msg);
-        if (updateResult === undefined) {
-            throw new Error('update should cover all cases');
-        }
-        const [newState, next] = updateResult;
-        if (debug) {
-            console.log('after update', newState);
-        }
-        setState(cmp, newState);
-        if (next !== null) {
-            runNext(cmp, next);
-        }
+        // TODO, to optimize remove requestAnimationFrame
+        requestAnimationFrame(() => {
+            if (debug) {
+                console.log('-------NEW MSG', msg);
+                console.log('before update', getState(cmp));
+            }
+            const updateResult = update(getState(cmp), msg);
+            if (updateResult === undefined) {
+                throw new Error('update should cover all cases');
+            }
+            const [newState, next] = updateResult;
+            if (debug) {
+                console.log('after update', newState);
+            }
+            setState(cmp, newState);
+            if (next !== null) {
+                runNext(cmp, next);
+            }
+        });
     }
 
     function runNext(cmp, next) {
@@ -81,7 +84,7 @@ export function component({ init, update, view, AttributeChange, debug = false }
 
         shouldComponentUpdate(nextProps) {
             if (!AttributeChange) {
-                return;
+                return true;
             }
             const allPropNames = _.uniq(Object.keys(this.props).concat(Object.keys(nextProps)));
 
