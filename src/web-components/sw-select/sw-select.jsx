@@ -109,7 +109,10 @@ export default class SwSelect extends Component {
         return option[labelField];
     }
 
-    render({ config: { name, sourceFn, labelField, initialOptions, selected, minimumCharLengthTrigger } = {} }) {
+    render({ config, showLabel }) {
+        showLabel = showLabel !== undefined && showLabel !== 'false';
+        const { name, labelField, initialOptions, selected, minimumCharLengthTrigger } = config;
+        let { sourceFn } = config;
         const options = this.state.options ? this.state.options : initialOptions;
         if (!name || !options || (sourceFn && !labelField)) {
             throw new Error('Missing "name" or "initialOptions" or "labelField" parameter.');
@@ -149,7 +152,7 @@ export default class SwSelect extends Component {
                     {this.state.error && <p className="error">{this.state.error}</p>}
                 </div>
 
-                <label htmlFor={name}>{name}</label>
+                {showLabel && <label htmlFor={name}>{name}</label>}
             </div>
         </>;
     }

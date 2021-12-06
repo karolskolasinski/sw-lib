@@ -51,7 +51,7 @@ if (!areElementsRegistered) {
     register(
         SwSelect,
         'sw-select',
-        ['config'],
+        ['config', 'show-label'],
         { shadow: true },
     );
     register(
