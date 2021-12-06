@@ -14,8 +14,8 @@ export var router = routerOriginal;
 export * from './utils/flash-message/flash-message.jsx';
 export * from './utils/modal/modal.jsx';
 export * as stateMgr from './utils/state-mgr/state-mgr';
-export * as dates from './utils/date';
-export * as strings from './utils/date';
+export * as dates from './utils/dates';
+export * as strings from './utils/strings';
 
 
 window.router = routerOriginal;
