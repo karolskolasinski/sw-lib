@@ -1,6 +1,7 @@
 import { Component } from 'preact';
 import style from '../common/sw-input/sw-input.style.css';
 import datetimeStyle from './sw-datetime-input.style.css';
+import tr from '../../utils/tr';
 
 export default class SwDatetimeInput extends Component {
     dispatchEvent(name) {
@@ -119,7 +120,7 @@ function datetimeToInteger(dateString, withTime, timeString) {
         return { newVal: null, datetimeErr: '' };
     }
     if (withTime && (!dateString || !timeString)) {
-        return { newVal: null, datetimeErr: 'Nieprawidłowa data/godzina' };
+        return { newVal: null, datetimeErr: tr('invalid_date_or_hour') };
     }
     const newString = dateString + (timeString ? 'T' + timeString : '');
     return { datetimeErr: '', newVal: new Date(newString).valueOf() };

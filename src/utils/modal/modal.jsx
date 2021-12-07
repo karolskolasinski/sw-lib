@@ -1,6 +1,7 @@
 import cssFile from './modal.style.css';
 import { render } from 'preact';
 import sanitizeHtml from 'sanitize-html';
+import tr from '../tr';
 
 let counter = 0;
 
@@ -167,7 +168,7 @@ export function modalPrompt({ title, text, placeholder, initialValue, icon }) {
                 onupdate={(detail) => content = detail.detail.value}
             />
         </>,
-        footer: ({ close }) => <sw-button onClick={() => close(content)}>Submit</sw-button>,
+        footer: ({ close }) => <sw-button onClick={() => close(content)}>{tr('submit')}</sw-button>,
         large: false
     });
 }

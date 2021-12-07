@@ -14,6 +14,16 @@ export namespace dates {
     export function formatDateTime(timestamp: number): string;
 }
 
+interface Translate {
+    (phrase: string | Record<string, string>, lang?: string): string;
+    getLang(): string;
+    setDefaultLang(lang: string): void;
+    getDefaultLang(): string;
+    addTranslation(phrase: string, translation: Record<string, string>): void;
+}
+
+export const tr: Translate;
+
 export namespace router {
 
     export interface Route {
