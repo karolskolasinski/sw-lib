@@ -90,7 +90,7 @@ export namespace stateMgr {
         AttributeChange?: AttributeChange<Msg>,
         debug?: boolean,
         tagName?: string,
-        propTypes: Record<string, BasicTypeConstructor>,
+        propTypes?: Record<string, BasicTypeConstructor>,
         shadow?: boolean
     }): void;
 

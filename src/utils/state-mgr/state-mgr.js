@@ -10,7 +10,7 @@ export function component({
     AttributeChange,
     debug = false,
     tagName,
-    propTypes,
+    propTypes = {},
     shadow = true
 }) {
     const alreadyRegistered = !!customElements.get(tagName);
