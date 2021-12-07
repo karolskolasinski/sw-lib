@@ -10,8 +10,18 @@ export function component({
     AttributeChange,
     debug = false,
     tagName,
-    porpTypes
+    propTypes,
+    shadow = true
 }) {
+    const alreadyRegistered = !!customElements.get(tagName);
+
+    if (alreadyRegistered) {
+        if (debug) {
+            consolne.log(`custom element "${tagName}" is already registerd`);
+        }
+        return;
+    }
+
     function setState(cmp, s) {
         cmp.swState = s;
         cmp.setState({ states: [s] });
@@ -78,7 +88,7 @@ export function component({
         };
     };
 
-    class App extends Component {
+    class Cmp extends Component {
 
         constructor() {
             super();
@@ -122,7 +132,8 @@ export function component({
         }
     }
 
-    return App;
+    const attrs = _.uniq(Object.keys(propTypes).map(toKebabCase).concat(Object.keys(propTypes)));
+    registerCustomElement(Cmp, tagName, attrs, { shadow });
 }
 
 function getOrCall(item, ...args) {

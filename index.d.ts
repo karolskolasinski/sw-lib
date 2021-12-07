@@ -71,7 +71,7 @@ export namespace stateMgr {
         = (new () => String)
         | (new () => Number)
         | (new () => Object)
-        | (new () => Array)
+        | (new () => Array<any>)
         | (new () => Boolean);
 
     export function component<State, Msg>({
@@ -81,7 +81,8 @@ export namespace stateMgr {
         AttributeChange,
         debug,
         tagName,
-        propTypes
+        propTypes,
+        shadow
     }: {
         init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
         update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
@@ -89,8 +90,9 @@ export namespace stateMgr {
         AttributeChange?: AttributeChange<Msg>,
         debug?: boolean,
         tagName?: string,
-        propTypes: Record<string, BasicTypeConstructor>
-    }): (props: Props) => VNode<any>;
+        propTypes: Record<string, BasicTypeConstructor>,
+        shadow?: boolean
+    }): void;
 
     export function mapMsg<T, P>(mapFunc: (msg: T) => P, view: View<T>): View<P>;
 
