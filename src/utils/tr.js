@@ -5,14 +5,7 @@ export default function tr(phrase, lang = tr.getLang()) {
     if (phrase instanceof Object) {
         return phrase[lang] ?? phrase[tr.getDefaultLang()];
     }
-    console.log('pp', {
-        phrase,
-        lang,
-        defaultLang: tr.getDefaultLang(),
-        first: _.get(window, ['tr', 'translations', phrase, lang]),
-        second: _.get(window, ['tr', 'translations', phrase, tr.getDefaultLang()]),
-        third: toSpaceCase(phrase)
-    });
+
     return _.get(window, ['tr', 'translations', phrase, lang],
         _.get(window, ['tr', 'translations', phrase, tr.getDefaultLang()],
             toSpaceCase(phrase)));

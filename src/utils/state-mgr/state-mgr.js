@@ -1,8 +1,17 @@
 import { Component, h } from 'preact';
+import registerCustomElement from 'preact-custom-element';
 import _ from 'lodash';
 import { toKebabCase, toCamelCase } from '../strings';
 
-export function component({ init, update, view, AttributeChange, debug = false }) {
+export function component({
+    init,
+    update,
+    view,
+    AttributeChange,
+    debug = false,
+    tagName,
+    porpTypes
+}) {
     function setState(cmp, s) {
         cmp.swState = s;
         cmp.setState({ states: [s] });

@@ -67,18 +67,29 @@ export namespace stateMgr {
         | [string]
         | { mapFunc: any, view: View<Msg> }
 
+    type BasicTypeConstructor
+        = (new () => String)
+        | (new () => Number)
+        | (new () => Object)
+        | (new () => Array)
+        | (new () => Boolean);
+
     export function component<State, Msg>({
         init,
         update,
         view,
         AttributeChange,
-        debug
+        debug,
+        tagName,
+        propTypes
     }: {
         init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
         update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
         view: (state: State) => View<Msg>,
         AttributeChange?: AttributeChange<Msg>,
-        debug?: boolean
+        debug?: boolean,
+        tagName?: string,
+        propTypes: Record<string, BasicTypeConstructor>
     }): (props: Props) => VNode<any>;
 
     export function mapMsg<T, P>(mapFunc: (msg: T) => P, view: View<T>): View<P>;
