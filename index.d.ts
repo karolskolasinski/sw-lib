@@ -15,7 +15,11 @@ export namespace dates {
 }
 
 interface Translate {
-    (phrase: string | Record<string, string>, lang?: string): string;
+    (
+        phrase: string | Record<string, string>,
+        langOrParams?: string | Record<string, string | number> | (string | number)[],
+        lang?: string
+    ): string;
     getLang(): string;
     setDefaultLang(lang: string): void;
     getDefaultLang(): string;

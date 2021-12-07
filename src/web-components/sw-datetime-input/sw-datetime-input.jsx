@@ -120,7 +120,7 @@ function datetimeToInteger(dateString, withTime, timeString) {
         return { newVal: null, datetimeErr: '' };
     }
     if (withTime && (!dateString || !timeString)) {
-        return { newVal: null, datetimeErr: tr('invalid_date_or_hour') };
+        return { newVal: null, datetimeErr: tr('datetime.invalidDateOrHour') };
     }
     const newString = dateString + (timeString ? 'T' + timeString : '');
     return { datetimeErr: '', newVal: new Date(newString).valueOf() };

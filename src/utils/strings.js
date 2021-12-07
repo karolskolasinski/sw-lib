@@ -7,7 +7,7 @@ export function toSpaceCase(str) {
 }
 
 export function toKebabCase(str) {
-    return toSpaceCase(str).split(/\s/).join('-');
+    return toSpaceCase(str).replace(/\s/g, '-');
 }
 
 export function toCamelCase(str) {

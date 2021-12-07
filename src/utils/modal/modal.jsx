@@ -168,7 +168,7 @@ export function modalPrompt({ title, text, placeholder, initialValue, icon }) {
                 onupdate={(detail) => content = detail.detail.value}
             />
         </>,
-        footer: ({ close }) => <sw-button onClick={() => close(content)}>{tr('submit')}</sw-button>,
+        footer: ({ close }) => <sw-button onClick={() => close(content)}>{tr('general.submit')}</sw-button>,
         large: false
     });
 }
