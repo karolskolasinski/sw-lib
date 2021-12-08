@@ -5,6 +5,10 @@ import _ from 'lodash';
 let counter = 2;
 
 export default class SwSelect extends Component {
+    static propTypes = {
+        config: Object,
+        showLabel: Boolean
+    };
     constructor() {
         super();
         this.toggleDropdownEventListener = this.toggleDropdownEventListener.bind(this);
@@ -111,6 +115,7 @@ export default class SwSelect extends Component {
 
     render({ config, showLabel = true }) {
         showLabel = showLabel !== undefined && showLabel !== 'false';
+        config = typeof config === 'string' ? this.config : config;
         const { name, labelField, initialOptions, selected, minimumCharLengthTrigger } = config;
         let { sourceFn } = config;
         const options = this.state.options ? this.state.options : initialOptions;

@@ -7,7 +7,7 @@
         "build": "esbuild src/index.js --bundle --outfile=dist/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text --format=esm",
         "build:dev": "esbuild test-client/index.jsx --bundle --outfile=test-client/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text",
         "build:prod": "npm run build -- --minify --sourcemap --target=chrome58,firefox57,safari11,edge16",
-        "build:watch": "npm run build -- --watch",
+        "build:watch": "concurrently \"npm run build -- --watch\" \"tsc --watch\"",
         "build:watch:dev": "npm run build:dev -- --watch",
         "test": "jest",
         "dev": "concurrently --kill-others \"live-server test-client\" \"npm run build:watch:dev\"",
@@ -27,6 +27,8 @@
     "homepage": "https://gitlab.com/7willows/sw-lib#readme",
     "devDependencies": {
         "@7willows/eslint-config-7w": "^1.0.0",
+        "@types/lodash": "^4.14.177",
+        "@types/preact-custom-element": "^4.0.1",
         "concurrently": "^6.2.1",
         "esbuild": "^0.12.26",
         "eslint": "^7.32.0",
@@ -39,9 +41,6 @@
         "preact-custom-element": "^4.2.1",
         "sanitize-html": "^2.5.1",
         "to-no-case": "^1.0.2"
-    },
-    "dependencies": {
-        
     },
     "jest": {
         "preset": "jest-preset-preact",

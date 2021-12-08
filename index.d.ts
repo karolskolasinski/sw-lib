@@ -93,7 +93,7 @@ export namespace stateMgr {
         view: (state: State) => View<Msg>,
         AttributeChange?: AttributeChange<Msg>,
         debug?: boolean,
-        tagName?: string,
+        tagName: string,
         propTypes?: Record<string, BasicTypeConstructor>,
         shadow?: boolean
     }): void;

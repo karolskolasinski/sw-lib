@@ -3,7 +3,33 @@ import registerCustomElement from 'preact-custom-element';
 import _ from 'lodash';
 import { toKebabCase, toCamelCase } from '../strings';
 
-export function component({
+export type Cmd<Msg> = Promise<Msg> | Msg | null | Event | CustomEvent;
+
+export type Props = Record<string, unknown>;
+
+export type Options<Msg> = Record<string, any | Msg | ((...args: any[]) => Msg)>;
+
+export type Dispatch<Msg> = (msg: Msg) => void;
+
+interface AttributeChange<Msg> {
+    new(name: string, value: unknown): Msg
+}
+
+export type View<Msg>
+    = [string, Options<Msg>, View<Msg>[] | string]
+    | [string, View<Msg>[] | Options<Msg> | string]
+    | [string]
+    | { mapFunc: any, view: View<Msg> }
+
+type BasicTypeConstructor
+    = (new () => String)
+    | (new () => Number)
+    | (new () => Object)
+    | (new () => Array<any>)
+    | (new () => Boolean);
+
+
+export function component<State, Msg>({
     init,
     update,
     view,
@@ -12,26 +38,35 @@ export function component({
     tagName,
     propTypes = {},
     shadow = true
-}) {
+}: {
+    init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
+    update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
+    view: (state: State) => View<Msg>,
+    AttributeChange?: AttributeChange<Msg>,
+    debug?: boolean,
+    tagName: string,
+    propTypes?: Record<string, BasicTypeConstructor>,
+    shadow?: boolean
+}): void {
     const alreadyRegistered = !!customElements.get(tagName);
 
     if (alreadyRegistered) {
         if (debug) {
-            consolne.log(`custom element "${tagName}" is already registerd`);
+            console.log(`custom element "${tagName}" is already registerd`);
         }
         return;
     }
 
-    function setState(cmp, s) {
+    function setState(cmp: any, s: State) {
         cmp.swState = s;
         cmp.setState({ states: [s] });
     }
 
-    function getState(cmp) {
+    function getState(cmp: any) {
         return cmp.swState;
     }
 
-    function runUpdate(cmp, msg) {
+    function runUpdate(cmp: Cmp, msg: Msg) {
         // TODO, to optimize remove requestAnimationFrame
         // requestAnimationFrame(() => {
         if (debug) {
@@ -53,7 +88,7 @@ export function component({
         // });
     }
 
-    function runNext(cmp, next) {
+    function runNext(cmp: Cmp, next: any) {
         if (next instanceof Event || next instanceof CustomEvent) {
             const host = cmp.ref.getRootNode().host;
 
@@ -81,14 +116,18 @@ export function component({
             });
     }
 
-    const dispatcher = (cmp, msgFactory) => {
-        return async function(event) {
+    const dispatcher = (cmp: Cmp, msgFactory: any) => {
+        return async function(event: Event) {
             const msg = getOrCall(msgFactory, event);
             runUpdate(cmp, msg);
         };
     };
 
     class Cmp extends Component {
+
+        public ref: any;
+        public initialRenderComplete: boolean;
+        public realProps: Record<string, any>;
 
         constructor() {
             super();
@@ -102,7 +141,7 @@ export function component({
             this.realProps = {};
         }
 
-        shouldComponentUpdate(nextProps) {
+        shouldComponentUpdate(nextProps: any): any {
             if (!AttributeChange) {
                 return true;
             }
@@ -116,7 +155,7 @@ export function component({
             });
         }
 
-        render(props) {
+        render(props: any) {
             if (!this.initialRenderComplete && AttributeChange) {
                 this.initialRenderComplete = true;
                 Object.keys(props).forEach(propName => {
@@ -136,7 +175,7 @@ export function component({
     registerCustomElement(Cmp, tagName, attrs, { shadow });
 }
 
-function getOrCall(item, ...args) {
+function getOrCall(item: any, ...args: any[]) {
     if (typeof item === 'function') {
         return item(...args);
     } else {
@@ -144,8 +183,8 @@ function getOrCall(item, ...args) {
     }
 }
 
-function toVNode(item, dispatcher) {
-    let mapFunc;
+function toVNode(item: any, dispatcher: any) {
+    let mapFunc: any;
 
     if (item.mapFunc && item.view) {
         mapFunc = item.mapFunc;
@@ -174,17 +213,17 @@ function toVNode(item, dispatcher) {
     }
 
     if (classes && classes.length > 0) {
-        const allClasses = classes.concat((opts.className ?? '').split(' ').filter((x) => x));
+        const allClasses = classes.concat((opts.className ?? '').split(' ').filter((x: any) => x));
         opts.className = allClasses.join(' ');
     }
 
-    const optsParsed = {};
+    const optsParsed: Record<string, any> = {};
     Object.keys(opts ?? {}).forEach(prop => {
         const propKebab = prop === 'className' ? 'className' : toKebabCase(prop);
         if (prop.slice(0, 2) === 'on') {
             if (mapFunc) {
                 const originalPropValue = opts[prop];
-                optsParsed[propKebab] = dispatcher((event) => {
+                optsParsed[propKebab] = dispatcher((event: Event) => {
                     const msg = getOrCall(originalPropValue, event);
                     return mapFunc(msg);
                 });
@@ -214,14 +253,14 @@ function toVNode(item, dispatcher) {
     return h(nodeName, optsParsed, content);
 }
 
-export function mapMsg(mapFunc, view) {
+export function mapMsg<Msg>(mapFunc: any, view: View<Msg>) {
     return {
         mapFunc,
         view
     };
 }
 
-export function unmapMsg(msgPromise, Wrapper) {
+export function unmapMsg(msgPromise: any, Wrapper: any) {
     if (!msgPromise) {
         return null;
     }
@@ -229,12 +268,12 @@ export function unmapMsg(msgPromise, Wrapper) {
 }
 
 
-function parseElement(el) {
+function parseElement(el: string) {
     const nodeName = el.split('.')[0] || 'div';
     const { classes, id } = el
         .split(/(#[a-zA-Z0-9\-_]+)|(\.[a-zA-Z0-9\-_]*)/g) // split into "#abc" and ".abc" parts
-        .filter(x => x)
-        .reduce((acc, item) => {
+        .filter((x: any) => x)
+        .reduce((acc: { classes: string[], id: string }, item: string) => {
             if (item[0] === '#') {
                 acc.id = item.slice(1);
             } else if (item[0] === '.') {
