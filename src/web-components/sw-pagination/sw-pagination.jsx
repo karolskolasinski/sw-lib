@@ -1,6 +1,11 @@
 import { Component } from 'preact';
 import style from './sw-pagination.style.css';
 import * as router from '../../utils/router/router';
+import tr from '../../utils/tr';
+
+tr.addTranslation('previousPage', { en: '< Previous page', pl: '< Poprzednia strona' });
+tr.addTranslation('nextPage', { en: 'Next page >', pl: 'Następna strona >' });
+tr.addTranslation('of', { en: 'of', pl: 'z' });
 
 export default class SwPagination extends Component {
     pageChange(page) {
@@ -27,7 +32,7 @@ export default class SwPagination extends Component {
             <style>{style}</style>
 
             <div ref={node => this.ref = node} className="wrapper">
-                {currentPageValue > 1 && this.generateTheATag(currentPageValue - 1, '< Previous page', 'previous')}
+                {currentPageValue > 1 && this.generateTheATag(currentPageValue - 1, tr('previousPage'), 'previous')}
 
 
                 {numberOfPagesValue > 1 && currentPageValue !== 1 && this.generateTheATag(1, '1')}
@@ -66,12 +71,12 @@ export default class SwPagination extends Component {
                 this.generateTheATag(currentPageValue + 4, currentPageValue + 4)}
 
 
-                <span className="caption">of</span>
+                <span className="caption">{tr('of')}</span>
                 <span className="caption">{numberOfPagesValue}</span>
 
 
                 {numberOfPagesValue > 1 && numberOfPagesValue - currentPageValue !== 0 &&
-                this.generateTheATag(currentPageValue + 1, 'Next page >', 'next')}
+                this.generateTheATag(currentPageValue + 1, tr('nextPage'), 'next')}
             </div>
         </>;
     }
