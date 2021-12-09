@@ -2,11 +2,9 @@ import * as stateMgr from '../../utils/state-mgr/state-mgr.js';
 import tr from '../../utils/tr.js';
 import * as router from '../../utils/router/router.js';
 import { InitializationState } from './initialization-state';
+// @ts-ignore
 import style from './sw-pagination.style.css';
 
-tr.addTranslation('previousPage', { en: '< Previous page', pl: '< Poprzednia strona' });
-tr.addTranslation('nextPage', { en: 'Next page >', pl: 'Następna strona >' });
-tr.addTranslation('of', { en: 'of', pl: 'z' });
 
 interface NormalState {
     currentPage: Number,
@@ -57,9 +55,9 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
                 numberOfPagesValue = isNaN(numberOfPagesValue) ? 1 : numberOfPagesValue;
 
                 const newState = {
-                    ...state,
                     currentPage: Number.parseInt(state?.getValue('currentPage')),
-                    numberOfPages: numberOfPagesValue
+                    numberOfPages: numberOfPagesValue,
+                    routeName: state.getValue('routeName')
                 };
 
                 return [newState, null];
@@ -67,7 +65,13 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
                 return [state, null];
             }
         } else {
-            return [state, null];
+            const newState = {
+                currentPage: state?.currentPage,
+                numberOfPages: isNaN(state?.numberOfPages) ? 1 : state?.numberOfPages,
+                routeName: state.routeName
+            };
+
+            return [newState, null];
         }
     }
 
@@ -92,14 +96,14 @@ function view(state: State): stateMgr.View<Msg> {
 
     return ['.wrapper', [
         ['style', style],
-        state.currentPage > 1 && generateTheATag(state, state.currentPage - 1, tr('previousPage'), 'previous'),
+        state.currentPage > 1 && generateTheATag(state, state.currentPage - 1, tr('pagination.previousPage'), 'previous'),
 
 
         state.numberOfPages > 1 && state.currentPage !== 1 && generateTheATag(state, 1, '1', null),
 
 
         (state.numberOfPages > 7 && state.currentPage > 4) || (state.numberOfPages === 7 && state.currentPage > 5)
-        && ['span', { class: 'caption' }, '...'],
+        && ['span.caption', '...'],
 
 
         state.currentPage - 4 > 0 && state.currentPage + 1 > state.numberOfPages && state.currentPage !== 5
@@ -115,7 +119,7 @@ function view(state: State): stateMgr.View<Msg> {
         && generateTheATag(state, state.currentPage - 1, state.currentPage - 1, null),
 
 
-        ['span', { class: 'currentPage' }, state.currentPage],
+        ['span.currentPage', state.currentPage],
 
 
         state.currentPage + 1 <= state.numberOfPages
@@ -131,19 +135,19 @@ function view(state: State): stateMgr.View<Msg> {
         && generateTheATag(state, state.currentPage + 4, state.currentPage + 4, null),
 
 
-        ['span', { class: 'caption' }, tr('of')],
-        ['span', { class: 'caption' }, state.numberOfPages],
+        ['span.caption', tr('pagination.of')],
+        ['span.caption', state.numberOfPages],
 
 
         state.numberOfPages > 1 && state.numberOfPages - state.currentPage !== 0
-        && generateTheATag(state, state.currentPage + 1, tr('nextPage'), 'next')
+        && generateTheATag(state, state.currentPage + 1, tr('pagination.nextPage'), 'next')
     ]];
 }
 
 function generateTheATag(state, page, innerText, className) {
     return ['a', {
         href: router.getRouteUrl(state.routeName, { page }),
-        class: className && className,
+        className: className && className,
         onclick: new Update(page)
     }, innerText]
 }
