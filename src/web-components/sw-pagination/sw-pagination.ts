@@ -21,7 +21,12 @@ class AttributeChange {
     }
 }
 
-type Msg = AttributeChange;
+class Update {
+    constructor(public page: number) {
+    }
+}
+
+type Msg = AttributeChange | Update;
 
 const propTypes = {
     currentPage: Number,
@@ -48,12 +53,12 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
             state.setValue(msg.name, msg.value);
 
             if (state.isInitialized()) {
-                let numberOfPagesValue = Number.parseInt(state?.values?.numberOfPages);
+                let numberOfPagesValue = Number.parseInt(state?.getValue('numberOfPages'));
                 numberOfPagesValue = isNaN(numberOfPagesValue) ? 1 : numberOfPagesValue;
 
                 const newState = {
                     ...state,
-                    currentPage: Number.parseInt(state?.values?.currentPage),
+                    currentPage: Number.parseInt(state?.getValue('currentPage')),
                     numberOfPages: numberOfPagesValue
                 };
 
@@ -69,6 +74,13 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
     if (state instanceof InitializationState) {
         console.error('impossible state');
         return [state, null];
+    }
+
+    if (msg instanceof Update) {
+        return [state, new CustomEvent('update', {
+            bubbles: true,
+            detail: { page: msg.page },
+        })];
     }
 }
 
@@ -128,18 +140,11 @@ function view(state: State): stateMgr.View<Msg> {
     ]];
 }
 
-function pageChange(page) {
-    this.ref.getRootNode().host.dispatchEvent(new CustomEvent('update', {
-        detail: { page },
-        bubbles: true,
-    }));
-}
-
 function generateTheATag(state, page, innerText, className) {
     return ['a', {
         href: router.getRouteUrl(state.routeName, { page }),
         class: className && className,
-        onclick: () => pageChange(page)
+        onclick: new Update(page)
     }, innerText]
 }
 
