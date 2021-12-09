@@ -82,14 +82,14 @@ export function component<State, Msg>({
     function runUpdate(cmp: Cmp, msg: Msg) {
         // TODO, to optimize remove requestAnimationFrame
         requestAnimationFrame(() => {
-            log(tagName + ':-------NEW MSG', msg);
-            log(tagName + ':before update', getState(cmp));
+            log('-------NEW MSG', msg);
+            log('before update', getState(cmp));
             const updateResult = update(getState(cmp), msg);
             if (updateResult === undefined) {
                 throw new Error('update should cover all cases');
             }
             const [newState, next] = updateResult;
-            log(tagName + ':after update', newState);
+            log('after update', newState);
             setState(cmp, newState);
             if (next !== null) {
                 runNext(cmp, next);

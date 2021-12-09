@@ -117,7 +117,6 @@ function init(): [State, null] {
 function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined {
     if (msg instanceof AttributeChange) {
         if (msg.name === 'config' && msg.value instanceof Object) {
-            console.log('aa', msg);
             return [{
                 ...msg.value,
                 isDropdownVisible: false,
@@ -185,7 +184,7 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
         return [
             { ...state, isLoading: false, isDropdownVisible: false, selected: msg.option },
             new CustomEvent('update', {
-                detail: msg.option,
+                detail: { value: msg.option },
                 bubbles: true,
             })
         ];
@@ -213,7 +212,7 @@ function view(state: State): stateMgr.View<Msg> {
         ['style', style],
         ['span.button', {
             onclick: state.isDropdownVisible ? new CloseSelect() : new OpenSelect()
-        }, tr('select.prompt')],
+        }, tr(state.selected?.label ? state.selected.label : 'select.prompt')],
         ['.dropdown', {
             className: [
                 state.isDropdownVisible ? 'show' : '',
