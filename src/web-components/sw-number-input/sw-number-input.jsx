@@ -6,7 +6,7 @@ export default class SwNumberInput extends Component {
         const minValue = Number.parseInt(min);
         const maxValue = Number.parseInt(max);
 
-        return <>
+        return <div className="sw-input sw-number-input">
             <style>{style}</style>
 
             <div className="input-wrapper">
@@ -28,7 +28,7 @@ export default class SwNumberInput extends Component {
                             value: e.target.value,
                         });
 
-                           if (e.target.validity.valid) {
+                        if (e.target.validity.valid) {
                             this.ref.getRootNode().host.dispatchEvent(new CustomEvent('update',
                                 {
                                     detail: { name: name, value: e.target.value, error: this.state.validationMessage },
@@ -40,6 +40,6 @@ export default class SwNumberInput extends Component {
 
                 {showLabel && <label htmlFor={name}>{placeholder}</label>}
             </div>
-        </>;
+        </div>;
     }
 }

@@ -1,10 +1,10 @@
-*, ::before, ::after {
+.sw-button {
     box-sizing: border-box;
     font: inherit;
     color: inherit;
 }
 
-.button {
+.sw-button .button {
     color: var(--foreground-color);
     background: var(--primary-color-70);
     font-size: 1em;
@@ -16,17 +16,17 @@
     text-decoration: none;
 }
 
-.button:hover {
+.sw-button .button:hover {
     background: var(--primary-color-100);
 }
 
-.button:disabled,
-.button:disabled:hover {
+.sw-button .button:disabled,
+.sw-button .button:disabled:hover {
     background: var(--primary-color-40);
     cursor: not-allowed;
 }
 
-.button:active {
+.sw-button .button:active {
     background: var(--primary-color-100);
     box-shadow: 0 0 2px 1px var(--primary-color-100);
 }

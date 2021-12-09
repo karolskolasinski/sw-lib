@@ -1,22 +1,22 @@
-*, ::before, ::after {
+.sw-input {
     box-sizing: border-box;
     font: inherit;
     color: inherit;
 }
 
-.error {
+.sw-input .error {
     color: var(--error-color);
 }
 
-p.error {
+.sw-input p.error {
     margin: .3em 0 0 0;
 }
 
-.input-wrapper {
+.sw-input .input-wrapper {
     position: relative;
 }
 
-input {
+.sw-input input {
     padding: .4em 0;
     border: 0;
     border-bottom: 1px solid lightgray;
@@ -25,7 +25,7 @@ input {
     background: none;
 }
 
-label {
+.sw-input label {
     position: absolute;
     top: .4em;
     left: 0;
@@ -34,32 +34,36 @@ label {
     transition: .2s ease-out all;
 }
 
-input:focus + label,
-input:not(:placeholder-shown) + label {
+.sw-input input:focus + label,
+.sw-input input:not(:placeholder-shown) + label {
     top: -1.4em;
     font-size: .85em;
 }
 
-input:-webkit-autofill:not(:focus),
-textarea:-webkit-autofill:not(:focus) {
+.sw-input input:-webkit-autofill:not(:focus),
+.sw-input textarea:-webkit-autofill:not(:focus) {
     border-bottom-color: lightgray;
     -webkit-box-shadow: none;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-textarea:-webkit-autofill,
-textarea:-webkit-autofill:hover,
-textarea:-webkit-autofill:focus {
+.sw-input input:-webkit-autofill,
+.sw-input input:-webkit-autofill:hover,
+.sw-input input:-webkit-autofill:focus,
+.sw-input textarea:-webkit-autofill,
+.sw-input textarea:-webkit-autofill:hover,
+.sw-input textarea:-webkit-autofill:focus {
     border-bottom-color: var(--primary-color-100);
     -webkit-box-shadow: 0 1px 0 0 var(--primary-color-100);
     transition: background-color 5000s ease-in-out 0s;
 }
 
-input:hover,
-input:focus-visible {
+.sw-input input:hover,
+.sw-input input:focus-visible {
     outline: 0;
     border-bottom-color: var(--primary-color-100);
     box-shadow: 0 1px 0 0 var(--primary-color-100);
+}
+
+.sw-input .datetime-wrapper {
+    display: flex;
 }

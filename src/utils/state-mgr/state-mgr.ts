@@ -3,7 +3,7 @@ import registerCustomElement from 'preact-custom-element';
 import _ from 'lodash';
 import { toKebabCase, toCamelCase } from '../strings';
 
-export type Cmd<Msg> = Promise<Msg> | Msg | null | Event | CustomEvent;
+export type Cmd<Msg> = Promise<Msg> | Msg | null | Event;
 
 export type Props = Record<string, unknown>;
 
@@ -28,6 +28,11 @@ type BasicTypeConstructor
     | (new () => Array<any>)
     | (new () => Boolean);
 
+export class Focus {
+    constructor(
+        public selector: string
+    ) { }
+}
 
 export function component<State, Msg>({
     init,
@@ -37,7 +42,9 @@ export function component<State, Msg>({
     debug = false,
     tagName,
     propTypes = {},
-    shadow = true
+    shadow = false,
+    willMount,
+    willUnmount
 }: {
     init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
     update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
@@ -46,14 +53,20 @@ export function component<State, Msg>({
     debug?: boolean,
     tagName: string,
     propTypes?: Record<string, BasicTypeConstructor>,
-    shadow?: boolean
+    shadow?: boolean,
+    willMount?: (cmp: any, dispatch: Dispatch<Msg>) => void,
+    willUnmount?: (cmp: any, dispatch: Dispatch<Msg>) => void
 }): void {
     const alreadyRegistered = !!customElements.get(tagName);
 
-    if (alreadyRegistered) {
-        if (debug) {
-            console.log(`custom element "${tagName}" is already registerd`);
+    const log = debug
+        ? (msg: string, ...args: any[]) => {
+            console.log(tagName + ':' + msg, ...args);
         }
+        : () => { }
+
+    if (alreadyRegistered) {
+        log(`custom element "${tagName}" is already registerd`);
         return;
     }
 
@@ -68,38 +81,45 @@ export function component<State, Msg>({
 
     function runUpdate(cmp: Cmp, msg: Msg) {
         // TODO, to optimize remove requestAnimationFrame
-        // requestAnimationFrame(() => {
-        if (debug) {
-            console.log('-------NEW MSG', msg);
-            console.log('before update', getState(cmp));
-        }
-        const updateResult = update(getState(cmp), msg);
-        if (updateResult === undefined) {
-            throw new Error('update should cover all cases');
-        }
-        const [newState, next] = updateResult;
-        if (debug) {
-            console.log('after update', newState);
-        }
-        setState(cmp, newState);
-        if (next !== null) {
-            runNext(cmp, next);
-        }
-        // });
+        requestAnimationFrame(() => {
+            log(tagName + ':-------NEW MSG', msg);
+            log(tagName + ':before update', getState(cmp));
+            const updateResult = update(getState(cmp), msg);
+            if (updateResult === undefined) {
+                throw new Error('update should cover all cases');
+            }
+            const [newState, next] = updateResult;
+            log(tagName + ':after update', newState);
+            setState(cmp, newState);
+            if (next !== null) {
+                runNext(cmp, next);
+            }
+        });
     }
 
     function runNext(cmp: Cmp, next: any) {
-        if (next instanceof Event || next instanceof CustomEvent) {
-            const host = cmp.ref.getRootNode().host;
-
-            if (debug) {
-                console.log('DISPATCH', next);
+        if (next instanceof Focus) {
+            function tryFocus(tries: number) {
+                requestAnimationFrame(() => {
+                    const node = cmp.ref.querySelector(next.selector);
+                    if (node) {
+                        node.focus();
+                    } else if (tries > 0) {
+                        tryFocus(tries - 1);
+                    }
+                });
             }
 
-            if (!host) {
-                cmp.ref.dispatchEvent(next);
+            tryFocus(100);
+            return;
+        }
+        if (next instanceof Event) {
+            log('DISPATCH', next);
+
+            if (shadow) {
+                cmp.ref.getRootNode().host.dispatchEvent(next);
             } else {
-                host.dispatchEvent(next);
+                cmp.ref.dispatchEvent(next);
             }
 
             return;
@@ -132,9 +152,7 @@ export function component<State, Msg>({
         constructor() {
             super();
             const [state, next] = init(msg => runUpdate(this, msg));
-            if (debug) {
-                console.log('INIT complete', state);
-            }
+            log('INIT complete', state);
             setState(this, state);
             runNext(this, next);
             this.initialRenderComplete = false;
@@ -169,6 +187,18 @@ export function component<State, Msg>({
             rendered.ref = ref => this.ref = ref;
             return rendered;
         }
+    }
+
+    if (willMount) {
+        Cmp.prototype.componentWillMount = function() {
+            willMount.call(this, this, msg => runUpdate(this, msg));
+        };
+    }
+
+    if (willUnmount) {
+        Cmp.prototype.componentWillUnmount = function() {
+            willUnmount.call(this, this, msg => runUpdate(this, msg));
+        };
     }
 
     const attrs = _.uniq(Object.keys(propTypes).map(toKebabCase).concat(Object.keys(propTypes)));

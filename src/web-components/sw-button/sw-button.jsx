@@ -6,7 +6,7 @@ export default class SwButton extends Component {
     render({ icon, disabled, href, children }) {
         const isDisabled = disabled !== 'false' && !!disabled;
 
-        return <>
+        return <div className="sw-button">
             <style>{style}</style>
 
             {!isDisabled && href
@@ -19,6 +19,6 @@ export default class SwButton extends Component {
                     disabled={isDisabled}>{children}
                 </button>
             }
-        </>;
+        </div>;
     }
 }

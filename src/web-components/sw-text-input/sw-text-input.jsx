@@ -6,7 +6,7 @@ export default class SwTextInput extends Component {
         const minValue = Number.parseInt(min);
         const maxValue = Number.parseInt(max);
 
-        return <>
+        return <div className="sw-input sw-text-input">
             <style>{style}</style>
             <div className="input-wrapper" ref={node => this.ref = node}>
                 <input id={name}
@@ -36,6 +36,6 @@ export default class SwTextInput extends Component {
 
                 { showLabel && <label htmlFor={name}>{placeholder}</label>}
             </div>
-        </>;
+        </div>;
     }
 }

@@ -1,15 +1,16 @@
-import cssFile from './flash-message.style.css';
+// @ts-ignore
+import style from './flash-message.css';
 
 let isStyleFileAdded = false;
 
 function addStyleFile() {
-    const style = document.createElement('style');
-    style.innerHTML = cssFile;
-    document.head.appendChild(style);
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = style;
+    document.head.appendChild(styleElement);
     isStyleFileAdded = true;
 }
 
-function manageMessageContainer(withAction) {
+function manageMessageContainer(withAction?: any) {
     if (!document.querySelector('.message-container') && !withAction) {
         const messageContainer = document.createElement('div');
         messageContainer.classList.add('message-container');
@@ -23,14 +24,14 @@ function manageMessageContainer(withAction) {
     }
 }
 
-function displayFlashMessage(flashMessage) {
+function displayFlashMessage(flashMessage: any) {
     manageMessageContainer();
 
-    const messageContainer = document.querySelector('.message-container');
-    messageContainer.appendChild(flashMessage);
+    const messageContainer = document.querySelector('.message-container') as any;
+    messageContainer?.appendChild(flashMessage);
 }
 
-export function flashMessage(message, level) {
+export function flashMessage(message: string, level: string) {
     if (typeof message !== 'string' || level && typeof level !== 'string') {
         throw new Error('The passed parameters are not strings');
     }
@@ -90,7 +91,7 @@ export function flashMessage(message, level) {
         }
     }
 
-    const flashMessage = item.firstChild;
+    const flashMessage = item.firstChild as any;
 
     flashMessage.onclick = () => {
         flashMessage.classList.add('slide-out-blurred-right');

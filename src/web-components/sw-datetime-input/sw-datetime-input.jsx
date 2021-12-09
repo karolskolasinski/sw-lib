@@ -1,6 +1,5 @@
 import { Component } from 'preact';
 import style from '../common/sw-input/sw-input.style.css';
-import datetimeStyle from './sw-datetime-input.style.css';
 import tr from '../../utils/tr';
 
 export default class SwDatetimeInput extends Component {
@@ -19,9 +18,8 @@ export default class SwDatetimeInput extends Component {
         const dateVal = dateStringify(value);
         const timeVal = timeStringify(value, date);
 
-        return <>
+        return <div className="sw-input sw-datetime-input">
             <style>{style}</style>
-            <style>{datetimeStyle}</style>
 
             <div className="input-wrapper" ref={node => this.ref = node}>
                 <div className="datetime-wrapper">
@@ -75,7 +73,7 @@ export default class SwDatetimeInput extends Component {
                     />}
                 </div>
             </div>
-        </>;
+        </div>;
     }
 }
 
