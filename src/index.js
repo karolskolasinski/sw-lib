@@ -15,7 +15,7 @@ import trOriginal from './utils/tr';
 export var tr = trOriginal;
 
 export * from './utils/flash-message/flash-message.ts';
-export * from './utils/modal/modal.jsx';
+export * from './utils/modal/modal.ts';
 export * as stateMgr from './utils/state-mgr/state-mgr';
 export * as dates from './utils/dates';
 export * as strings from './utils/strings';
