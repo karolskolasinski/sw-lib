@@ -61,6 +61,14 @@ export namespace stateMgr {
 
     export type Dispatch<Msg> = (msg: Msg) => void;
 
+    export class InitializationState {
+        constructor(props: string[]);
+        isInitialized(): this is Required<InitializationState>;
+        setValue(propName: string, propValue: any): void;
+        getValue(propName: string): any;
+        getValues(): Record<string, any>;
+    }
+
     interface AttributeChange<Msg> {
         new(name: string, value: unknown): Msg
     }

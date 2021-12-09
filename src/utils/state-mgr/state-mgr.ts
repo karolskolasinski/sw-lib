@@ -3,6 +3,8 @@ import registerCustomElement from 'preact-custom-element';
 import _ from 'lodash';
 import { toKebabCase, toCamelCase } from '../strings';
 
+export * from './initialization-state';
+
 export type Cmd<Msg> = Promise<Msg> | Msg | null | Event;
 
 export type Props = Record<string, unknown>;
@@ -61,7 +63,7 @@ export function component<State, Msg>({
 
     const log = debug
         ? (msg: string, ...args: any[]) => {
-            console.log(['stateMgr:' + tagName + ': ' + msg, ...args);
+            console.log('stateMgr:' + tagName + ': ' + msg, ...args);
         }
         : () => { }
 
