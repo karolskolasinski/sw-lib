@@ -76,7 +76,6 @@
 }
 
 body > :not(.modal-wrapper, .modal-container) {
-    display: inherit;
     filter: blur(1px);
 }
 

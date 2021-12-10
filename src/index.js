@@ -3,8 +3,7 @@ import SwButton from './web-components/sw-button/sw-button.jsx';
 import SwTextInput from './web-components/sw-text-input/sw-text-input.jsx';
 import SwDatetimeInput from './web-components/sw-datetime-input/sw-datetime-input.jsx';
 import SwLoader from './web-components/sw-loader/sw-loader.jsx';
-import SwPagination from './web-components/sw-pagination/sw-pagination.jsx';
-import './web-components/sw-select/sw-select.ts';
+import './web-components/sw-pagination/sw-pagination.ts';
 import SwTable from './web-components/sw-table/sw-table.jsx';
 import SwNumberInput from './web-components/sw-number-input/sw-number-input';
 
@@ -47,11 +46,6 @@ if (!areElementsRegistered) {
     register(SwNumberInput,
         'sw-number-input',
         ['name', 'required', 'placeholder', 'disabled', 'value', 'min', 'max', 'step', 'show-label'],
-        { shadow: true },
-    );
-    register(SwPagination,
-        'sw-pagination',
-        ['current-page', 'number-of-pages', 'route-name'],
         { shadow: true },
     );
     register(
