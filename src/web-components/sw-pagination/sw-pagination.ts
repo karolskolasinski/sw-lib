@@ -1,7 +1,7 @@
 import * as stateMgr from '../../utils/state-mgr/state-mgr.js';
 import tr from '../../utils/tr.js';
 import * as router from '../../utils/router/router.js';
-import { InitializationState } from './initialization-state';
+import { InitializationState } from '../../utils/state-mgr/initialization-state';
 // @ts-ignore
 import style from './sw-pagination.style.css';
 
@@ -65,11 +65,19 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
                 return [state, null];
             }
         } else {
-            const newState = {
-                currentPage: state?.currentPage,
-                numberOfPages: isNaN(state?.numberOfPages) ? 1 : state?.numberOfPages,
-                routeName: state.routeName
-            };
+            let newState = {...state};
+
+            switch (msg.name) {
+                case 'numberOfPages':
+                    newState.numberOfPages = isNaN(msg?.value) ? 1 : msg?.value;
+                    break;
+                case 'currentPage':
+                    newState.currentPage = isNaN(msg?.value) ? 1 : msg?.value;
+                    break;
+                case 'routeName':
+                    newState.routeName = msg?.value;
+                    break;
+            }
 
             return [newState, null];
         }
@@ -83,7 +91,7 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
     if (msg instanceof Update) {
         return [state, new CustomEvent('update', {
             bubbles: true,
-            detail: { page: msg.page },
+            detail: {page: msg.page},
         })];
     }
 }
@@ -146,10 +154,10 @@ function view(state: State): stateMgr.View<Msg> {
 
 function generateTheATag(state, page, innerText, className) {
     return ['a', {
-        href: router.getRouteUrl(state.routeName, { page }),
+        href: router.getRouteUrl(state.routeName, {page}),
         className: className && className,
         onclick: new Update(page)
-    }, innerText]
+    }, innerText];
 }
 
 
