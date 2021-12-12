@@ -1,18 +1,17 @@
-import * as stateMgr from '../../utils/state-mgr/state-mgr.ts';
-import tr from '../../utils/tr.js';
-import * as router from '../../utils/router/router.js';
-import { InitializationState } from '../../utils/state-mgr/initialization-state.ts';
+import * as stateMgr from '../../utils/state-mgr/state-mgr';
+import tr from '../../utils/tr';
+import * as router from '../../utils/router/router';
 // @ts-ignore
 import style from './sw-pagination.style.css';
 
 
 interface NormalState {
-    currentPage: Number,
-    numberOfPages: Number,
-    routeName: String,
+    currentPage: number,
+    numberOfPages: number,
+    routeName: string,
 }
 
-type State = InitializationState | NormalState;
+type State = stateMgr.InitializationState | NormalState;
 
 class AttributeChange {
     constructor(public name: string, public value: any) {
@@ -37,19 +36,19 @@ stateMgr.component({
 });
 
 function init(): [State, stateMgr.Cmd<Msg>] {
-    return [new InitializationState(Object.keys(propTypes)), null];
+    return [new stateMgr.InitializationState(Object.keys(propTypes)), null];
 }
 
 function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined {
-    if (state instanceof InitializationState) {
+    if (state instanceof stateMgr.InitializationState) {
         state.setValue(msg.name, msg.value);
 
         if (state.isInitialized()) {
-            let numberOfPagesValue = Number.parseInt(state?.getValue('numberOfPages'));
+            let numberOfPagesValue = parseInt(state?.getValue('numberOfPages'));
             numberOfPagesValue = isNaN(numberOfPagesValue) ? 1 : numberOfPagesValue;
 
             const newState = {
-                currentPage: Number.parseInt(state?.getValue('currentPage')),
+                currentPage: parseInt(state?.getValue('currentPage')),
                 numberOfPages: numberOfPagesValue,
                 routeName: state.getValue('routeName')
             };
@@ -59,7 +58,7 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
             return [state, null];
         }
     } else {
-        let newState = {...state};
+        let newState = { ...state };
 
         switch (msg.name) {
             case 'numberOfPages':
@@ -78,16 +77,16 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
 }
 
 function view(state: State): stateMgr.View<Msg> {
-    if (state instanceof InitializationState) {
+    if (state instanceof stateMgr.InitializationState) {
         return ['sw-loader'];
     }
 
     return ['.wrapper', [
         ['style', style],
-        state.currentPage > 1 && generateTheATag(state, state.currentPage - 1, tr('pagination.previousPage'), 'previous'),
+        state.currentPage > 1 && pageView(state, state.currentPage - 1, tr('pagination.previousPage'), 'previous'),
 
 
-        state.numberOfPages > 1 && state.currentPage !== 1 && generateTheATag(state, 1, '1', null),
+        state.numberOfPages > 1 && state.currentPage !== 1 && pageView(state, 1, '1'),
 
 
         ((state.numberOfPages >= 7 && state.currentPage > 4) || (state.numberOfPages === 7 && state.currentPage > 5))
@@ -95,32 +94,32 @@ function view(state: State): stateMgr.View<Msg> {
 
 
         state.currentPage - 4 > 0 && state.currentPage + 1 > state.numberOfPages && state.currentPage !== 5
-        && generateTheATag(state, state, state.currentPage - 4, state.currentPage - 4),
+        && pageView(state, state.currentPage - 4, (state.currentPage - 4).toString()),
 
         state.currentPage - 3 > 0 && state.currentPage + 2 > state.numberOfPages && state.currentPage !== 4
-        && generateTheATag(state, state.currentPage - 3, state.currentPage - 3, null),
+        && pageView(state, state.currentPage - 3, (state.currentPage - 3).toString()),
 
         state.currentPage - 2 > 0 && state.currentPage !== 3
-        && generateTheATag(state, state.currentPage - 2, state.currentPage - 2, null),
+        && pageView(state, state.currentPage - 2, (state.currentPage - 2).toString()),
 
         state.currentPage - 1 > 0 && state.currentPage !== 2
-        && generateTheATag(state, state.currentPage - 1, state.currentPage - 1, null),
+        && pageView(state, state.currentPage - 1, (state.currentPage - 1).toString()),
 
 
         ['span.currentPage', state.currentPage],
 
 
         state.currentPage + 1 <= state.numberOfPages
-        && generateTheATag(state, state.currentPage + 1, state.currentPage + 1, null),
+        && pageView(state, state.currentPage + 1, (state.currentPage + 1).toString()),
 
         state.currentPage + 2 <= state.numberOfPages
-        && generateTheATag(state, state.currentPage + 2, state.currentPage + 2, null),
+        && pageView(state, state.currentPage + 2, (state.currentPage + 2).toString()),
 
         state.currentPage + 3 <= state.numberOfPages && state.currentPage - 4 < 4 && state.currentPage < 4
-        && generateTheATag(state, state.currentPage + 3, state.currentPage + 3, null),
+        && pageView(state, state.currentPage + 3, (state.currentPage + 3).toString()),
 
         state.currentPage + 4 <= state.numberOfPages && state.currentPage - 4 < 4 && state.currentPage < 3
-        && generateTheATag(state, state.currentPage + 4, state.currentPage + 4, null),
+        && pageView(state, state.currentPage + 4, (state.currentPage + 4).toString()),
 
 
         ['span.caption', tr('pagination.of')],
@@ -128,13 +127,13 @@ function view(state: State): stateMgr.View<Msg> {
 
 
         state.numberOfPages > 1 && state.numberOfPages - state.currentPage !== 0
-        && generateTheATag(state, state.currentPage + 1, tr('pagination.nextPage'), 'next')
+        && pageView(state, state.currentPage + 1, tr('pagination.nextPage'), 'next')
     ]];
 }
 
-function generateTheATag(state, page, innerText, className) {
+function pageView(state: NormalState, page: number, innerText: string = '', className: string = '') {
     return ['a', {
-        href: router.getRouteUrl(state.routeName, {page}),
+        href: router.getRouteUrl(state.routeName, { page }),
         className: className && className
     }, innerText];
 }
