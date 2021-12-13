@@ -1,32 +1,36 @@
-.sw-button {
+:host {
     box-sizing: border-box;
-    font: inherit;
-    color: inherit;
 }
 
-.sw-button .button {
-    color: var(--foreground-color);
-    background: var(--primary-color-70);
-    font-size: 1em;
+.button {
+    color: var(--fg-color);
+    background: var(--bg-color);
+    font-size: var(--font-size, 1em);
     cursor: pointer;
-    border: none;
-    border-radius: 3px;
+    border: var(--border, none);
+    border-radius: var(--border-radius, 0);
     white-space: nowrap;
-    padding: .4em;
+    padding: var(--padding, 0);
     text-decoration: none;
+    display: flex;
+    font-weight: var(--font-weight);
 }
 
-.sw-button .button:hover {
-    background: var(--primary-color-100);
+.button:hover {
+    background: var(--bg-hover-color, var(--bg-color));
+    color: var(--fg-hover-color, var(--fg-color));
 }
 
-.sw-button .button:disabled,
-.sw-button .button:disabled:hover {
-    background: var(--primary-color-40);
+.button:disabled,
+.button:disabled:hover {
+    background: var(--bd-disabled-color, var(--bg-color));
+    color: var(--fg-disabled-color, var(--fg-color));
     cursor: not-allowed;
+    pointer-events: none;
 }
 
-.sw-button .button:active {
-    background: var(--primary-color-100);
-    box-shadow: 0 0 2px 1px var(--primary-color-100);
+.button:active {
+    background: var(--bg-active-color, var(--bg-color));
+    color: var(--fg-active-color, var(--fg-color));
+    box-shadow: 0 0 0.125em 0.0625em var(--bg-active-color);
 }

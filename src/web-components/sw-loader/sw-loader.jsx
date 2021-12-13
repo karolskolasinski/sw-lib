@@ -3,7 +3,7 @@ import style from './sw-loader.style.css';
 
 export default class SwLoader extends Component {
     render() {
-        return <div className="sw-loader">
+        return <>
             <style>{style}</style>
 
             <div className="loader-box">
@@ -13,6 +13,6 @@ export default class SwLoader extends Component {
                     <div/>
                 </div>
             </div>
-        </div>;
+        </>;
     }
 }
