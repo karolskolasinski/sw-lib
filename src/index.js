@@ -6,7 +6,7 @@ import SwLoader from './web-components/sw-loader/sw-loader.jsx';
 import './web-components/sw-pagination/sw-pagination.ts';
 import SwTable from './web-components/sw-table/sw-table.jsx';
 import SwNumberInput from './web-components/sw-number-input/sw-number-input';
-
+import './web-components/sw-select/sw-select.ts';
 import * as routerOriginal from './utils/router/router';
 export var router = routerOriginal;
 
