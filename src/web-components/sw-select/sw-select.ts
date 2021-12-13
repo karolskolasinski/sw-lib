@@ -13,6 +13,7 @@ class AttributeChange {
 
 class OpenSelect { }
 class CloseSelect { }
+class ToggleSelect { }
 
 class KeyboardMove {
     constructor(
@@ -49,6 +50,8 @@ class SearchFailure { }
 type Msg
     = AttributeChange
     | OpenSelect
+    | CloseSelect
+    | ToggleSelect
     | KeyboardMove
     | SearchRequest
     | DelaySearch
@@ -87,14 +90,14 @@ stateMgr.component({
     propTypes: {
         config: Object
     },
-    debug: false,
+    shadow: true,
     init,
     update,
     view,
     AttributeChange,
     willMount(cmp: any, dispatch: stateMgr.Dispatch<Msg>) {
         cmp.closeSelect = (event: MouseEvent) => {
-            if (!getParents(event.target as HTMLElement).includes(cmp.ref)) {
+            if (event.target !== cmp.ref.getRootNode().host) {
                 dispatch(new CloseSelect());
             }
         };
@@ -138,6 +141,14 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
 
     if (msg instanceof CloseSelect) {
         return [{ ...state, isDropdownVisible: false, isLoading: false }, null];
+    }
+
+    if (msg instanceof ToggleSelect) {
+        if (state.isDropdownVisible) {
+            return [{ ...state, isDropdownVisible: false, isLoading: false }, null];
+        } else {
+            return [{ ...state, isDropdownVisible: true, isLoading: false }, new stateMgr.Focus('.input')];
+        }
     }
 
     if (msg instanceof KeyboardMove) {
@@ -211,7 +222,7 @@ function view(state: State): stateMgr.View<Msg> {
     return ['.sw-select', [
         ['style', style],
         ['span.button', {
-            onclick: state.isDropdownVisible ? new CloseSelect() : new OpenSelect()
+            onclick: new ToggleSelect()
         }, tr(state.selected?.label ? state.selected.label : 'select.prompt')],
         ['.dropdown', {
             className: [
