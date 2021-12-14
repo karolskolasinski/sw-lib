@@ -1,69 +1,73 @@
-.sw-input {
+:host {
     box-sizing: border-box;
     font: inherit;
     color: inherit;
+    --enable-transition: var(--on);
 }
 
-.sw-input .error {
+.error {
     color: var(--error-color);
 }
 
-.sw-input p.error {
+p.error {
     margin: .3em 0 0 0;
 }
 
-.sw-input .input-wrapper {
-    position: relative;
+.input-wrapper {
+    display: flex;
+    flex-direction: column-reverse;
 }
 
-.sw-input input {
-    padding: .4em 0;
-    border: 0;
-    border-bottom: 1px solid lightgray;
+input {
+    padding: var(--padding, .4em 0);
+    border-style: solid;
+    border-width: var(--border-width, 0 0 0.0625em 0);
+    border-radius: var(--border-radius);
+    border-color: var(--border-color, lightgray);
     width: 100%;
-    font-size: 1em;
-    background: none;
+    background: var(--input-bg-color, none);
+    box-sizing: border-box;
 }
 
-.sw-input label {
-    position: absolute;
-    top: .4em;
-    left: 0;
+label {
+    position: var(--enable-transition, relative);
+    margin-bottom: var(--label-distance);
+    font-weight: var(--label-font-weight);
+    top: 1.8em;
     cursor: text;
-    font-size: 1em;
-    transition: .2s ease-out all;
+    transition: .2s ease-out top;
+    pointer-events: var(--enable-transition, none);
 }
 
-.sw-input input:focus + label,
-.sw-input input:not(:placeholder-shown) + label {
-    top: -1.4em;
-    font-size: .85em;
+input:focus + label,
+input:not(:placeholder-shown) + label {
+    top: 0;
 }
 
-.sw-input input:-webkit-autofill:not(:focus),
-.sw-input textarea:-webkit-autofill:not(:focus) {
+input:-webkit-autofill:not(:focus),
+textarea:-webkit-autofill:not(:focus) {
     border-bottom-color: lightgray;
     -webkit-box-shadow: none;
 }
 
-.sw-input input:-webkit-autofill,
-.sw-input input:-webkit-autofill:hover,
-.sw-input input:-webkit-autofill:focus,
-.sw-input textarea:-webkit-autofill,
-.sw-input textarea:-webkit-autofill:hover,
-.sw-input textarea:-webkit-autofill:focus {
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
     border-bottom-color: var(--primary-color-100);
-    -webkit-box-shadow: 0 1px 0 0 var(--primary-color-100);
+    -webkit-box-shadow: 0 0.0625em 0 0 var(--primary-color-100);
     transition: background-color 5000s ease-in-out 0s;
 }
 
-.sw-input input:hover,
-.sw-input input:focus-visible {
+input:hover,
+input:focus-visible {
     outline: 0;
-    border-bottom-color: var(--primary-color-100);
-    box-shadow: 0 1px 0 0 var(--primary-color-100);
+    border-color: var(--border-hover-color);
+    box-shadow: 0 1px 0 0 var(--border-hover-color);
 }
 
-.sw-input .datetime-wrapper {
+.datetime-wrapper {
     display: flex;
 }
