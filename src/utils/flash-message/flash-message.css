@@ -16,7 +16,7 @@
     border-radius: var(--radius);
 }
 
-.content {
+.message-container .content {
     display: flex;
     width: 20em;
     justify-content: center;
@@ -26,7 +26,7 @@
     color: #333841;
 }
 
-.icon {
+.message-container .icon {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -34,35 +34,35 @@
     border-radius: var(--flash-radius) 0 0 var(--flash-radius);
 }
 
-.info {
+.message-container .info {
     background: rgba(84, 178, 255, 0.3);
 }
 
-.info-border {
+.message-container .info-border {
     border: 1px solid rgba(0, 146, 255, 0.4);
 }
 
-.success {
+.message-container .success {
     background: rgba(0, 248, 65, 0.3);
 }
 
-.success-border {
+.message-container .success-border {
     border: 1px solid rgba(74, 194, 107, 0.4);
 }
 
-.warning {
+.message-container .warning {
     background: rgba(255, 233, 30, 0.3);
 }
 
-.warning-border {
+.message-container .warning-border {
     border: 1px solid rgba(212, 167, 44, 0.4)
 }
 
-.error {
+.message-container .error {
     background: rgba(255, 94, 64, 0.3);
 }
 
-.error-border {
+.message-container .error-border {
     border: 1px solid rgba(255, 129, 130, 0.4);
 }
 
@@ -78,7 +78,7 @@
  * animation bounce-right
  * ----------------------------------------
  */
-.bounce-right {
+.message-container .bounce-right {
     -webkit-animation: bounce-right 0.8s both;
     animation: bounce-right 0.8s both;
 }
@@ -196,7 +196,7 @@
  * animation slide-out-blurred-right
  * ----------------------------------------
  */
-.slide-out-blurred-right {
+.message-container .slide-out-blurred-right {
     -webkit-animation: slide-out-blurred-right 0.45s cubic-bezier(0.755, 0.050, 0.855, 0.060) both;
     animation: slide-out-blurred-right 0.45s cubic-bezier(0.755, 0.050, 0.855, 0.060) both;
 }
