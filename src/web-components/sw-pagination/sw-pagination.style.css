@@ -4,34 +4,44 @@
     color: inherit;
 }
 
-a {
-    text-decoration: none;
-}
-
 .wrapper {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding-top: 2em;
 }
 
 div.wrapper a,
-div.wrapper span {
-    margin: 0 .5em;
+div.wrapper .current-page {
+    box-sizing: border-box;
+    display: inline-block;
+    width: var(--page-width);
+    text-decoration: none;
+    margin: var(--page-margin);
+    padding: var(--page-padding);
+    background-color: var(--page-bg-color);
+    border-radius: var(--border-radius);
 }
 
-#next {
-    margin-left: .5em;
+div.wrapper a:hover {
+    background-color: var(--page-hover-bg-color, var(--page-bg-color));
 }
 
-.currentPage {
-    color: var(--primary-color-100)
+.next-page-link-text,
+.previous-page-link-text {
+    display: var(--enable-short-style, none);
 }
 
-.previous,
-.next {
-    font-weight: bold;
-    text-transform: uppercase;
+.pages-list {
+    margin: 0 var(--next-prev-distance);
+}
+
+.pages-list:last-child {
+    margin-right: 0;
+}
+
+div.wrapper .current-page {
+    color: var(--current-page-fg-color);
+    background-color: var(--current-page-bg-color);
 }
 
 span:not(span.currentPage, span.caption) {

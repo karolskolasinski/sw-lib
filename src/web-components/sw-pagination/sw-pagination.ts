@@ -83,59 +83,64 @@ function view(state: State): stateMgr.View<Msg> {
 
     return ['.wrapper', [
         ['style', style],
-        state.currentPage > 1 && pageView(state, state.currentPage - 1, tr('pagination.previousPage'), 'previous'),
+        state.currentPage > 1 && pageView(state, state.currentPage - 1, [
+            ['i.icon.icon-chevron-left'],
+            ['span.previous-page-link-text', tr('pagination.previousPage')]
+        ], 'previous'),
+
+        ['.pages-list', [
+
+            state.numberOfPages > 1 && state.currentPage !== 1 && pageView(state, 1, '1'),
 
 
-        state.numberOfPages > 1 && state.currentPage !== 1 && pageView(state, 1, '1'),
+            ((state.numberOfPages >= 7 && state.currentPage > 4) || (state.numberOfPages === 7 && state.currentPage > 5))
+            && ['span.caption', '...'],
 
 
-        ((state.numberOfPages >= 7 && state.currentPage > 4) || (state.numberOfPages === 7 && state.currentPage > 5))
-        && ['span.caption', '...'],
+            state.currentPage - 4 > 0 && state.currentPage + 1 > state.numberOfPages && state.currentPage !== 5
+            && pageView(state, state.currentPage - 4, (state.currentPage - 4).toString()),
+
+            state.currentPage - 3 > 0 && state.currentPage + 2 > state.numberOfPages && state.currentPage !== 4
+            && pageView(state, state.currentPage - 3, (state.currentPage - 3).toString()),
+
+            state.currentPage - 2 > 0 && state.currentPage !== 3
+            && pageView(state, state.currentPage - 2, (state.currentPage - 2).toString()),
+
+            state.currentPage - 1 > 0 && state.currentPage !== 2
+            && pageView(state, state.currentPage - 1, (state.currentPage - 1).toString()),
 
 
-        state.currentPage - 4 > 0 && state.currentPage + 1 > state.numberOfPages && state.currentPage !== 5
-        && pageView(state, state.currentPage - 4, (state.currentPage - 4).toString()),
+            ['span.current-page', state.currentPage],
 
-        state.currentPage - 3 > 0 && state.currentPage + 2 > state.numberOfPages && state.currentPage !== 4
-        && pageView(state, state.currentPage - 3, (state.currentPage - 3).toString()),
+            state.currentPage + 1 <= state.numberOfPages
+            && pageView(state, state.currentPage + 1, (state.currentPage + 1).toString()),
 
-        state.currentPage - 2 > 0 && state.currentPage !== 3
-        && pageView(state, state.currentPage - 2, (state.currentPage - 2).toString()),
+            state.currentPage + 2 <= state.numberOfPages
+            && pageView(state, state.currentPage + 2, (state.currentPage + 2).toString()),
 
-        state.currentPage - 1 > 0 && state.currentPage !== 2
-        && pageView(state, state.currentPage - 1, (state.currentPage - 1).toString()),
+            state.currentPage + 3 <= state.numberOfPages && state.currentPage - 4 < 4 && state.currentPage < 4
+            && pageView(state, state.currentPage + 3, (state.currentPage + 3).toString()),
 
+            state.currentPage + 4 <= state.numberOfPages && state.currentPage - 4 < 4 && state.currentPage < 3
+            && pageView(state, state.currentPage + 4, (state.currentPage + 4).toString()),
 
-        ['span.currentPage', state.currentPage],
+            ['span.caption', tr('pagination.of', { total: state.numberOfPages })],
 
-
-        state.currentPage + 1 <= state.numberOfPages
-        && pageView(state, state.currentPage + 1, (state.currentPage + 1).toString()),
-
-        state.currentPage + 2 <= state.numberOfPages
-        && pageView(state, state.currentPage + 2, (state.currentPage + 2).toString()),
-
-        state.currentPage + 3 <= state.numberOfPages && state.currentPage - 4 < 4 && state.currentPage < 4
-        && pageView(state, state.currentPage + 3, (state.currentPage + 3).toString()),
-
-        state.currentPage + 4 <= state.numberOfPages && state.currentPage - 4 < 4 && state.currentPage < 3
-        && pageView(state, state.currentPage + 4, (state.currentPage + 4).toString()),
-
-
-        ['span.caption', tr('pagination.of')],
-        ['span.caption', state.numberOfPages],
-
+        ]],
 
         state.numberOfPages > 1 && state.numberOfPages - state.currentPage !== 0
-        && pageView(state, state.currentPage + 1, tr('pagination.nextPage'), 'next')
+        && pageView(state, state.currentPage + 1, [
+            ['span.next-page-link-text', tr('pagination.nextPage')],
+            ['i.icon.icon-chevron-right']
+        ], 'next-page-link')
     ]];
 }
 
-function pageView(state: NormalState, page: number, innerText: string = '', className: string = '') {
+function pageView(state: NormalState, page: number, inner: any, className: string = '') {
     return ['a', {
         href: router.getRouteUrl(state.routeName, { page }),
         className: className && className
-    }, innerText];
+    }, inner];
 }
 
 
