@@ -17,14 +17,16 @@
 }
 
 .sw-select .button {
-    background-color: var(--background-color);
+    display: block;
+    background-color: var(--bg-color);
     border: none;
     text-align: left;
-    padding: .4em 0;
     font-size: 1em;
     width: 100%;
     cursor: pointer;
-    border-bottom: 0.0625em solid var(--border-color);
+    border-color: var(--border-color);
+    border-width: var(--border-width, 0 0 0.0625em 0);
+    border-style: solid;
 }
 
 .sw-select button:hover,
@@ -38,11 +40,11 @@
 .sw-select .dropdown {
     display: none;
     margin-top: .4em;
-    width: 100%;
+    width: 19.5em;
     position: absolute;
     border: 1px solid var(--border-color);
     z-index: 1;
-    background: var(--background-color);
+    background: var(--dropdown-bg-color, var(--bg-color));
     border-radius: var(--border-radius)
 }
 
@@ -59,8 +61,8 @@
 }
 
 .sw-select .results > * {
-    padding: .4em;
-    margin: .4em;
+    padding: 0 .4em;
+    margin: 0 .4em;
 }
 
 .sw-select .option-hover,
@@ -85,7 +87,7 @@
     outline: 0;
     border: 0;
     border-bottom: 0.0625em solid var(--border-color);
-    background: var(--background-color);
+    background: var(--bg-color);
 }
 
 .sw-select input:hover,
