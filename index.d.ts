@@ -36,11 +36,14 @@ export namespace router {
         isDefault: boolean;
     }
 
+    export type RouteParams = Record<string, string | number | boolean>;
+
     export function findDefaultRoute(): Route;
     export function findRouteByName(routeName: string): Route;
     export function findRouteByUrl(url: string): Route;
     export function getCurrentRoute(): Route;
-    export function getRouteUrl(routeName: string, params?: Record<string, string | number>): string;
+    export function getRouteUrl(routeName: string, params?: RouteParams): string;
+    export function navigate(routeName: string, params?: RouteParams): void;
     export function addRoute(initRoute: {
         name: string,
         path: string;

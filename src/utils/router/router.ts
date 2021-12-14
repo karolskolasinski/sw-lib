@@ -1,8 +1,10 @@
 const routes = (window as any).routes = (window as any).routes ?? [];
 
+type RouteParams = Record<string, string | number | boolean>;
+
 interface RoutePart {
     paramsObjectFromUrlPart(urlPart: string): Record<string, string>;
-    paramsObjectToUrlPart(obj: Record<string, string | number | boolean>): string;
+    paramsObjectToUrlPart(obj: RouteParams): string;
 }
 
 export interface StoredRoute {
@@ -16,7 +18,7 @@ export interface RouteDefinition {
     name: string;
     path: string;
     isDefault?: boolean;
-    defaultParams?: Record<string, string | number | boolean>
+    defaultParams?: RouteParams;
 }
 
 function routeMatchUrl(route: StoredRoute, url: string) {
@@ -70,9 +72,15 @@ export function getCurrentRoute() {
     return findRouteByUrl(window.location.href);
 }
 
-export function getRouteUrl(routeName: string, params: Record<string, string | number | boolean>) {
+export function getRouteUrl(routeName: string, params?: RouteParams) {
     const route = findRouteByName(routeName);
     return window.location.pathname + '#' + getRoutePath(route, params);
+}
+
+
+
+export function navigate(routeName: string, params?: RouteParams): void {
+    window.location.href = getRouteUrl(routeName, params);
 }
 
 function getRouteParams(route: StoredRoute) {
@@ -87,7 +95,7 @@ function getRouteParams(route: StoredRoute) {
     return params;
 }
 
-function getRoutePath(route: StoredRoute, params: Record<string, string | number | boolean>) {
+function getRoutePath(route: StoredRoute, params: RouteParams = {}) {
     return route.parts.map(part => part.paramsObjectToUrlPart(params)).join('/');
 }
 
