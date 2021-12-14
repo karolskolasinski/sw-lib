@@ -50,7 +50,7 @@ function parse(text: string, locals: Record<string, string | number>) {
         return text.split(/\$\{[a-zA-Z0-9]+\}/).map((item: string, index: number) => item + (locals[index] ?? '')).join('');
     }
     return Object.keys(locals).reduce((text, varName) => {
-        return text.replaceAll('${' + text + '}', (locals as any)[varName]);
+        return text.replaceAll('${' + varName + '}', (locals as any)[varName]);
     }, text);
 }
 

@@ -4,9 +4,9 @@ import SwDatetimeInput from './web-components/sw-datetime-input/sw-datetime-inpu
 import SwLoader from './web-components/sw-loader/sw-loader.jsx';
 import './web-components/sw-pagination/sw-pagination.ts';
 import SwTable from './web-components/sw-table/sw-table.jsx';
-import SwNumberInput from './web-components/sw-number-input/sw-number-input';
 import './web-components/sw-select/sw-select.ts';
 import './web-components/sw-text-input/sw-text-input.ts';
+import './web-components/sw-number-input/sw-number-input.ts';
 import * as routerOriginal from './utils/router/router';
 export var router = routerOriginal;
 
@@ -41,11 +41,6 @@ if (!areElementsRegistered) {
         SwLoader,
         'sw-loader',
         [],
-        { shadow: true },
-    );
-    register(SwNumberInput,
-        'sw-number-input',
-        ['name', 'required', 'placeholder', 'disabled', 'value', 'min', 'max', 'step', 'show-label'],
         { shadow: true },
     );
     register(
