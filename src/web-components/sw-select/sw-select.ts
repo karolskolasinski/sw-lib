@@ -65,6 +65,7 @@ interface SelectOption {
 }
 
 interface State {
+    label?: string;
     name?: string;
     isLoading: boolean;
     phrase: string;
@@ -91,6 +92,7 @@ stateMgr.component({
         config: Object
     },
     shadow: true,
+    debug: true,
     init,
     update,
     view,
@@ -122,6 +124,7 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
         if (msg.name === 'config' && msg.value instanceof Object) {
             return [{
                 ...msg.value,
+                label: msg.value.label || msg.value.name,
                 isDropdownVisible: false,
                 shouldDisplayAbove: false,
                 displayedOptions: msg.value.options ?? [],
@@ -248,6 +251,6 @@ function view(state: State): stateMgr.View<Msg> {
             ]
 
         ],
-        state.showLabel && ['label', { htmlFor: state.name }]
+        state.showLabel && ['label', { htmlFor: state.name }, state.label]
     ]];
 }

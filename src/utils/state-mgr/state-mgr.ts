@@ -168,7 +168,7 @@ export function component<State, Msg>({
             const allPropNames = _.uniq(Object.keys(this.realProps).concat(Object.keys(nextProps)).map(toCamelCase));
 
             allPropNames.forEach((propName) => {
-                if (!_.isEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
+                if (!isEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
                     this.realProps[propName] = nextProps[propName];
                     runUpdate(this, new AttributeChange(propName, nextProps[propName]));
                 }
@@ -319,4 +319,42 @@ function parseElement(el: string) {
         id,
         classes
     };
+}
+
+function isEqual(a: any, b: any): boolean {
+    const aType = getType(a);
+    const bType = getType(b);
+
+    if (aType !== bType) {
+        return false;
+    }
+
+    if (aType === 'object') {
+        const sameKeys = _.isEqual(Object.keys(aType), Object.keys(bType));
+
+        if (!sameKeys) {
+            return false;
+        }
+        return Object.keys(aType).every(key => isEqual(aType[key], bType[key]));
+    }
+
+    if (aType === 'function') {
+        return aType?.toString() === bType?.toString();
+    }
+
+    return _.isEqual(a, b);
+}
+function getType(x: any) {
+    if (['string', 'number', 'boolean', 'undefined', 'function'].includes(typeof x)) {
+        return typeof x;
+    }
+    if (Array.isArray(x)) {
+        return 'array';
+    }
+    if (x === null) {
+        return 'null';
+    }
+    if (x instanceof Object) {
+        return 'object';
+    }
 }
