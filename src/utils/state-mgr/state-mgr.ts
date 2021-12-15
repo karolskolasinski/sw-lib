@@ -168,6 +168,7 @@ export function component<State, Msg>({
             const allPropNames = _.uniq(Object.keys(this.realProps).concat(Object.keys(nextProps)).map(toCamelCase));
 
             allPropNames.forEach((propName) => {
+
                 if (!isEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
                     this.realProps[propName] = nextProps[propName];
                     runUpdate(this, new AttributeChange(propName, nextProps[propName]));
@@ -330,12 +331,12 @@ function isEqual(a: any, b: any): boolean {
     }
 
     if (aType === 'object') {
-        const sameKeys = _.isEqual(Object.keys(aType), Object.keys(bType));
+        const sameKeys = _.isEqual(Object.keys(a), Object.keys(b));
 
         if (!sameKeys) {
             return false;
         }
-        return Object.keys(aType).every(key => isEqual(aType[key], bType[key]));
+        return Object.keys(a).every((key: string) => isEqual(a[key], b[key]));
     }
 
     if (aType === 'function') {

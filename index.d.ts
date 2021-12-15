@@ -109,8 +109,8 @@ export namespace stateMgr {
         tagName: string,
         propTypes?: Record<string, BasicTypeConstructor>,
         shadow?: boolean,
-        willMount: (cmp: any, dispatch: Dispatch<Msg>) => void,
-        willUnmount: (cmp: any, dispatch: Dispatch<Msg>) => void,
+        willMount?: (cmp: any, dispatch: Dispatch<Msg>) => void,
+        willUnmount?: (cmp: any, dispatch: Dispatch<Msg>) => void,
     }): void;
 
     export function mapMsg<T, P>(mapFunc: (msg: T) => P, view: View<T>): View<P>;
