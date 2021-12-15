@@ -195,7 +195,10 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
         return [
             { ...state, isLoading: false, isDropdownVisible: false, selected: msg.option },
             new CustomEvent('update', {
-                detail: { value: msg.option },
+                detail: {
+                    name: state.name,
+                    value: msg.option
+                },
                 bubbles: true,
             })
         ];

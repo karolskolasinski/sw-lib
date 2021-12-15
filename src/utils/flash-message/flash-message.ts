@@ -76,8 +76,3 @@ export function flashMessage(message: string, level: string) {
     displayFlashMessage(flashMessage);
 }
 
-function renderFlashMessage(message: string, lvl: string, iconPaths: string): string {
-    return;
-}
-
-

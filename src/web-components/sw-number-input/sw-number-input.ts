@@ -73,6 +73,11 @@ stateMgr.component({
 
         if (msg instanceof Input) {
             state.value = msg.value;
+            console.log('dispatch', {
+                name: state.name,
+                value: msg.value,
+                error: msg.validationMessage
+            });
             return [state, new CustomEvent('update', {
                 bubbles: true,
                 detail: {
