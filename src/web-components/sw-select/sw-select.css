@@ -58,6 +58,7 @@
     flex-direction: column;
     max-height: 12.5em;
     overflow: auto;
+    padding: 0.6em 0;
 }
 
 .sw-select .results > * {
