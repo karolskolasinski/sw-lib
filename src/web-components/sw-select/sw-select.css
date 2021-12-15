@@ -9,11 +9,11 @@
 }
 
 .sw-select label {
+    font-weight: var(--label-font-weight);
     position: absolute;
     top: -1.4em;
     left: 0;
     cursor: text;
-    font-size: .85em;
 }
 
 .sw-select .button {
@@ -24,8 +24,10 @@
     font-size: 1em;
     width: 100%;
     cursor: pointer;
+    padding: var(--padding);
     border-color: var(--border-color);
     border-width: var(--border-width, 0 0 0.0625em 0);
+    border-radius: var(--border-radius, 0.25em);
     border-style: solid;
 }
 
@@ -45,7 +47,7 @@
     border: 1px solid var(--border-color);
     z-index: 1;
     background: var(--dropdown-bg-color, var(--bg-color));
-    border-radius: var(--border-radius)
+    border-radius: var(--border-radius, 0.25em);
 }
 
 .sw-select .dropdown input {
