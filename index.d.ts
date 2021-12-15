@@ -97,7 +97,9 @@ export namespace stateMgr {
         debug,
         tagName,
         propTypes,
-        shadow
+        shadow,
+        willMount,
+        willUnmount
     }: {
         init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
         update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
@@ -106,7 +108,9 @@ export namespace stateMgr {
         debug?: boolean,
         tagName: string,
         propTypes?: Record<string, BasicTypeConstructor>,
-        shadow?: boolean
+        shadow?: boolean,
+        willMount: (cmp: any, dispatch: Dispatch<Msg>) => void,
+        willUnmount: (cmp: any, dispatch: Dispatch<Msg>) => void,
     }): void;
 
     export function mapMsg<T, P>(mapFunc: (msg: T) => P, view: View<T>): View<P>;
