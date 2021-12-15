@@ -1,12 +1,13 @@
 :host {
     box-sizing: border-box;
+    cursor: pointer;
 }
 
 .button {
     color: var(--fg-color);
     background: var(--bg-color);
-    font-size: var(--font-size, 1em);
     cursor: pointer;
+    font-size: var(--font-size, 1em);
     border: var(--border, none);
     border-radius: var(--border-radius, 0);
     white-space: nowrap;
