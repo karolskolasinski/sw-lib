@@ -98,7 +98,7 @@ stateMgr.component({
         config: Object
     },
     shadow: true,
-    debug: true,
+    debug: false,
     init,
     update,
     view,

@@ -11,7 +11,8 @@
 .sw-select label {
     font-weight: var(--label-font-weight);
     position: absolute;
-    top: -1.4em;
+    top: calc(-1.4em - var(--label-distance));
+    font-size: var(--label-font-size);
     left: 0;
     cursor: text;
 }
@@ -29,6 +30,7 @@
     border-width: var(--border-width, 0 0 0.0625em 0);
     border-radius: var(--border-radius, 0.25em);
     border-style: solid;
+    line-height: 1em;
 }
 
 .sw-select button:hover,
@@ -90,7 +92,7 @@
     outline: 0;
     border: 0;
     border-bottom: 0.0625em solid var(--border-color);
-    background: var(--bg-color);
+    background: var(--input-bg-color, var(--bg-color));
 }
 
 .sw-select input:hover,
