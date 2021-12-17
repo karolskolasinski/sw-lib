@@ -239,7 +239,8 @@ function view(state: State): stateMgr.View<Msg> {
     return ['.sw-select', [
         ['style', style],
         ['span.button', {
-            onclick: new ToggleSelect()
+            onclick: new ToggleSelect(),
+            title: tr(state.selected?.label ? state.selected.label : 'select.prompt')
         }, tr(state.selected?.label ? state.selected.label : 'select.prompt')],
         ['.dropdown', {
             className: [
