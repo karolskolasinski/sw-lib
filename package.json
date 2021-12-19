@@ -5,11 +5,12 @@
     "main": "dist/build.js",
     "scripts": {
         "build": "esbuild src/index.js --bundle --outfile=dist/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text --format=esm",
-        "build:dev": "esbuild test-client/index.jsx --bundle --outfile=test-client/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text",
+        "build:dev": "esbuild src/test-client/index.jsx --bundle --outfile=src/test-client/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text",
         "build:prod": "npm run build -- --minify --sourcemap --target=chrome96,firefox91,safari15,edge96",
         "build:watch": "concurrently \"npm run build -- --watch\" \"tsc --watch\"",
         "build:watch:dev": "npm run build:dev -- --watch",
         "test": "jest",
+        "test-client": "live-server . --open=/src/test-client/index.html --watch=dist/,src/**/*.html, src/**/*.css",
         "dev": "concurrently --kill-others \"live-server test-client\" \"npm run build:watch:dev\"",
         "lint": "eslint src/"
     },

@@ -83,6 +83,8 @@ out
 # Nuxt.js build / generate output
 .nuxt
 dist
+src/test-client/build.js
+src/test-client/build.js.map
 
 # Gatsby files
 .cache/
@@ -132,3 +134,4 @@ build/
 # VS Code
 .vscode/
 *.code-workspace
+

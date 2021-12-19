@@ -1,6 +1,6 @@
 import { h, render, Component } from 'preact';
-import '../src/index';
-import { flashMessage, modal, modalAlert, modalPrompt, modalConfirm } from '../src';
+import '../index';
+import { flashMessage, modal, modalAlert, modalPrompt, modalConfirm } from '../';
 
 const users = [
     { id: '1', name: 'Jan Kowalski' },
@@ -205,4 +205,4 @@ class Main extends Component {
     }
 }
 
-render(h(Main), document.body);
+render(h(Main), document.querySelector('.common-tests'));

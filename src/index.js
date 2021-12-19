@@ -7,6 +7,7 @@ import SwTable from './web-components/sw-table/sw-table.jsx';
 import './web-components/sw-select/sw-select.ts';
 import './web-components/sw-text-input/sw-text-input.ts';
 import './web-components/sw-number-input/sw-number-input.ts';
+import './web-components/sw-map/sw-map.js';
 import * as routerOriginal from './utils/router/router';
 export var router = routerOriginal;
 
