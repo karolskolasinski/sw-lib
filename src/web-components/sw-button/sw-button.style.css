@@ -13,7 +13,7 @@
     white-space: nowrap;
     padding: var(--padding, 0);
     text-decoration: none;
-    display: flex;
+    display: block;
     font-weight: var(--font-weight);
 }
 

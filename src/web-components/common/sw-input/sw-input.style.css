@@ -44,7 +44,9 @@ input:focus + label,
 input:not(:placeholder-shown) + label {
     top: 0;
     font-size: var(--enable-transition, .8em);
-    line-height: var(--enable-transition, 1.45em);
+    line-height: 1.2em;
+    display: var(--enable-transition, block);
+    height: var(--enable-transition, 1.45em);
 }
 
 input:-webkit-autofill:not(:focus),
