@@ -145,24 +145,24 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
         if (state.isDropdownVisible) {
             return [state, null];
         }
-        return [{...state, isDropdownVisible: true, isLoading: false}, new stateMgr.Focus('.input')];
+        return [{ ...state, isDropdownVisible: true, isLoading: false }, new stateMgr.Focus('.input')];
     }
 
     if (msg instanceof CloseSelect) {
-        return [{...state, isDropdownVisible: false, isLoading: false}, null];
+        return [{ ...state, isDropdownVisible: false, isLoading: false }, null];
     }
 
     if (msg instanceof ToggleSelect) {
         if (state.isDropdownVisible) {
-            return [{...state, isDropdownVisible: false, isLoading: false}, null];
+            return [{ ...state, isDropdownVisible: false, isLoading: false }, null];
         } else {
-            return [{...state, isDropdownVisible: true, isLoading: false}, new stateMgr.Focus('.input')];
+            return [{ ...state, isDropdownVisible: true, isLoading: false }, new stateMgr.Focus('.input')];
         }
     }
 
     if (msg instanceof KeyboardMove) {
         if (msg.keyCode === 'Escape') {
-            return [{...state, isDropdownVisible: false}, null];
+            return [{ ...state, isDropdownVisible: false }, null];
         }
         return [state, null];
     }
@@ -170,7 +170,7 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
     if (msg instanceof SearchRequest) {
         if (msg.phrase.length >= state.minimumCharLengthTrigger) {
             if (state.sourceFn) {
-                return [{...state, phrase: msg.phrase}, delaySearch(msg.phrase)];
+                return [{ ...state, phrase: msg.phrase }, delaySearch(msg.phrase)];
             } else {
                 return [{
                     ...state,
@@ -189,7 +189,7 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
 
     if (msg instanceof DelaySearch) {
         if (msg.phrase === state.phrase) {
-            return [{...state, isLoading: true}, search(state)];
+            return [{ ...state, isLoading: true }, search(state)];
         } else {
             return [state, null];
         }
@@ -198,16 +198,16 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
     if (msg instanceof SearchFailure) {
         0;
         flashMessage(tr('select.searchFailed'), 'error');
-        return [{...state, isLoading: false,}, null];
+        return [{ ...state, isLoading: false, }, null];
     }
 
     if (msg instanceof SearchSuccess) {
-        return [{...state, isLoading: true, displayedOptions: msg.options}, null];
+        return [{ ...state, isLoading: true, displayedOptions: msg.options }, null];
     }
 
     if (msg instanceof Pick) {
         return [
-            {...state, isLoading: false, isDropdownVisible: false, selected: msg.option},
+            { ...state, isLoading: false, isDropdownVisible: false, selected: msg.option },
             new CustomEvent('update', {
                 detail: {
                     name: state.name,
@@ -236,33 +236,42 @@ async function search(state: State): Promise<Msg> {
 }
 
 function view(state: State): stateMgr.View<Msg> {
+    const title = state.selected?.label ? trMaybe(state.selected?.label, state.selected) : tr('select.prompt');
+
     return ['.sw-select', [
         ['style', style],
         ['span.button', {
             onclick: new ToggleSelect(),
-            title: tr(state.selected?.label ? state.selected.label : 'select.prompt')
-        }, tr(state.selected?.label ? state.selected.label : 'select.prompt')],
+            title
+        }, title],
         ['.dropdown', {
             className: [
                 state.isDropdownVisible ? 'show' : '',
                 state.shouldDisplayAbove ? 'show-above' : ''
             ].join(' ')
         }, [
-            ['input.input', {
-                type: 'text',
-                value: state.phrase,
-                placeholder: tr('select.placeholder'),
-                onkeyup: (event: KeyboardEvent) => new KeyboardMove(event.code),
-                oninput: (event: Event) => new SearchRequest((event as any).target.value)
-            }],
-            ['.results',
-                (state.displayedOptions ?? []).map(option => ['span.option', {
-                    onclick: new Pick(option)
-                }, tr(option.label, option as any)])
+                ['input.input', {
+                    type: 'text',
+                    value: state.phrase,
+                    placeholder: tr('select.placeholder'),
+                    onkeyup: (event: KeyboardEvent) => new KeyboardMove(event.code),
+                    oninput: (event: Event) => new SearchRequest((event as any).target.value)
+                }],
+                ['.results',
+                    (state.displayedOptions ?? []).map(option => ['span.option', {
+                        onclick: new Pick(option)
+                    }, trMaybe(option.label, option)])
+                ]
             ]
-        ]
 
         ],
-        state.showLabel && ['label', {htmlFor: state.name}, state.label]
+        state.showLabel && ['label', { htmlFor: state.name }, state.label]
     ]];
+}
+
+function trMaybe(item: string | Record<string, string>, translationOptions?: any): string {
+    if (typeof item === 'string') {
+        return item;
+    }
+    return tr(item, translationOptions);
 }
