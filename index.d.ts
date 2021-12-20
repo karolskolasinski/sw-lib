@@ -20,9 +20,15 @@ interface Translate {
         langOrParams?: string | Record<string, string | number> | (string | number)[],
         lang?: string
     ): string;
+    getBrowserLang(): string;
+    getBrowserLocale(): string;
+    setLang(lang: string): string;
     getLang(): string;
-    setDefaultLang(lang: string): void;
-    getDefaultLang(): string;
+    /**
+     * tip: for 'en_US' the locale is 'US'
+     */
+    setLocale(locale: string): string;
+    getLocale(): string;
     addTranslation(phrase: string, translation: Record<string, string>): void;
 }
 

@@ -34,12 +34,12 @@ export default function tr(
     }
 
     if (phrase instanceof Object) {
-        return phrase[lang] ?? phrase[tr.getDefaultLang()];
+        return phrase[lang] ?? phrase['en'];
     }
 
     return parse(
         _.get(window, ['tr', 'translations', phrase, lang],
-            _.get(window, ['tr', 'translations', phrase, tr.getDefaultLang()],
+            _.get(window, ['tr', 'translations', phrase, 'en'],
                 toSpaceCase(phrase))),
         locals as any
     );
@@ -54,19 +54,34 @@ function parse(text: string, locals: Record<string, string | number>) {
     }, text);
 }
 
-tr.getLang = function() {
+tr.getBrowserLang = function getBrowserLang() {
     const userLang = navigator.language || (navigator as any).userLanguage;
-    return userLang.split('-')[0].split('_')[0] ?? tr.getDefaultLang();
-};
+    return userLang.split(/[\-_]/)[0] ?? 'en';
+}
 
-tr.setDefaultLang = function(lang: string) {
-    _.set(window, ['tr', 'defaultLang'], lang);
-};
+tr.getBrowserLocale = function getBrowserLocale() {
+    const userLang = navigator.language || (navigator as any).userLanguage;
+    return userLang.split(/[\-_]/)[1] ?? 'US';
+}
 
-tr.getDefaultLang = function() {
-    return _.get(window, ['tr', 'defaultLang'], 'en');
-};
+tr.setLang = function setLang(lang: string) {
+    localStorage.setItem('tr.lang', lang);
+}
 
+tr.getLang = function getLang() {
+    return localStorage.getItem('tr.lang') ?? tr.getBrowserLang();
+}
+
+/**
+ * tip: for 'en_US' the locale is 'US'
+ */
+tr.setLocale = function setLocale(locale: string) {
+    localStorage.setItem('tr.locale', locale);
+}
+
+tr.getLocale = function getLocale() {
+    return localStorage.getItem('tr.locale') ?? tr.getBrowserLang();
+}
 tr.addTranslation = function(phrase: string, translation: Record<string, string>) {
     _.set(window, ['tr', 'translations', phrase], {
         ..._.get(window, ['tr', 'translations', phrase], {}),

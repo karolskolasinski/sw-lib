@@ -1,4 +1,5 @@
 import makeLog from '../../utils/make-log';
+import tr from '../../utils/tr';
 
 const log = makeLog('sw-map');
 
@@ -36,7 +37,7 @@ function waitForAttributes(el, attributes, fnc) {
 
 class SwMap extends HTMLElement {
     static get observedAttributes() {
-        return ['api-key', 'width', 'height'];
+        return ['api-key', 'selectable'];
     }
 
     constructor() {
@@ -79,6 +80,16 @@ class SwMap extends HTMLElement {
     async attributeChangedCallback(attrName, _previous, current) {
         this.myAttrs[attrName] = current;
         log('got attribute', attrName);
+
+        if (attrName === 'selectable') {
+            const coords = (current || '').split('x');
+            if (this.selectedCoords && coords[0] && coords[1]) {
+                log('change location');
+                this.setLocation({ lat: coords[0], lng: coords[1] });
+            }
+            return;
+        }
+
         waitForAttributes(this, ['api-key'], async () => {
             log('establishing new here connection for key:' + current);
             await ensureJsIsLoaded();
@@ -115,7 +126,7 @@ class SwMap extends HTMLElement {
 
             this.map.addObject(this.markersGroup);
 
-            this.ui = H.ui.UI.createDefault(this.map, defaultLayers, 'pl-PL');
+            this.ui = H.ui.UI.createDefault(this.map, defaultLayers, tr.getLang() + '-' + tr.getLocale());
             this.ui.removeControl('mapsettings');
 
             this.syncMarkers();
@@ -125,17 +136,37 @@ class SwMap extends HTMLElement {
 
             this.map.addEventListener('tap', this.onMapClick);
             this.markersGroup.addEventListener('tap', this.onMarkerClick);
+
+            if (this.getAttribute('selectable') !== null) {
+                const coords = (this.getAttribute('selectable') || '').split('x');
+                if (coords[0] && coords[1]) {
+                    this.setLocation({
+                        lat: coords[0],
+                        lng: coords[1]
+                    });
+                }
+            }
         });
     }
 
     onMapClick(event) {
         if (this.getAttribute('selectable') !== null) {
-            const coord = this.map.screenToGeo(
+            const coords = this.map.screenToGeo(
                 event.currentPointer.viewportX,
                 event.currentPointer.viewportY
             );
-            this.setLocation(coord);
+            this.setLocation(coords);
+            this.triggerUpdateEvent(coords);
         }
+    }
+
+    triggerUpdateEvent(coords) {
+        const updateEvent = new CustomEvent('update', {
+            bubbles: true,
+            detail: { value: coords }
+        });
+        log('Dispatching update event', updateEvent);
+        this.dispatchEvent(updateEvent);
     }
 
     setLocation(coords) {
@@ -143,6 +174,9 @@ class SwMap extends HTMLElement {
             log('Map is not initialized');
             return;
         }
+        log('setting location', coords);
+        this.selectedCoords = coords;
+
         if (!this.marker) {
             const icon = new H.map.Icon(makeIcon('#000'));
             this.marker = new H.map.Marker(coords, { icon: icon });
@@ -150,13 +184,6 @@ class SwMap extends HTMLElement {
         } else {
             this.marker.setGeometry(coords);
         }
-
-        const updateEvent = new CustomEvent('update', {
-            bubbles: true,
-            detail: coords
-        });
-        log('Dispatching update event', updateEvent);
-        this.dispatchEvent(updateEvent);
     }
 
     connectedCallback() {

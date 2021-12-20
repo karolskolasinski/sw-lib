@@ -141,7 +141,9 @@ export function component<State, Msg>({
     const dispatcher = (cmp: Cmp, msgFactory: any) => {
         return async function(event: Event) {
             const msg = getOrCall(msgFactory, event);
-            runUpdate(cmp, msg);
+            if (msg) {
+                runUpdate(cmp, msg);
+            }
         };
     };
 
