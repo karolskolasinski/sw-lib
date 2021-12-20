@@ -60,8 +60,7 @@ tr.getBrowserLang = function getBrowserLang() {
 }
 
 tr.getBrowserLocale = function getBrowserLocale() {
-    const userLang = navigator.language || (navigator as any).userLanguage;
-    return userLang.split(/[\-_]/)[1] ?? 'US';
+    return tr.getBrowserLang().toUpperCase();
 }
 
 tr.setLang = function setLang(lang: string) {
@@ -80,7 +79,7 @@ tr.setLocale = function setLocale(locale: string) {
 }
 
 tr.getLocale = function getLocale() {
-    return localStorage.getItem('tr.locale') ?? tr.getBrowserLang();
+    return localStorage.getItem('tr.locale') || tr.getBrowserLocale();
 }
 tr.addTranslation = function(phrase: string, translation: Record<string, string>) {
     _.set(window, ['tr', 'translations', phrase], {
