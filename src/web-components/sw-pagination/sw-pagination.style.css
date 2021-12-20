@@ -12,6 +12,7 @@
 
 div.wrapper a,
 div.wrapper .current-page {
+    text-align: center;
     box-sizing: border-box;
     display: inline-block;
     width: var(--page-width);
