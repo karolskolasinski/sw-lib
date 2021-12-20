@@ -69,7 +69,7 @@ class SwMap extends HTMLElement {
     }
 
     onMarkerClick(event) {
-        const selectedEvent = new CustomEvent('selected', {
+        const selectedEvent = new CustomEvent('select', {
             bubbles: true,
             detail: event.target.getData().mid
         });
@@ -138,12 +138,11 @@ class SwMap extends HTMLElement {
             this.markersGroup.addEventListener('tap', this.onMarkerClick);
 
             if (this.getAttribute('selectable') !== null) {
-                const coords = (this.getAttribute('selectable') || '').split('x');
-                if (coords[0] && coords[1]) {
-                    this.setLocation({
-                        lat: coords[0],
-                        lng: coords[1]
-                    });
+                const split = (this.getAttribute('selectable') || '').split('x');
+                if (split[0] && split[1]) {
+                    const coords = { lat: split[0], lng: split[1] };
+                    this.setLocation(coords);
+                    this.map.setCenter(coords);
                 }
             }
         });

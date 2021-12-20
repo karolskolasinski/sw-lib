@@ -41,7 +41,7 @@ export function component<State, Msg>({
     update,
     view,
     AttributeChange,
-    debug = false,
+    debug = (window as any).debug,
     tagName,
     propTypes = {},
     shadow = false,
