@@ -196,7 +196,6 @@ export function component<State, Msg>({
         }
 
         redraw() {
-            console.log('redraw ' + tagName);
             this.forceUpdate();
         }
 
