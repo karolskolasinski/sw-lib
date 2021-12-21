@@ -200,7 +200,6 @@ export function component<State, Msg>({
         }
 
         componentWillMount() {
-            console.log('wwwww ' + tagName);
             tr.addEventListener('setlang', this.redraw);
             if (willMount) {
                 willMount.call(this, this, msg => runUpdate(this, msg));
