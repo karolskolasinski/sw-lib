@@ -1,3 +1,5 @@
+import { addEventDispatcherTrait } from './event-dispatcher';
+
 const routes = (window as any).routes = (window as any).routes ?? [];
 
 type RouteParams = Record<string, string | number | boolean>;
@@ -40,7 +42,7 @@ function routeMatchUrl(route: StoredRoute, url: string) {
     return true;
 }
 
-export function findDefaultRoute() {
+function findDefaultRoute() {
     const defaultRoute = routes.find((r: StoredRoute) => r.isDefault);
 
     if (!defaultRoute) {
@@ -51,7 +53,7 @@ export function findDefaultRoute() {
     return defaultRoute;
 }
 
-export function findRouteByName(routeName: string) {
+function findRouteByName(routeName: string) {
     const route = routes.find((r: StoredRoute) => r.name === routeName)
         ?? findDefaultRoute();
 
@@ -59,7 +61,7 @@ export function findRouteByName(routeName: string) {
     return route;
 }
 
-export function findRouteByUrl(url: string) {
+function findRouteByUrl(url: string) {
     url = (url ?? '').split('#')[1] ?? '';
     const route = routes.find((route: StoredRoute) => routeMatchUrl(route, url))
         ?? findDefaultRoute();
@@ -68,18 +70,18 @@ export function findRouteByUrl(url: string) {
     return route;
 }
 
-export function getCurrentRoute() {
+function getCurrentRoute() {
     return findRouteByUrl(window.location.href);
 }
 
-export function getRouteUrl(routeName: string, params?: RouteParams) {
+function getRouteUrl(routeName: string, params?: RouteParams) {
     const route = findRouteByName(routeName);
     return window.location.pathname + '#' + getRoutePath(route, params);
 }
 
 
 
-export function navigate(routeName: string, params?: RouteParams): void {
+function navigate(routeName: string, params?: RouteParams): void {
     window.location.href = getRouteUrl(routeName, params);
 }
 
@@ -99,7 +101,7 @@ function getRoutePath(route: StoredRoute, params: RouteParams = {}) {
     return route.parts.map(part => part.paramsObjectToUrlPart(params)).join('/');
 }
 
-export function addRoute({ name, path, isDefault, defaultParams }: RouteDefinition) {
+function addRoute({ name, path, isDefault, defaultParams }: RouteDefinition) {
     const parts = path.split('/').filter(x => x).map(partString => {
         return {
             paramsObjectToUrlPart: (params: Record<string, string> = {}) => {
@@ -122,25 +124,20 @@ export function addRoute({ name, path, isDefault, defaultParams }: RouteDefiniti
     routes.push({ name, parts, isDefault });
 }
 
-type Listener = (event: Event) => void;
-const eventListeners: Record<string, Listener[]> = {};
-
-export function addEventListener(eventType: string, listener: Listener) {
-    eventListeners[eventType] = eventListeners[eventType] ?? [];
-    eventListeners[eventType].push(listener);
-}
-
-export function removeEventListener(eventType: string, listener: Listener) {
-    eventListeners[eventType] = eventListeners[eventType] ?? [];
-    eventListeners[eventType] = (eventListeners[eventType] ?? []).filter(l => l !== listener);
-}
-
-function trigger(event: Event) {
-    (eventListeners[event.type] ?? []).forEach(listener => listener(event));
-}
-
 window.addEventListener('hashchange', () => {
     const route = getCurrentRoute();
     const event = new CustomEvent('routeChange', { detail: route });
-    trigger(event);
+    router.trigger(event);
 });
+
+export var router = window.router || addEventDispatcherTrait({
+    findDefaultRoute,
+    findRouteByName,
+    findRouteByUrl,
+    getCurrentRoute,
+    getRouteUrl,
+    navigate,
+    addRoute
+});
+
+(window as any).router = router;

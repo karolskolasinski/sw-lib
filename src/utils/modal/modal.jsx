@@ -1,7 +1,7 @@
 import cssFile from './modal.style.css';
 import { render } from 'preact';
 import sanitizeHtml from 'sanitize-html';
-import tr from '../tr';
+import { tr } from '../tr';
 
 let counter = 0;
 

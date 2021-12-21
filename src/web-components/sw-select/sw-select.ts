@@ -1,6 +1,6 @@
 import * as stateMgr from '../../utils/state-mgr/state-mgr';
 import { flashMessage } from '../../utils/flash-message/flash-message';
-import tr from '../../utils/tr';
+import { tr } from '../../utils/tr';
 // @ts-ignore
 import style from './sw-select.css';
 

@@ -1,6 +1,6 @@
 import { Component } from 'preact';
 import style from '../common/sw-input/sw-input.style.css';
-import tr from '../../utils/tr';
+import { tr } from '../../utils/tr';
 
 export default class SwDatetimeInput extends Component {
     dispatchEvent(name) {

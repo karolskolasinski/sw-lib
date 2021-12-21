@@ -1,6 +1,6 @@
 import * as stateMgr from '../../utils/state-mgr/state-mgr';
-import tr from '../../utils/tr';
-import * as router from '../../utils/router/router';
+import { tr } from '../../utils/tr';
+import { router } from '../../utils/router';
 // @ts-ignore
 import style from './sw-pagination.style.css';
 

@@ -1,18 +1,26 @@
 import _ from 'lodash';
 import { toSpaceCase } from './strings';
+import { addEventDispatcherTrait, EventDispatcher } from './event-dispatcher';
 
-/**
- * translates given phrase
- *
- * @example
- * tr.addTranslation('abc', { en: 'Hello ${name}' });
- * tr('abc', { name: 'World' })
- * => 'Hello World'
- * // you can also use an array:
- * tr('abc', ['World'])
- * => 'Hello World'
- */
-export default function tr(
+interface Translate extends EventDispatcher {
+    (
+        phrase: string | Record<string, string>,
+        langOrParams?: string | Record<string, string | number> | (string | number)[],
+        lang?: string
+    ): string;
+    getBrowserLang(): string;
+    getBrowserLocale(): string;
+    setLang(lang: string): void;
+    getLang(): string;
+    /**
+     * tip: for 'en_US' the locale is 'US'
+     */
+    setLocale(locale: string): void;
+    getLocale(): string;
+    addTranslation(phrase: string, translation: Record<string, string>): void;
+}
+
+export var tr: Translate = (window as any).tr || function(
     phrase: string | Record<string, string>,
     arg2?: string | Record<string, string | number> | (string | number)[],
     arg3?: string
@@ -43,7 +51,9 @@ export default function tr(
                 toSpaceCase(phrase))),
         locals as any
     );
-}
+} as Translate;
+
+tr = addEventDispatcherTrait(tr);
 
 function parse(text: string, locals: Record<string, string | number>) {
     if (Array.isArray(locals)) {
@@ -63,8 +73,9 @@ tr.getBrowserLocale = function getBrowserLocale() {
     return tr.getBrowserLang().toUpperCase();
 }
 
-tr.setLang = function setLang(lang: string) {
+tr.setLang = function setLang(lang: string): void {
     localStorage.setItem('tr.lang', lang);
+    tr.dispatchEvent(new CustomEvent('setlang'));
 }
 
 tr.getLang = function getLang() {
@@ -81,9 +92,13 @@ tr.setLocale = function setLocale(locale: string) {
 tr.getLocale = function getLocale() {
     return localStorage.getItem('tr.locale') || tr.getBrowserLocale();
 }
+
+
 tr.addTranslation = function(phrase: string, translation: Record<string, string>) {
     _.set(window, ['tr', 'translations', phrase], {
         ..._.get(window, ['tr', 'translations', phrase], {}),
         ...translation
     });
 };
+
+(window as any).tr = (window as any).tr || tr;

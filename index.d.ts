@@ -14,7 +14,7 @@ export namespace dates {
     export function formatDateTime(timestamp: number): string;
 }
 
-interface Translate {
+interface Translate extends EventDispatcher {
     (
         phrase: string | Record<string, string>,
         langOrParams?: string | Record<string, string | number> | (string | number)[],
@@ -22,43 +22,53 @@ interface Translate {
     ): string;
     getBrowserLang(): string;
     getBrowserLocale(): string;
-    setLang(lang: string): string;
+    setLang(lang: string): void;
     getLang(): string;
     /**
      * tip: for 'en_US' the locale is 'US'
      */
-    setLocale(locale: string): string;
+    setLocale(locale: string): void;
     getLocale(): string;
     addTranslation(phrase: string, translation: Record<string, string>): void;
 }
 
 export const tr: Translate;
 
-export namespace router {
+export interface EventDispatcher {
+    addEventListener(eventType: string, listener: (event: Event) => void): void;
+    removeEventListener(eventType: string, listenr: (event: Event) => void): void;
+    dispatchEvent(event: Event): void;
 
-    export interface Route {
-        name: string;
-        params: Record<string, string>;
-        isDefault: boolean;
-    }
+    on(eventType: string, listener: (event: Event) => void): void;
+    off(eventType: string, listenr: (event: Event) => void): void;
+    trigger(event: Event): void;
+}
 
-    export type RouteParams = Record<string, string | number | boolean>;
 
-    export function findDefaultRoute(): Route;
-    export function findRouteByName(routeName: string): Route;
-    export function findRouteByUrl(url: string): Route;
-    export function getCurrentRoute(): Route;
-    export function getRouteUrl(routeName: string, params?: RouteParams): string;
-    export function navigate(routeName: string, params?: RouteParams): void;
-    export function addRoute(initRoute: {
+export interface Route {
+    name: string;
+    params: Record<string, string>;
+    isDefault: boolean;
+}
+
+export interface Router extends EventDispatcher {
+    findDefaultRoute(): Route;
+    findRouteByName(routeName: string): Route;
+    findRouteByUrl(url: string): Route;
+    getCurrentRoute(): Route;
+    getRouteUrl(routeName: string, params?: RouteParams): string;
+    navigate(routeName: string, params?: RouteParams): void;
+    addRoute(initRoute: {
         name: string,
         path: string;
         isDefault?: string,
         defaultParams?: Record<string, string | number>
     }): void;
-    export function addEventListener(eventType: string, listener: (event: Event) => void): void;
-    export function removeEventListener(eventType: string, listenr: (event: Event) => void): void;
 }
+
+export type RouteParams = Record<string, string | number | boolean>;
+
+export var router: Router;
 
 export namespace stateMgr {
 

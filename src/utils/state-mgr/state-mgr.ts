@@ -2,6 +2,7 @@ import { Component, h } from 'preact';
 import registerCustomElement from 'preact-custom-element';
 import _ from 'lodash';
 import { toKebabCase, toCamelCase } from '../strings';
+import { tr } from '../tr';
 
 export * from './initialization-state';
 
@@ -161,6 +162,7 @@ export function component<State, Msg>({
             runNext(this, next);
             this.initialRenderComplete = false;
             this.realProps = {};
+            this.redraw = this.redraw.bind(this);
         }
 
         shouldComponentUpdate(nextProps: any): any {
@@ -192,18 +194,26 @@ export function component<State, Msg>({
             rendered.ref = ref => this.ref = ref;
             return rendered;
         }
-    }
 
-    if (willMount) {
-        Cmp.prototype.componentWillMount = function() {
-            willMount.call(this, this, msg => runUpdate(this, msg));
-        };
-    }
+        redraw() {
+            console.log('redraw ' + tagName);
+            this.forceUpdate();
+        }
 
-    if (willUnmount) {
-        Cmp.prototype.componentWillUnmount = function() {
-            willUnmount.call(this, this, msg => runUpdate(this, msg));
-        };
+        componentWillMount() {
+            console.log('wwwww ' + tagName);
+            tr.addEventListener('setlang', this.redraw);
+            if (willMount) {
+                willMount.call(this, this, msg => runUpdate(this, msg));
+            }
+        }
+
+        componentWillUnmount() {
+            tr.removeEventListener('setlang', this.redraw);
+            if (willUnmount) {
+                willUnmount.call(this, this, msg => runUpdate(this, msg));
+            }
+        }
     }
 
     const attrs = _.uniq(Object.keys(propTypes).map(toKebabCase).concat(Object.keys(propTypes)));

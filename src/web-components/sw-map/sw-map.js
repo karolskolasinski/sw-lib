@@ -1,5 +1,5 @@
 import makeLog from '../../utils/make-log';
-import tr from '../../utils/tr';
+import { tr } from '../../utils/tr';
 
 const log = makeLog('sw-map');
 
