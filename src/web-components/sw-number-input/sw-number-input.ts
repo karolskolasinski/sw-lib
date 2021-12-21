@@ -105,7 +105,7 @@ function view(state: State): stateMgr.View<Msg> {
                 max: state.max,
                 step: state.step,
                 ariaLabelledby: state.label,
-                onblur: (event: any) => new Input(event.target.value, event.target.validationMessage)
+                oninput: (event: any) => new Input(event.target.value, event.target.validationMessage)
             }],
             state.showLabel && ['label', { htmlFor: state.name }, state.label],
         ]]
