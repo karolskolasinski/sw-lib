@@ -1,9 +1,15 @@
-:host {
+*, ::before, ::after {
     box-sizing: border-box;
+    font: inherit;
+    color: inherit;
+}
+
+:host {
     cursor: pointer;
 }
 
 .button {
+    width: var(--button-width);
     color: var(--fg-color);
     background: var(--bg-color);
     cursor: pointer;

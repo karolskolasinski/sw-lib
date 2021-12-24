@@ -1,7 +1,10 @@
-:host {
+*, ::before, ::after {
     box-sizing: border-box;
     font: inherit;
     color: inherit;
+}
+
+:host {
     --enable-transition: var(--on);
 }
 
@@ -35,7 +38,7 @@ label {
     font-weight: var(--label-font-weight);
     top: 1.8em;
     cursor: text;
-    transition: .2s ease-out top, font-size;
+    transition: .2s ease-out top, .2s ease-out font-size;
     pointer-events: var(--enable-transition, none);
     line-height: 1.2em;
 }
@@ -46,7 +49,7 @@ input:not(:placeholder-shown) + label {
     font-size: var(--enable-transition, .8em);
     line-height: 1.2em;
     display: var(--enable-transition, block);
-    height: var(--enable-transition, 1.45em);
+    height: var(--enable-transition, 1.6em);
 }
 
 input:-webkit-autofill:not(:focus),
