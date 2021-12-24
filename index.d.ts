@@ -70,7 +70,7 @@ export type RouteParams = Record<string, string | number | boolean>;
 
 export var router: Router;
 
-export namespace stateMgr {
+export namespace stm {
 
     export type Cmd<Msg> = Promise<Msg> | Msg | null | Event | CustomEvent;
 

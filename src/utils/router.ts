@@ -130,7 +130,7 @@ window.addEventListener('hashchange', () => {
     router.trigger(event);
 });
 
-export var router = window.router || addEventDispatcherTrait({
+export var router = (window as any).router || addEventDispatcherTrait({
     findDefaultRoute,
     findRouteByName,
     findRouteByUrl,

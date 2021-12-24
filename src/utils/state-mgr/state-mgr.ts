@@ -50,7 +50,7 @@ export function component<State, Msg>({
     willUnmount
 }: {
     init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
-    update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
+    update: (state: State, msg: Msg) => [State, Cmd<Msg>],
     view: (state: State) => View<Msg>,
     AttributeChange?: AttributeChange<Msg>,
     debug?: boolean,
