@@ -1,4 +1,4 @@
-import * as stateMgr from '../../utils/state-mgr/state-mgr';
+import * as stm from '../../utils/state-mgr/state-mgr';
 import { tr } from '../../utils/tr';
 import { router } from '../../utils/router';
 // @ts-ignore
@@ -11,7 +11,7 @@ interface NormalState {
     routeName: string,
 }
 
-type State = stateMgr.InitializationState | NormalState;
+type State = stm.InitializationState | NormalState;
 
 class AttributeChange {
     constructor(public name: string, public value: any) {
@@ -26,7 +26,7 @@ const propTypes = {
     routeName: String,
 };
 
-stateMgr.component({
+stm.component({
     tagName: 'sw-pagination',
     init,
     update,
@@ -35,12 +35,12 @@ stateMgr.component({
     propTypes,
 });
 
-function init(): [State, stateMgr.Cmd<Msg>] {
-    return [new stateMgr.InitializationState(Object.keys(propTypes)), null];
+function init(): [State, stm.Cmd<Msg>] {
+    return [new stm.InitializationState(Object.keys(propTypes)), null];
 }
 
-function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined {
-    if (state instanceof stateMgr.InitializationState) {
+function update(state: State, msg: Msg): [State, stm.Cmd<Msg>] {
+    if (state instanceof stm.InitializationState) {
         state.setValue(msg.name, msg.value);
 
         if (state.isInitialized()) {
@@ -76,8 +76,8 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
     }
 }
 
-function view(state: State): stateMgr.View<Msg> {
-    if (state instanceof stateMgr.InitializationState) {
+function view(state: State): stm.View<Msg> {
+    if (state instanceof stm.InitializationState) {
         return ['sw-loader'];
     }
 

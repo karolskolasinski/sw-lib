@@ -1,4 +1,4 @@
-import * as stateMgr from '../../utils/state-mgr/state-mgr';
+import * as stm from '../../utils/state-mgr/state-mgr';
 // @ts-ignore
 import style from '../common/sw-input/sw-input.style.css'
 
@@ -38,12 +38,12 @@ const propTypes = {
     showLabel: Boolean
 }
 
-stateMgr.component({
+stm.component({
     tagName: 'sw-text-input',
     shadow: true,
     AttributeChange,
     propTypes,
-    init(): [State, stateMgr.Cmd<Msg>] {
+    init(): [State, stm.Cmd<Msg>] {
         return [{
             disabled: false,
             showLabel: true,
@@ -78,7 +78,7 @@ stateMgr.component({
     view
 });
 
-function view(state: State): stateMgr.View<Msg> {
+function view(state: State): stm.View<Msg> {
     return ['.sw-input.sw-text-input', [
         ['style', style],
         ['.input-wrapper', [

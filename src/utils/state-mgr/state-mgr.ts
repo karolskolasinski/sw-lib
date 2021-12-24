@@ -64,7 +64,7 @@ export function component<State, Msg>({
 
     const log = debug
         ? (msg: string, ...args: any[]) => {
-            console.log('stateMgr:' + tagName + ': ' + msg, ...args);
+            console.log('stm:' + tagName + ': ' + msg, ...args);
         }
         : () => { }
 

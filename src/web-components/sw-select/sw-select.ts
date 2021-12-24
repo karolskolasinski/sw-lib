@@ -1,4 +1,4 @@
-import * as stateMgr from '../../utils/state-mgr/state-mgr';
+import * as stm from '../../utils/state-mgr/state-mgr';
 import { flashMessage } from '../../utils/flash-message/flash-message';
 import { tr } from '../../utils/tr';
 // @ts-ignore
@@ -92,7 +92,7 @@ function getParents(el: HTMLElement | null): HTMLElement[] {
     return [el, ...getParents(el.parentElement)];
 }
 
-stateMgr.component({
+stm.component({
     tagName: 'sw-select',
     propTypes: {
         config: Object
@@ -103,7 +103,7 @@ stateMgr.component({
     update,
     view,
     AttributeChange,
-    willMount(cmp: any, dispatch: stateMgr.Dispatch<Msg>) {
+    willMount(cmp: any, dispatch: stm.Dispatch<Msg>) {
         cmp.closeSelect = (event: MouseEvent) => {
             if (event.target !== cmp.ref.getRootNode().host) {
                 dispatch(new CloseSelect());
@@ -125,7 +125,7 @@ function init(): [State, null] {
     }, null];
 }
 
-function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined {
+function update(state: State, msg: Msg): [State, stm.Cmd<Msg>] | undefined {
     if (msg instanceof AttributeChange) {
         if (msg.name === 'config' && msg.value instanceof Object) {
             return [{
@@ -145,7 +145,7 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
         if (state.isDropdownVisible) {
             return [state, null];
         }
-        return [{ ...state, isDropdownVisible: true, isLoading: false }, new stateMgr.Focus('.input')];
+        return [{ ...state, isDropdownVisible: true, isLoading: false }, new stm.Focus('.input')];
     }
 
     if (msg instanceof CloseSelect) {
@@ -156,7 +156,7 @@ function update(state: State, msg: Msg): [State, stateMgr.Cmd<Msg>] | undefined 
         if (state.isDropdownVisible) {
             return [{ ...state, isDropdownVisible: false, isLoading: false }, null];
         } else {
-            return [{ ...state, isDropdownVisible: true, isLoading: false }, new stateMgr.Focus('.input')];
+            return [{ ...state, isDropdownVisible: true, isLoading: false }, new stm.Focus('.input')];
         }
     }
 
@@ -235,7 +235,7 @@ async function search(state: State): Promise<Msg> {
     }
 }
 
-function view(state: State): stateMgr.View<Msg> {
+function view(state: State): stm.View<Msg> {
     const title = state.selected?.label ? trMaybe(state.selected?.label, state.selected) : tr('select.prompt');
 
     return ['.sw-select', [
