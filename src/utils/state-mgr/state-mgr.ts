@@ -10,7 +10,7 @@ export type Cmd<Msg> = Promise<Msg> | Msg | null | Event;
 
 export type Props = Record<string, unknown>;
 
-export type Options<Msg> = Record<string, any | Msg | ((...args: any[]) => Msg)>;
+export type Options<Msg> = Record<string, string | boolean | number | Record<string, any> | Msg | ((...args: any[]) => Msg)>;
 
 export type Dispatch<Msg> = (msg: Msg) => void;
 
@@ -22,6 +22,7 @@ export type View<Msg>
     = [string, Options<Msg>, View<Msg>[] | string]
     | [string, View<Msg>[] | Options<Msg> | string]
     | [string]
+    | boolean
     | { mapFunc: any, view: View<Msg> }
 
 type BasicTypeConstructor

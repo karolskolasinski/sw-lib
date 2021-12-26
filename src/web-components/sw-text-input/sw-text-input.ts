@@ -74,6 +74,8 @@ stm.component({
                 },
             })]
         }
+
+        return [state, null];
     },
     view
 });

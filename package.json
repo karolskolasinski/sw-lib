@@ -2,7 +2,7 @@
     "name": "@7willows/sw-lib",
     "version": "1.1.0",
     "license": "UNLICENSED",
-    "main": "dist/build.js",
+    "main": "dist/build.mjs",
     "scripts": {
         "build": "esbuild src/index.js --bundle --outfile=dist/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text --format=esm",
         "build:dev": "esbuild src/test-client/index.jsx --bundle --outfile=src/test-client/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text",
@@ -49,5 +49,8 @@
             "<rootDir>/tests/__mocks__/browserMocks.js",
             "<rootDir>/tests/__mocks__/setupTests.js"
         ]
+    },
+    "dependencies": {
+        "ts-pattern": "^3.3.4"
     }
 }

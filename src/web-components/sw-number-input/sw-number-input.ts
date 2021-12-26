@@ -82,6 +82,7 @@ stm.component({
                 },
             })]
         }
+        return [state, msg];
     },
     view
 });

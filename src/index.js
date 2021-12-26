@@ -9,6 +9,7 @@ import './web-components/sw-text-input/sw-text-input.ts';
 import './web-components/sw-number-input/sw-number-input.ts';
 import './web-components/sw-map/sw-map.js';
 
+
 import * as routerModule from './utils/router.ts';
 export var router = routerModule.router;
 

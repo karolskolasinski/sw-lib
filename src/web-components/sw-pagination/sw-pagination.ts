@@ -136,7 +136,7 @@ function view(state: State): stm.View<Msg> {
     ]];
 }
 
-function pageView(state: NormalState, page: number, inner: any, className: string = '') {
+function pageView(state: NormalState, page: number, inner: any, className: string = ''): stm.View<Msg> {
     return ['a', {
         href: router.getRouteUrl(state.routeName, { page }),
         className: className && className
