@@ -31,7 +31,7 @@ stm.component({
     init,
     update,
     view,
-    AttributeChange,
+    attributeChangeFactory: (name, value): Msg => new AttributeChange(name, value),
     propTypes,
 });
 

@@ -72,7 +72,12 @@ export var router: Router;
 
 export namespace stm {
 
-    export type Cmd<Msg> = Promise<Msg> | Msg | null | Event | CustomEvent;
+    export type Cmd<Msg>
+        = Promise<Msg>
+        | Msg
+        | null
+        | Event
+        | [type: 'Focus', selector: string]
 
     export type Props = Record<string, unknown>;
 
@@ -88,10 +93,6 @@ export namespace stm {
         getValues(): Record<string, any>;
     }
 
-    interface AttributeChange<Msg> {
-        new(name: string, value: unknown): Msg
-    }
-
     export type View<Msg>
         = [string, Options<Msg>, View<Msg>[] | string]
         | [string, View<Msg>[] | Options<Msg> | string]
@@ -105,11 +106,13 @@ export namespace stm {
         | (new () => Array<any>)
         | (new () => Boolean);
 
+    export function focus(selector: string): [type: 'Focus', selector: string];
+
     export function component<State, Msg>({
         init,
         update,
         view,
-        AttributeChange,
+        attributeChangeFactory,
         debug,
         tagName,
         propTypes,
@@ -120,7 +123,7 @@ export namespace stm {
         init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
         update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
         view: (state: State) => View<Msg>,
-        AttributeChange?: AttributeChange<Msg>,
+        attributeChangeFactory: (name: string, value: string) => Msg,
         debug?: boolean,
         tagName: string,
         propTypes?: Record<string, BasicTypeConstructor>,

@@ -2,7 +2,6 @@ import register from 'preact-custom-element';
 import SwButton from './web-components/sw-button/sw-button.jsx';
 import SwDatetimeInput from './web-components/sw-datetime-input/sw-datetime-input.jsx';
 import SwLoader from './web-components/sw-loader/sw-loader.jsx';
-import SwTable from './web-components/sw-table/sw-table.jsx';
 import './web-components/sw-pagination/sw-pagination.ts';
 import './web-components/sw-select/sw-select.ts';
 import './web-components/sw-text-input/sw-text-input.ts';
@@ -41,12 +40,6 @@ if (!areElementsRegistered) {
         SwLoader,
         'sw-loader',
         [],
-        { shadow: true },
-    );
-    register(
-        SwTable,
-        'sw-table',
-        ['config'],
         { shadow: true },
     );
 }

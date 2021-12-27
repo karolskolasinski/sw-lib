@@ -1,4 +1,5 @@
 import * as stm from '../../utils/state-mgr/state-mgr';
+import { match, select, __ } from 'ts-pattern';
 // @ts-ignore
 import style from '../common/sw-input/sw-input.style.css'
 
@@ -10,24 +11,9 @@ interface State {
     name: string;
     label: string;
 }
-
-class AttributeChange {
-    constructor(
-        public name: string,
-        public value: unknown
-    ) { }
-}
-
-class Input {
-    constructor(
-        public value: string,
-        public validationMessage: string
-    ) { }
-}
-
 type Msg
-    = AttributeChange
-    | Input;
+    = [type: 'AttributeChange', name: string, value: any]
+    | [type: 'Input', value: string, validationMessage: string]
 
 const propTypes = {
     name: String,
@@ -41,7 +27,7 @@ const propTypes = {
 stm.component({
     tagName: 'sw-text-input',
     shadow: true,
-    AttributeChange,
+    attributeChangeFactory: (name, value): Msg => ['AttributeChange', name, value],
     propTypes,
     init(): [State, stm.Cmd<Msg>] {
         return [{
@@ -54,28 +40,27 @@ stm.component({
         }, null];
     },
     update(state: State, msg: Msg) {
-        if (msg instanceof AttributeChange) {
-            if ((propTypes as any)[msg.name] === Boolean) {
-                (state as any)[msg.name] = msg.value && msg.value !== 'false';
-            } else if ((propTypes as any)[msg.name]) {
-                (state as any)[msg.name] = (msg.value as any).toString();
-            }
-            return [state, null];
-        }
-
-        if (msg instanceof Input) {
-            state.value = msg.value;
-            return [state, new CustomEvent('update', {
-                bubbles: true,
-                detail: {
-                    name: state.name,
-                    value: msg.value,
-                    error: msg.validationMessage
-                },
-            })]
-        }
-
-        return [state, null];
+        return match<Msg, [State, stm.Cmd<Msg>]>(msg)
+            .with(['AttributeChange', select('name'), select('value')], ({ name, value }: any) => {
+                if ((propTypes as any)[name] === Boolean) {
+                    (state as any)[name] = value && value !== 'false';
+                } else if ((propTypes as any)[name]) {
+                    (state as any)[name] = (value as any).toString();
+                }
+                return [state, null];
+            })
+            .with(['Input', select('value'), select('validationMessage')], ({ value, validationMessage }) => [
+                { ...state, value },
+                new CustomEvent('update', {
+                    bubbles: true,
+                    detail: {
+                        name: state.name,
+                        value,
+                        error: validationMessage
+                    },
+                })
+            ])
+            .exhaustive();
     },
     view
 });
@@ -91,7 +76,7 @@ function view(state: State): stm.View<Msg> {
                 disabled: state.disabled,
                 value: state.value,
                 ariaLabelledby: state.label,
-                oninput: (event: any) => new Input(event.target.value, event.target.validationMessage)
+                oninput: (event: any) => ['Input', event.target.value, event.target.validationMessage]
             }],
             state.showLabel && ['label', { htmlFor: state.name }, state.label],
         ]]

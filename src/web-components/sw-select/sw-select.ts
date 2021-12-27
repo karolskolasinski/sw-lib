@@ -1,69 +1,22 @@
 import * as stm from '../../utils/state-mgr/state-mgr';
 import { flashMessage } from '../../utils/flash-message/flash-message';
 import { tr } from '../../utils/tr';
+import { match, select, __, when, not } from 'ts-pattern';
 // @ts-ignore
 import style from './sw-select.css';
 
-class AttributeChange {
-    constructor(
-        public name: string,
-        public value: any
-    ) { }
-}
-
-class OpenSelect {
-}
-
-class CloseSelect {
-}
-
-class ToggleSelect {
-}
-
-class KeyboardMove {
-    constructor(
-        public keyCode: string
-    ) { }
-}
-
-class SearchRequest {
-    constructor(
-        public phrase: string
-    ) { }
-}
-
-class DelaySearch {
-    constructor(
-        public phrase: string
-    ) { }
-}
-
-class Pick {
-    constructor(
-        public option: SelectOption
-    ) { }
-}
-
-class SearchSuccess {
-    constructor(
-        public options: SelectOption[]
-    ) { }
-}
-
-class SearchFailure {
-}
-
 type Msg
-    = AttributeChange
-    | OpenSelect
-    | CloseSelect
-    | ToggleSelect
-    | KeyboardMove
-    | SearchRequest
-    | DelaySearch
-    | SearchSuccess
-    | SearchFailure
-    | Pick;
+    = [type: 'AttributeChange', name: string, value: string]
+    | 'OpenSelect'
+    | 'CloseSelect'
+    | 'ToggleSelect'
+    | [type: 'Pick', option: SelectOption]
+    | [type: 'KeyboadMove', keyCode: string]
+    | [type: 'SearchRequest', phrase: string]
+    | [type: 'DelaySearch', phrase: string]
+    | [type: 'SearchSuccess', options: SelectOption[]]
+    | 'SearchFailure'
+
 
 interface SelectOption {
     label: string;
@@ -85,13 +38,6 @@ interface State {
     displayedOptions: SelectOption[];
 }
 
-function getParents(el: HTMLElement | null): HTMLElement[] {
-    if (!el) {
-        return [];
-    }
-    return [el, ...getParents(el.parentElement)];
-}
-
 stm.component({
     tagName: 'sw-select',
     propTypes: {
@@ -99,128 +45,113 @@ stm.component({
     },
     shadow: true,
     debug: false,
-    init,
-    update,
     view,
-    AttributeChange,
+    attributeChangeFactory: (name, value): Msg => ['AttributeChange', name, value],
     willMount(cmp: any, dispatch: stm.Dispatch<Msg>) {
         cmp.closeSelect = (event: MouseEvent) => {
             if (event.target !== cmp.ref.getRootNode().host) {
-                dispatch(new CloseSelect());
+                dispatch('CloseSelect');
             }
         };
         document.addEventListener('click', cmp.closeSelect);
     },
     willUnmount(cmp: any) {
         document.removeEventListener('click', cmp.closeSelect);
+    },
+    init() {
+        return [{
+            minimumCharLengthTrigger: 2,
+            isLoading: false,
+            displayedOptions: [],
+            phrase: ''
+        }, null];
+    },
+    update(state: State, msg: Msg) {
+        return match<[State, Msg], [State, stm.Cmd<Msg>]>([state, msg])
+            .with([__, ['AttributeChange', 'config', select()]], (config: any) => [
+                {
+                    ...config,
+                    label: config.label || config.name,
+                    isDropdownVisible: false,
+                    shouldDisplayAbove: false,
+                    displayedOptions: config.options ?? [],
+                    showLabel: config.showLabel && config.showLabel !== 'false'
+                },
+                null
+            ])
+            .with([__, ['AttributeChange', __, __]], () => [state, null])
+            .with([{ isDropdownVisible: true }, 'OpenSelect'], () => [state, null])
+            .with([__, 'OpenSelect'], () => [
+                { ...state, isDropdownVisible: true, isLoading: false },
+                stm.focus('.input')
+            ])
+            .with([__, ['KeyboadMove', 'Escape']], () => [{ ...state, isDropdownVisible: false }, null])
+            .with([__, ['KeyboadMove', __]], () => [state, null])
+            .with([__, 'CloseSelect'], () => [
+                { ...state, isDropdownVisible: false, isLoading: false },
+                null
+            ])
+
+            .with([{ isDropdownVisible: true }, 'ToggleSelect'], () => [
+                { ...state, isDropdownVisible: false, isLoading: false },
+                null
+            ])
+            .with([__, 'ToggleSelect'], () => [
+                { ...state, isDropdownVisible: true, isLoading: false },
+                stm.focus('.input')
+            ])
+            .with([__, ['Pick', select()]], (option) => [
+                { ...state, isLoading: false, isDropdownVisible: false, selected: option },
+                new CustomEvent('update', {
+                    detail: {
+                        name: state.name,
+                        value: option
+                    },
+                    bubbles: true,
+                })
+            ])
+            .with([__, ['SearchRequest', select()]], (phrase) => {
+                if (state.minimumCharLengthTrigger > phrase.length) {
+                    return [{ ...state, phrase }, null];
+                }
+                return [
+                    {
+                        ...state,
+                        phrase,
+                        displayedOptions: state.options?.filter(o => o.label.includes(phrase)) ?? []
+                    }, null
+                ];
+            })
+
+            .with([__, ['SearchSuccess', select()]], (options) => [
+                { ...state, isLoading: true, displayedOptions: options },
+                null
+            ])
+            .with([__, 'SearchFailure'], () => {
+                flashMessage(tr('select.searchFailed'), 'error');
+                return [{ ...state, isLoading: false, }, null];
+            })
+
+            .with([{ sourceFn: not(__.nullish) }, ['SearchRequest', select()]], (phrase) => {
+                if (state.minimumCharLengthTrigger > phrase.length) {
+                    return [{ ...state, phrase }, null];
+                }
+                return [{ ...state, phrase }, delaySearch(phrase)];
+            })
+            .with([__, ['DelaySearch', select()]], (phrase) => {
+                if (state.phrase === phrase) {
+                    return [{ ...state, isLoading: true }, search(state)]
+                } else {
+                    return [state, null]
+                }
+            })
+            .exhaustive();
     }
 });
 
-function init(): [State, null] {
-    return [{
-        minimumCharLengthTrigger: 2,
-        isLoading: false,
-        displayedOptions: [],
-        phrase: ''
-    }, null];
-}
 
-function update(state: State, msg: Msg): [State, stm.Cmd<Msg>] | undefined {
-    if (msg instanceof AttributeChange) {
-        if (msg.name === 'config' && msg.value instanceof Object) {
-            return [{
-                ...msg.value,
-                label: msg.value.label || msg.value.name,
-                isDropdownVisible: false,
-                shouldDisplayAbove: false,
-                displayedOptions: msg.value.options ?? [],
-                showLabel: msg.value.showLabel && msg.value.showLabel !== 'false'
-            }, null];
-        } else {
-            return [state, null];
-        }
-    }
-
-    if (msg instanceof OpenSelect) {
-        if (state.isDropdownVisible) {
-            return [state, null];
-        }
-        return [{ ...state, isDropdownVisible: true, isLoading: false }, new stm.Focus('.input')];
-    }
-
-    if (msg instanceof CloseSelect) {
-        return [{ ...state, isDropdownVisible: false, isLoading: false }, null];
-    }
-
-    if (msg instanceof ToggleSelect) {
-        if (state.isDropdownVisible) {
-            return [{ ...state, isDropdownVisible: false, isLoading: false }, null];
-        } else {
-            return [{ ...state, isDropdownVisible: true, isLoading: false }, new stm.Focus('.input')];
-        }
-    }
-
-    if (msg instanceof KeyboardMove) {
-        if (msg.keyCode === 'Escape') {
-            return [{ ...state, isDropdownVisible: false }, null];
-        }
-        return [state, null];
-    }
-
-    if (msg instanceof SearchRequest) {
-        if (msg.phrase.length >= state.minimumCharLengthTrigger) {
-            if (state.sourceFn) {
-                return [{ ...state, phrase: msg.phrase }, delaySearch(msg.phrase)];
-            } else {
-                return [{
-                    ...state,
-                    phrase: msg.phrase,
-                    displayedOptions: (state.options ?? []).filter(option => option.label.includes(msg.phrase))
-                }, null];
-            }
-        } else {
-            return [{
-                ...state,
-                displayedOptions: state.options || [],
-                phrase: msg.phrase
-            }, null];
-        }
-    }
-
-    if (msg instanceof DelaySearch) {
-        if (msg.phrase === state.phrase) {
-            return [{ ...state, isLoading: true }, search(state)];
-        } else {
-            return [state, null];
-        }
-    }
-
-    if (msg instanceof SearchFailure) {
-        0;
-        flashMessage(tr('select.searchFailed'), 'error');
-        return [{ ...state, isLoading: false, }, null];
-    }
-
-    if (msg instanceof SearchSuccess) {
-        return [{ ...state, isLoading: true, displayedOptions: msg.options }, null];
-    }
-
-    if (msg instanceof Pick) {
-        return [
-            { ...state, isLoading: false, isDropdownVisible: false, selected: msg.option },
-            new CustomEvent('update', {
-                detail: {
-                    name: state.name,
-                    value: msg.option
-                },
-                bubbles: true,
-            })
-        ];
-    }
-}
-
-function delaySearch(phrase: string) {
-    return new Promise(r => setTimeout(() => r(new DelaySearch(phrase)), 300));
+function delaySearch(phrase: string): Promise<Msg> {
+    return new Promise(r => setTimeout(() => r(['DelaySearch', phrase])));
 }
 
 async function search(state: State): Promise<Msg> {
@@ -228,20 +159,22 @@ async function search(state: State): Promise<Msg> {
 
     try {
         const options = await sourceFn(state.phrase);
-        return new SearchSuccess(options);
+        return ['SearchSuccess', options]
     } catch (err) {
         console.error('search failed', err);
-        return new SearchFailure();
+        return 'SearchFailure';
     }
 }
 
 function view(state: State): stm.View<Msg> {
-    const title = state.selected?.label ? trMaybe(state.selected?.label, state.selected) : tr('select.prompt');
+    const title = state.selected?.label
+        ? trMaybe(state.selected?.label, state.selected)
+        : tr('select.prompt');
 
     return ['.sw-select', [
         ['style', style],
         ['span.button', {
-            onclick: new ToggleSelect(),
+            onclick: 'ToggleSelect',
             title
         }, title],
         ['.dropdown', {
@@ -254,18 +187,18 @@ function view(state: State): stm.View<Msg> {
                     type: 'text',
                     value: state.phrase,
                     placeholder: tr('select.placeholder'),
-                    onkeyup: (event: KeyboardEvent) => new KeyboardMove(event.code),
-                    oninput: (event: Event) => new SearchRequest((event as any).target.value)
+                    onkeyup: (event: KeyboardEvent) => ['KeyboadMove', event.code],
+                    oninput: (event: any) => ['SearchRequest', event?.target?.value]
                 }],
                 ['.results',
                     (state.displayedOptions ?? []).map(option => ['span.option', {
-                        onclick: new Pick(option)
+                        onclick: ['Pick', option]
                     }, trMaybe(option.label, option)])
                 ]
             ]
 
         ],
-        state.showLabel && ['label', { htmlFor: state.name }, state.label]
+        (state as any).showLabel && ['label', { htmlFor: state.name }, state.label]
     ]];
 }
 

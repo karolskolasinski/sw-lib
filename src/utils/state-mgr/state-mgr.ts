@@ -6,17 +6,18 @@ import { tr } from '../tr';
 
 export * from './initialization-state';
 
-export type Cmd<Msg> = Promise<Msg> | Msg | null | Event;
+export type Cmd<Msg>
+    = Promise<Msg>
+    | Msg
+    | null
+    | Event
+    | [type: 'Focus', selector: string]
 
 export type Props = Record<string, unknown>;
 
 export type Options<Msg> = Record<string, string | boolean | number | Record<string, any> | Msg | ((...args: any[]) => Msg)>;
 
 export type Dispatch<Msg> = (msg: Msg) => void;
-
-interface AttributeChange<Msg> {
-    new(name: string, value: unknown): Msg
-}
 
 export type View<Msg>
     = [string, Options<Msg>, View<Msg>[] | string]
@@ -32,17 +33,15 @@ type BasicTypeConstructor
     | (new () => Array<any>)
     | (new () => Boolean);
 
-export class Focus {
-    constructor(
-        public selector: string
-    ) { }
+export function focus(selector: string): [type: 'Focus', selector: string] {
+    return ['Focus', selector];
 }
 
 export function component<State, Msg>({
     init,
     update,
     view,
-    AttributeChange,
+    attributeChangeFactory,
     debug = (window as any).debug,
     tagName,
     propTypes = {},
@@ -53,7 +52,7 @@ export function component<State, Msg>({
     init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
     update: (state: State, msg: Msg) => [State, Cmd<Msg>],
     view: (state: State) => View<Msg>,
-    AttributeChange?: AttributeChange<Msg>,
+    attributeChangeFactory?: (name: string, value: string) => Msg,
     debug?: boolean,
     tagName: string,
     propTypes?: Record<string, BasicTypeConstructor>,
@@ -102,10 +101,10 @@ export function component<State, Msg>({
     }
 
     function runNext(cmp: Cmp, next: any) {
-        if (next instanceof Focus) {
+        if (next && next[0] === 'Focus') {
             function tryFocus(tries: number) {
                 requestAnimationFrame(() => {
-                    const node = cmp.ref.querySelector(next.selector);
+                    const node = cmp.ref.querySelector(next[1]);
                     if (node) {
                         node.focus();
                     } else if (tries > 0) {
@@ -167,7 +166,7 @@ export function component<State, Msg>({
         }
 
         shouldComponentUpdate(nextProps: any): any {
-            if (!AttributeChange) {
+            if (!attributeChangeFactory) {
                 return true;
             }
             const allPropNames = _.uniq(Object.keys(this.realProps).concat(Object.keys(nextProps)).map(toCamelCase));
@@ -176,17 +175,17 @@ export function component<State, Msg>({
 
                 if (!isEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
                     this.realProps[propName] = nextProps[propName];
-                    runUpdate(this, new AttributeChange(propName, nextProps[propName]));
+                    runUpdate(this, attributeChangeFactory(propName, nextProps[propName]));
                 }
             });
         }
 
         render(props: any) {
-            if (!this.initialRenderComplete && AttributeChange) {
+            if (!this.initialRenderComplete && attributeChangeFactory) {
                 this.initialRenderComplete = true;
                 Object.keys(props).forEach(propName => {
                     this.realProps[toCamelCase(propName)] = props[propName];
-                    runUpdate(this, new AttributeChange(toCamelCase(propName), props[propName]));
+                    runUpdate(this, attributeChangeFactory(toCamelCase(propName), props[propName]));
                 });
             }
             const state = getState(this);
