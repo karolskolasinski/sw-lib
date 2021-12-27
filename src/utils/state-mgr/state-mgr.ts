@@ -1,4 +1,4 @@
-import { Component, h } from 'preact';
+import { Component, h, VNode, isValidElement } from 'preact';
 import registerCustomElement from 'preact-custom-element';
 import _ from 'lodash';
 import { toKebabCase, toCamelCase } from '../strings';
@@ -83,7 +83,6 @@ export function component<State, Msg>({
     }
 
     function runUpdate(cmp: Cmp, msg: Msg) {
-        // TODO, to optimize remove requestAnimationFrame
         requestAnimationFrame(() => {
             log('-------NEW MSG', msg);
             log('before update', getState(cmp));
@@ -172,7 +171,14 @@ export function component<State, Msg>({
             const allPropNames = _.uniq(Object.keys(this.realProps).concat(Object.keys(nextProps)).map(toCamelCase));
 
             allPropNames.forEach((propName) => {
-
+                if (propName === 'children') {
+                    if (this.realProps['children'] !== nextProps['children']) {
+                        this.realProps[propName] = nextProps[propName];
+                        runUpdate(this, attributeChangeFactory(propName, nextProps[propName]));
+                    }
+                    return;
+                }
+                
                 if (!isEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
                     this.realProps[propName] = nextProps[propName];
                     runUpdate(this, attributeChangeFactory(propName, nextProps[propName]));
@@ -189,8 +195,11 @@ export function component<State, Msg>({
                 });
             }
             const state = getState(this);
-            const arr = view(state);
-            const rendered = toVNode(arr, dispatcher.bind(null, this));
+            let vnode:any = view(state);
+            if (!isValidElement(vnode)) {
+                vnode = toVNode(vnode, dispatcher);
+            }
+            const rendered = initVNode(vnode as any, dispatcher.bind(null, this));
             rendered.ref = ref => this.ref = ref;
             return rendered;
         }
@@ -226,14 +235,28 @@ function getOrCall(item: any, ...args: any[]) {
     }
 }
 
-function toVNode(item: any, dispatcher: any) {
-    let mapFunc: any;
-
-    if (item.mapFunc && item.view) {
-        mapFunc = item.mapFunc;
-        item = item.view;
+function initVNode(vnode:VNode, dispatcher:any):VNode {
+    if (typeof vnode === 'string') {
+        return vnode;
     }
+    Object.keys(vnode.props).forEach(key => {
+        if (key.slice(0, 2) === 'on') {
+            (vnode as any).props[key] = dispatcher((vnode as any).props[key]);
+        }
+    });
 
+    if (Array.isArray(vnode.props.children)) {
+        vnode.props.children.forEach(child => {
+            initVNode(child as VNode, dispatcher);
+        });
+    } else {
+        initVNode(vnode.props.children as VNode, dispatcher);
+    }
+    
+    return vnode;
+}
+
+function toVNode(item: any, dispatcher: any) {
     const el = item[0];
     let opts = item[1];
     let content = item[2];
@@ -260,56 +283,20 @@ function toVNode(item: any, dispatcher: any) {
         opts.className = allClasses.join(' ');
     }
 
-    const optsParsed: Record<string, any> = {};
-    Object.keys(opts ?? {}).forEach(prop => {
-        const propKebab = prop === 'className' ? 'className' : toKebabCase(prop);
-        if (prop.slice(0, 2) === 'on') {
-            if (mapFunc) {
-                const originalPropValue = opts[prop];
-                optsParsed[propKebab] = dispatcher((event: Event) => {
-                    const msg = getOrCall(originalPropValue, event);
-                    return mapFunc(msg);
-                });
-            } else {
-                optsParsed[propKebab] = dispatcher(opts[prop]);
-            }
-        } else {
-            optsParsed[propKebab] = opts[prop];
-        }
-    });
-
     if (Array.isArray(content)) {
         content = content
             .filter(item => item)
             .map(child => {
-                if (mapFunc) {
-                    child = { mapFunc, view: child };
-                }
-                if (Array.isArray(child) || (child.mapFunc && child.view)) {
+                if (Array.isArray(child)) {
                     return toVNode(child, dispatcher);
                 }
                 // it's already a VNode
-                return child;
+                return initVNode(child, dispatcher);
             });
     }
 
-    return h(nodeName, optsParsed, content);
+    return h(nodeName, opts, content);
 }
-
-export function mapMsg<Msg>(mapFunc: any, view: View<Msg>) {
-    return {
-        mapFunc,
-        view
-    };
-}
-
-export function unmapMsg(msgPromise: any, Wrapper: any) {
-    if (!msgPromise) {
-        return null;
-    }
-    return Promise.resolve(msgPromise).then((subMsg) => new Wrapper(subMsg));
-}
-
 
 function parseElement(el: string) {
     const nodeName = el.split('.')[0] || 'div';

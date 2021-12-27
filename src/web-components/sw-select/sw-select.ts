@@ -1,7 +1,7 @@
 import * as stm from '../../utils/state-mgr/state-mgr';
 import { flashMessage } from '../../utils/flash-message/flash-message';
 import { tr } from '../../utils/tr';
-import { match, select, __, when, not } from 'ts-pattern';
+import { match, select, __, not } from 'ts-pattern';
 // @ts-ignore
 import style from './sw-select.css';
 
@@ -80,7 +80,6 @@ stm.component({
                 null
             ])
             .with([__, ['AttributeChange', __, __]], () => [state, null])
-            .with([{ isDropdownVisible: true }, 'OpenSelect'], () => [state, null])
             .with([__, 'OpenSelect'], () => [
                 { ...state, isDropdownVisible: true, isLoading: false },
                 stm.focus('.input')
@@ -91,13 +90,8 @@ stm.component({
                 { ...state, isDropdownVisible: false, isLoading: false },
                 null
             ])
-
-            .with([{ isDropdownVisible: true }, 'ToggleSelect'], () => [
-                { ...state, isDropdownVisible: false, isLoading: false },
-                null
-            ])
             .with([__, 'ToggleSelect'], () => [
-                { ...state, isDropdownVisible: true, isLoading: false },
+                { ...state, isDropdownVisible: !state.isDropdownVisible, isLoading: false },
                 stm.focus('.input')
             ])
             .with([__, ['Pick', select()]], (option) => [
@@ -122,7 +116,6 @@ stm.component({
                     }, null
                 ];
             })
-
             .with([__, ['SearchSuccess', select()]], (options) => [
                 { ...state, isLoading: true, displayedOptions: options },
                 null

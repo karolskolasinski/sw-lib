@@ -18,8 +18,8 @@
     border-radius: var(--border-radius, 0);
     white-space: nowrap;
     padding: var(--padding, 0);
-    text-decoration: none;
-    display: block;
+    text-decoration: none; 
+    display: inline-block;
     font-weight: var(--font-weight);
 }
 

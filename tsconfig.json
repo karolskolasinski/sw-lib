@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "declaration": true,
+        "jsx": "preserve",
         "importHelpers": true,
         "module": "commonjs",
         "outDir": "lib",

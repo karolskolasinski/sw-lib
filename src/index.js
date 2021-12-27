@@ -1,5 +1,4 @@
 import register from 'preact-custom-element';
-import SwButton from './web-components/sw-button/sw-button.jsx';
 import SwDatetimeInput from './web-components/sw-datetime-input/sw-datetime-input.jsx';
 import SwLoader from './web-components/sw-loader/sw-loader.jsx';
 import './web-components/sw-pagination/sw-pagination.ts';
@@ -7,7 +6,7 @@ import './web-components/sw-select/sw-select.ts';
 import './web-components/sw-text-input/sw-text-input.ts';
 import './web-components/sw-number-input/sw-number-input.ts';
 import './web-components/sw-map/sw-map.js';
-
+import './web-components/sw-button/sw-button.jsx';
 
 import * as routerModule from './utils/router.ts';
 export var router = routerModule.router;
@@ -24,12 +23,6 @@ export * as strings from './utils/strings';
 const areElementsRegistered = !!customElements.get('sw-button');
 
 if (!areElementsRegistered) {
-    register(
-        SwButton,
-        'sw-button',
-        ['icon', 'disabled', 'href'],
-        { shadow: true },
-    );
     register(
         SwDatetimeInput,
         'sw-datetime-input',

@@ -123,7 +123,7 @@ export namespace stm {
         init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
         update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
         view: (state: State) => View<Msg>,
-        attributeChangeFactory: (name: string, value: string) => Msg,
+        attributeChangeFactory?: (name: string, value: string) => Msg,
         debug?: boolean,
         tagName: string,
         propTypes?: Record<string, BasicTypeConstructor>,
@@ -131,10 +131,6 @@ export namespace stm {
         willMount?: (cmp: any, dispatch: Dispatch<Msg>) => void,
         willUnmount?: (cmp: any, dispatch: Dispatch<Msg>) => void,
     }): void;
-
-    export function mapMsg<T, P>(mapFunc: (msg: T) => P, view: View<T>): View<P>;
-
-    export function unmapMsg<T, W>(msgPromise: Promise<T> | T | null, Wrapper: W): Promise<W>;
 }
 
 export interface ModalClose {
