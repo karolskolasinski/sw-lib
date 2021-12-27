@@ -81,7 +81,12 @@ export namespace stm {
 
     export type Props = Record<string, unknown>;
 
-    export type Options<Msg> = Record<string, any | Msg | ((...args: any[]) => Msg)>;
+    export type Handler<Msg> = Msg | ((event: CustomEvent & Event) => Msg);
+
+    export interface Options<Msg> {
+        [on: `on${string}`]: Handler<Msg>;
+        [attr: string]: unknown
+    }
 
     export type Dispatch<Msg> = (msg: Msg) => void;
 
@@ -97,7 +102,7 @@ export namespace stm {
         = [string, Options<Msg>, View<Msg>[] | string]
         | [string, View<Msg>[] | Options<Msg> | string]
         | [string]
-        | { mapFunc: any, view: View<Msg> }
+        | VNode<Options<Msg>>;
 
     type BasicTypeConstructor
         = (new () => String)

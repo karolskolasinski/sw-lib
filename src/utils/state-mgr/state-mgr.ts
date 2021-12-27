@@ -15,7 +15,12 @@ export type Cmd<Msg>
 
 export type Props = Record<string, unknown>;
 
-export type Options<Msg> = Record<string, string | boolean | number | Record<string, any> | Msg | ((...args: any[]) => Msg)>;
+export type Handler<Msg> = Msg | ((event: Event) => Msg);
+
+export interface Options<Msg> {
+    [on: `on${string}`]: Handler<Msg>;
+    [attr: string]: unknown
+}
 
 export type Dispatch<Msg> = (msg: Msg) => void;
 
@@ -23,8 +28,7 @@ export type View<Msg>
     = [string, Options<Msg>, View<Msg>[] | string]
     | [string, View<Msg>[] | Options<Msg> | string]
     | [string]
-    | boolean
-    | { mapFunc: any, view: View<Msg> }
+    | VNode<Options<Msg>>;
 
 type BasicTypeConstructor
     = (new () => String)
@@ -178,7 +182,7 @@ export function component<State, Msg>({
                     }
                     return;
                 }
-                
+
                 if (!isEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
                     this.realProps[propName] = nextProps[propName];
                     runUpdate(this, attributeChangeFactory(propName, nextProps[propName]));
@@ -195,11 +199,11 @@ export function component<State, Msg>({
                 });
             }
             const state = getState(this);
-            let vnode:any = view(state);
+            let vnode: any = view(state);
             if (!isValidElement(vnode)) {
                 vnode = toVNode(vnode, dispatcher);
             }
-            const rendered = initVNode(vnode as any, dispatcher.bind(null, this));
+            const rendered = initVNode(vnode, dispatcher.bind(null, this));
             rendered.ref = ref => this.ref = ref;
             return rendered;
         }
@@ -235,7 +239,7 @@ function getOrCall(item: any, ...args: any[]) {
     }
 }
 
-function initVNode(vnode:VNode, dispatcher:any):VNode {
+function initVNode(vnode: VNode, dispatcher: any): VNode {
     if (typeof vnode === 'string') {
         return vnode;
     }
@@ -252,7 +256,7 @@ function initVNode(vnode:VNode, dispatcher:any):VNode {
     } else {
         initVNode(vnode.props.children as VNode, dispatcher);
     }
-    
+
     return vnode;
 }
 
