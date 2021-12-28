@@ -1,4 +1,4 @@
-import { Component, h, VNode, isValidElement, options } from 'preact';
+import { Component, h, VNode, isValidElement } from 'preact';
 import registerCustomElement from 'preact-custom-element';
 import _ from 'lodash';
 import { toKebabCase, toCamelCase } from '../strings';
@@ -19,7 +19,8 @@ export type Handler<Msg> = Msg | ((event: Event) => Msg);
 
 export interface Options<Msg> {
     [on: `on${string}`]: Handler<Msg>;
-    [attr: string]: unknown
+
+    [attr: string]: unknown;
 }
 
 export type Dispatch<Msg> = (msg: Msg) => void;
@@ -28,7 +29,7 @@ export type View<Msg>
     = [string, Options<Msg>, View<Msg>[] | string]
     | [string, View<Msg>[] | Options<Msg> | string]
     | [string]
-    | boolean
+    | false
     | VNode<Options<Msg>>;
 
 type BasicTypeConstructor
@@ -43,17 +44,17 @@ export function focus(selector: string): [type: 'Focus', selector: string] {
 }
 
 export function component<State, Msg>({
-    init,
-    update,
-    view,
-    attributeChangeFactory,
-    debug = (window as any).debug,
-    tagName,
-    propTypes = {},
-    shadow = false,
-    willMount,
-    willUnmount
-}: {
+                                          init,
+                                          update,
+                                          view,
+                                          attributeChangeFactory,
+                                          debug = (window as any).debug,
+                                          tagName,
+                                          propTypes = {},
+                                          shadow = false,
+                                          willMount,
+                                          willUnmount
+                                      }: {
     init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
     update: (state: State, msg: Msg) => [State, Cmd<Msg>],
     view: (state: State) => View<Msg>,
@@ -71,10 +72,10 @@ export function component<State, Msg>({
         ? (msg: string, ...args: any[]) => {
             console.log('stm:' + tagName + ': ' + msg, ...args);
         }
-        : () => { }
+        : () => { };
 
     if (alreadyRegistered) {
-        log(`custom element "${tagName}" is already registerd`);
+        log(`custom element "${tagName}" is already registered`);
         return;
     }
 
@@ -144,7 +145,7 @@ export function component<State, Msg>({
     }
 
     const dispatcher = (cmp: Cmp, msgFactory: any) => {
-        return async function(event: Event) {
+        return async function (event: Event) {
             const msg = getOrCall(msgFactory, event);
             if (msg) {
                 runUpdate(cmp, msg);
@@ -205,7 +206,9 @@ export function component<State, Msg>({
                 vnode = toVNode(vnode, dispatcher);
             }
             const rendered = initVNode(vnode, dispatcher.bind(null, this));
-            rendered.ref = ref => this.ref = ref;
+            if (typeof rendered !== 'string') {
+                rendered.ref = ref => this.ref = ref;
+            }
             return rendered;
         }
 
@@ -240,7 +243,7 @@ function getOrCall(item: any, ...args: any[]) {
     }
 }
 
-function initVNode(vnode: VNode, dispatcher: any): VNode {
+function initVNode(vnode: VNode | string, dispatcher: any): VNode | string {
     if (typeof vnode === 'string') {
         return vnode;
     }
@@ -347,6 +350,7 @@ function isEqual(a: any, b: any): boolean {
 
     return _.isEqual(a, b);
 }
+
 function getType(x: any) {
     if (['string', 'number', 'boolean', 'undefined', 'function'].includes(typeof x)) {
         return typeof x;

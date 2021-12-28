@@ -102,7 +102,7 @@ export namespace stm {
         = [string, Options<Msg>, View<Msg>[] | string]
         | [string, View<Msg>[] | Options<Msg> | string]
         | [string]
-        | boolean
+        | false
         | VNode<Options<Msg>>;
 
     type BasicTypeConstructor
