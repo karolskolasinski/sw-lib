@@ -10,7 +10,7 @@ type Msg = [type: 'AttributeChange', name: string, value: string];
 stm.component({
     tagName: 'sw-button',
     shadow: true,
-    debug: true,
+    debug: false,
     attributeChangeFactory: (name: string, value: string): Msg => ['AttributeChange', name, value],
     init() {
         return [{ isDisabled: false, children: '', href: '', msg: '' }, null];
