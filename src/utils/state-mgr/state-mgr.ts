@@ -28,6 +28,7 @@ export type View<Msg>
     = [string, Options<Msg>, View<Msg>[] | string]
     | [string, View<Msg>[] | Options<Msg> | string]
     | [string]
+    | boolean
     | VNode<Options<Msg>>;
 
 type BasicTypeConstructor
