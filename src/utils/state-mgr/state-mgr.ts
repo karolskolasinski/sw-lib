@@ -1,4 +1,4 @@
-import { Component, h, VNode, isValidElement } from 'preact';
+import { Component, h, VNode, isValidElement, options } from 'preact';
 import registerCustomElement from 'preact-custom-element';
 import _ from 'lodash';
 import { toKebabCase, toCamelCase } from '../strings';
@@ -254,7 +254,7 @@ function initVNode(vnode: VNode, dispatcher: any): VNode {
         vnode.props.children.forEach(child => {
             initVNode(child as VNode, dispatcher);
         });
-    } else {
+    } else if (vnode.props.children) {
         initVNode(vnode.props.children as VNode, dispatcher);
     }
 
