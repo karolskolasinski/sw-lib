@@ -19,6 +19,7 @@ export * from './utils/modal/modal.jsx';
 export * as stm from './utils/state-mgr/state-mgr';
 export * as dates from './utils/dates';
 export * as strings from './utils/strings';
+export * from './utils/v.ts';
 
 const areElementsRegistered = !!customElements.get('sw-button');
 

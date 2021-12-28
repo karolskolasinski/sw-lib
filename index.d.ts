@@ -70,6 +70,34 @@ export type RouteParams = Record<string, string | number | boolean>;
 
 export var router: Router;
 
+export type Handler<Msg> = Msg | ((event: CustomEvent & Event) => Msg);
+
+export interface Options<Msg> {
+    [on: `on${string}`]: Handler<Msg>;
+    [attr: string]: unknown
+}
+
+export type ContentChild<Msg> = v.View<Msg> | string | false | ContentChild<Msg>[];
+
+export interface V {
+    <Msg>(
+        tagName: string,
+        opts?: Options<Msg> | ContentChild<Msg>,
+        ...content: ContentChild<Msg>[]
+    ): v.View<Msg>
+
+    [key: string]: <Msg>(
+        opts?: Options<Msg> | ContentChild<Msg>,
+        ...content: ContentChild<Msg>[]
+    ) => v.View<Msg>;
+}
+
+export var v: V;
+
+export namespace v {
+    export type View<Msg> = VNode<Options<Msg>>;
+}
+
 export namespace stm {
 
     export type Cmd<Msg>
@@ -77,16 +105,9 @@ export namespace stm {
         | Msg
         | null
         | Event
-        | [type: 'Focus', selector: string]
+        | ReturnType<typeof focus>
 
     export type Props = Record<string, unknown>;
-
-    export type Handler<Msg> = Msg | ((event: CustomEvent & Event) => Msg);
-
-    export interface Options<Msg> {
-        [on: `on${string}`]: Handler<Msg>;
-        [attr: string]: unknown
-    }
 
     export type Dispatch<Msg> = (msg: Msg) => void;
 
@@ -102,6 +123,7 @@ export namespace stm {
         = [string, Options<Msg>, View<Msg>[] | string]
         | [string, View<Msg>[] | Options<Msg> | string]
         | [string]
+        | string
         | boolean
         | VNode<Options<Msg>>;
 
