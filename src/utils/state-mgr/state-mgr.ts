@@ -30,6 +30,7 @@ export type View<Msg>
     | [string, View<Msg>[] | Options<Msg> | string]
     | [string]
     | false
+    | string
     | VNode<Options<Msg>>;
 
 type BasicTypeConstructor
@@ -44,17 +45,17 @@ export function focus(selector: string): [type: 'Focus', selector: string] {
 }
 
 export function component<State, Msg>({
-                                          init,
-                                          update,
-                                          view,
-                                          attributeChangeFactory,
-                                          debug = (window as any).debug,
-                                          tagName,
-                                          propTypes = {},
-                                          shadow = false,
-                                          willMount,
-                                          willUnmount
-                                      }: {
+    init,
+    update,
+    view,
+    attributeChangeFactory,
+    debug = (window as any).debug,
+    tagName,
+    propTypes = {},
+    shadow = false,
+    willMount,
+    willUnmount
+}: {
     init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
     update: (state: State, msg: Msg) => [State, Cmd<Msg>],
     view: (state: State) => View<Msg>,
@@ -145,7 +146,7 @@ export function component<State, Msg>({
     }
 
     const dispatcher = (cmp: Cmp, msgFactory: any) => {
-        return async function (event: Event) {
+        return async function(event: Event) {
             const msg = getOrCall(msgFactory, event);
             if (msg) {
                 runUpdate(cmp, msg);
