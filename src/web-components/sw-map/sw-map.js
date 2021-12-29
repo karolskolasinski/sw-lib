@@ -1,3 +1,4 @@
+/* global H */
 import makeLog from '../../utils/make-log';
 import { tr } from '../../utils/tr';
 
@@ -27,17 +28,9 @@ async function ensureJsIsLoaded() {
     }
 }
 
-function waitForAttributes(el, attributes, fnc) {
-    const allAttributesReady = attributes.every(attr => el.myAttrs[attr]);
-
-    if (allAttributesReady) {
-        fnc();
-    }
-}
-
 class SwMap extends HTMLElement {
     static get observedAttributes() {
-        return ['api-key', 'selectable'];
+        return ['api-key', 'apiKey', 'apikey', 'selectable'];
     }
 
     constructor() {
@@ -59,7 +52,7 @@ class SwMap extends HTMLElement {
 
         this.observer = new MutationObserver(mutationsList => {
             for (const mutation of mutationsList) {
-                if (mutation.type === 'childList') {
+                if (mutation.type === 'childList' && this.map) {
                     this.syncMarkers();
                 }
             }
@@ -90,62 +83,65 @@ class SwMap extends HTMLElement {
             return;
         }
 
-        waitForAttributes(this, ['api-key'], async () => {
-            log('establishing new here connection for key:' + current);
-            await ensureJsIsLoaded();
+        const apiKey = this.myAttrs['api-key'] || this.myAttrs['apiKey'] || this.myAttrs['apikey'];
 
-            this.markersGroup = new H.map.Group();
+        if (!apiKey) {
+            return;
+        }
+        log('establishing new here connection for key:' + current);
+        await ensureJsIsLoaded();
 
-            if (this.mainNode) {
-                this.mainNode.remove();
-                if (this.map) {
-                    this.map.removeEventListener('tap', this.onMapClick);
-                    this.markersGroup.removeEventListener('tap', this.onMarkerClick);
-                }
+        this.markersGroup = new H.map.Group();
+
+        if (this.mainNode) {
+            this.mainNode.remove();
+            if (this.map) {
+                this.map.removeEventListener('tap', this.onMapClick);
+                this.markersGroup.removeEventListener('tap', this.onMarkerClick);
             }
+        }
 
-            this.mainNode = createNode('<div class="map-container"></div>');
-            this.mainNode.style.width = this.clientWidth + 'px';
-            this.mainNode.style.height = this.clientHeight + 'px';
-            this.shadowRoot.appendChild(this.mainNode);
+        this.mainNode = createNode('<div class="map-container"></div>');
+        this.mainNode.style.width = this.clientWidth + 'px';
+        this.mainNode.style.height = this.clientHeight + 'px';
+        this.shadowRoot.appendChild(this.mainNode);
 
-            this.platform = new H.service.Platform({
-                apikey: this.getAttribute('api-key')
-            });
-
-            log('drawing a map');
-            const defaultLayers = this.platform.createDefaultLayers();
-            this.map = new H.Map(
-                this.mainNode,
-                defaultLayers.vector.normal.map,
-                {
-                    zoom: 6,
-                    center: { lat: 52, lng: 19 }
-                }
-            );
-
-            this.map.addObject(this.markersGroup);
-
-            this.ui = H.ui.UI.createDefault(this.map, defaultLayers, tr.getLang() + '-' + tr.getLocale());
-            this.ui.removeControl('mapsettings');
-
-            this.syncMarkers();
-
-            var mapEvents = new H.mapevents.MapEvents(this.map);
-            new H.mapevents.Behavior(mapEvents);
-
-            this.map.addEventListener('tap', this.onMapClick);
-            this.markersGroup.addEventListener('tap', this.onMarkerClick);
-
-            if (this.getAttribute('selectable') !== null) {
-                const split = (this.getAttribute('selectable') || '').split('x');
-                if (split[0] && split[1]) {
-                    const coords = { lat: split[0], lng: split[1] };
-                    this.setLocation(coords);
-                    this.map.setCenter(coords);
-                }
-            }
+        this.platform = new H.service.Platform({
+            apikey: apiKey
         });
+
+        log('drawing a map');
+        const defaultLayers = this.platform.createDefaultLayers();
+        this.map = new H.Map(
+            this.mainNode,
+            defaultLayers.vector.normal.map,
+            {
+                zoom: 6,
+                center: { lat: 52, lng: 19 }
+            }
+        );
+
+        this.map.addObject(this.markersGroup);
+
+        this.ui = H.ui.UI.createDefault(this.map, defaultLayers, tr.getLang() + '-' + tr.getLocale());
+        this.ui.removeControl('mapsettings');
+
+        this.syncMarkers();
+
+        var mapEvents = new H.mapevents.MapEvents(this.map);
+        new H.mapevents.Behavior(mapEvents);
+
+        this.map.addEventListener('tap', this.onMapClick);
+        this.markersGroup.addEventListener('tap', this.onMarkerClick);
+
+        if (this.getAttribute('selectable') !== null) {
+            const split = (this.getAttribute('selectable') || '').split('x');
+            if (split[0] && split[1]) {
+                const coords = { lat: split[0], lng: split[1] };
+                this.setLocation(coords);
+                this.map.setCenter(coords);
+            }
+        }
     }
 
     onMapClick(event) {
