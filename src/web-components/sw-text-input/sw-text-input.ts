@@ -1,5 +1,6 @@
 import * as stm from '../../utils/state-mgr/state-mgr';
 import { match, select, __ } from 'ts-pattern';
+import { v } from '../../utils/v';
 // @ts-ignore
 import style from '../common/sw-input/sw-input.style.css'
 
@@ -65,20 +66,20 @@ stm.component({
     view
 });
 
-function view(state: State): stm.View<Msg> {
-    return ['.sw-input.sw-text-input', [
-        ['style', style],
-        ['.input-wrapper', [
-            ['input', {
+function view(state: State) {
+    return v<Msg>('.sw-input.sw-text-input',
+        v.style(style),
+        v('.input-wrapper',
+            v.input({
                 type: 'text',
                 required: state.required,
                 placeholder: ' ',
                 disabled: state.disabled,
                 value: state.value,
                 ariaLabelledby: state.label,
-                oninput: (event: any) => ['Input', event.target.value, event.target.validationMessage]
-            }],
-            state.showLabel && ['label', { htmlFor: state.name }, state.label],
-        ]]
-    ]];
+                oninput: (event: any): Msg => ['Input', event.target.value, event.target.validationMessage]
+            }),
+            state.showLabel && v.label({ htmlFor: state.name }, state.label),
+        )
+    );
 }

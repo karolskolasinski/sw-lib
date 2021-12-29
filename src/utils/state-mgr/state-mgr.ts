@@ -245,7 +245,7 @@ function getOrCall(item: any, ...args: any[]) {
 }
 
 function initVNode(vnode: VNode | string, dispatcher: any): VNode | string {
-    if (typeof vnode === 'string') {
+    if (typeof vnode === 'string' || typeof vnode === 'boolean') {
         return vnode;
     }
     Object.keys(vnode.props).forEach(key => {
