@@ -57,13 +57,13 @@ export var v = new Proxy(view, {
 interface V {
     <Msg>(
         tagName: string,
-        opts?: Options<Msg> | VNode<Options<Msg>>,
-        ...content: VNode<Options<Msg>>[]
+        opts?: Options<Msg> | ContentChild<Msg>,
+        ...content: ContentChild<Msg>[]
     ): VNode<Options<Msg>>
 
     [key: string]: <Msg>(
-        opts?: Options<Msg> | VNode<Options<Msg>>,
-        ...content: VNode<Options<Msg>>[]
+        opts?: Options<Msg> | ContentChild<Msg>,
+        ...content: ContentChild<Msg>[]
     ) => VNode<Options<Msg>>;
 }
 
