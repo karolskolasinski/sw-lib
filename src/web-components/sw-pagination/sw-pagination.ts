@@ -110,7 +110,7 @@ function view(state: State): stm.View<Msg> {
             && pageView(state, state.currentPage - 1, (state.currentPage - 1).toString()),
 
 
-            ['span.current-page', state.currentPage],
+            ['span.current-page', state.currentPage.toString()],
 
             state.currentPage + 1 <= state.numberOfPages
             && pageView(state, state.currentPage + 1, (state.currentPage + 1).toString()),

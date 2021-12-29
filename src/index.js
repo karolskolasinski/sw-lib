@@ -1,6 +1,7 @@
 import register from 'preact-custom-element';
 import SwDatetimeInput from './web-components/sw-datetime-input/sw-datetime-input.jsx';
-import SwLoader from './web-components/sw-loader/sw-loader.jsx';
+
+import './web-components/sw-loader/sw-loader.jsx';
 import './web-components/sw-pagination/sw-pagination.ts';
 import './web-components/sw-select/sw-select.ts';
 import './web-components/sw-text-input/sw-text-input.ts';
@@ -28,12 +29,6 @@ if (!areElementsRegistered) {
         SwDatetimeInput,
         'sw-datetime-input',
         ['name', 'required', 'placeholder', 'disabled', 'value', 'step', 'show-label'],
-        { shadow: true },
-    );
-    register(
-        SwLoader,
-        'sw-loader',
-        [],
         { shadow: true },
     );
 }
