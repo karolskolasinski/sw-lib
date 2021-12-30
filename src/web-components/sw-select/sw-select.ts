@@ -44,7 +44,7 @@ stm.component({
         config: Object
     },
     shadow: true,
-    debug: false,
+    debug: true,
     view,
     attributeChangeFactory: (name, value): Msg => ['AttributeChange', name, value],
     willMount(cmp: any, dispatch: stm.Dispatch<Msg>) {
@@ -104,7 +104,7 @@ stm.component({
                     bubbles: true,
                 })
             ])
-            .with([__, ['SearchRequest', select()]], (phrase) => {
+            .with([{sourceFn: __.nullish}, ['SearchRequest', select()]], (phrase) => {
                 if (state.minimumCharLengthTrigger > phrase.length) {
                     return [{ ...state, phrase }, null];
                 }
@@ -138,7 +138,7 @@ stm.component({
                     return [state, null]
                 }
             })
-            .exhaustive();
+            .run();
     }
 });
 
