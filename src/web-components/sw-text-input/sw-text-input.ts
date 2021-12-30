@@ -2,7 +2,7 @@ import * as stm from '../../utils/state-mgr/state-mgr';
 import { match, select, __ } from 'ts-pattern';
 import { v } from '../../utils/v';
 // @ts-ignore
-import style from '../common/sw-input/sw-input.style.css'
+import style from '../common/sw-input/sw-input.style.css';
 
 interface State {
     disabled: boolean;
@@ -11,7 +11,9 @@ interface State {
     value: string;
     name: string;
     label: string;
+    type: string;
 }
+
 type Msg
     = [type: 'AttributeChange', name: string, value: any]
     | [type: 'Input', value: string, validationMessage: string]
@@ -22,8 +24,9 @@ const propTypes = {
     label: String,
     disabled: Boolean,
     value: String,
-    showLabel: Boolean
-}
+    showLabel: Boolean,
+    type: String
+};
 
 stm.component({
     tagName: 'sw-text-input',
@@ -37,7 +40,8 @@ stm.component({
             required: false,
             value: '',
             name: '',
-            label: ''
+            label: '',
+            type: ''
         }, null];
     },
     update(state: State, msg: Msg) {
@@ -46,6 +50,9 @@ stm.component({
                 if ((propTypes as any)[name] === Boolean) {
                     (state as any)[name] = value && value !== 'false';
                 } else if ((propTypes as any)[name]) {
+                    value = (name === 'type' && ['text', 'password', 'email', 'color', 'search', 'url', 'tel'].includes(value))
+                        ? value
+                        : 'text';
                     (state as any)[name] = (value as any).toString();
                 }
                 return [state, null];
@@ -71,7 +78,7 @@ function view(state: State) {
         v.style(style),
         v('.input-wrapper',
             v.input({
-                type: 'text',
+                type: state.type,
                 required: state.required,
                 placeholder: ' ',
                 disabled: state.disabled,
