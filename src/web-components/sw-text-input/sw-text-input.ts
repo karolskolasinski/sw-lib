@@ -15,7 +15,7 @@ interface State {
 }
 
 type Msg
-    = [type: 'AttributeChange', name: string, value: any]
+    = [type: 'AttributeChange', name: string, value: string | boolean]
     | [type: 'Input', value: string, validationMessage: string]
 
 const propTypes = {
@@ -46,13 +46,17 @@ stm.component({
     },
     update(state: State, msg: Msg) {
         return match<Msg, [State, stm.Cmd<Msg>]>(msg)
+            .with(['AttributeChange', 'type', select()], (inputValue) => {
+                state.type = ['text', 'password', 'email', 'color', 'search', 'url', 'tel'].includes(inputValue as string)
+                    ? inputValue as string
+                    : 'text';
+
+                return [state, msg];
+            })
             .with(['AttributeChange', select('name'), select('value')], ({ name, value }: any) => {
                 if ((propTypes as any)[name] === Boolean) {
                     (state as any)[name] = value && value !== 'false';
                 } else if ((propTypes as any)[name]) {
-                    value = (name === 'type' && ['text', 'password', 'email', 'color', 'search', 'url', 'tel'].includes(value))
-                        ? value
-                        : 'text';
                     (state as any)[name] = (value as any).toString();
                 }
                 return [state, null];
