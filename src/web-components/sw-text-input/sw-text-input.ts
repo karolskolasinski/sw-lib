@@ -41,7 +41,7 @@ stm.component({
             value: '',
             name: '',
             label: '',
-            type: ''
+            type: 'text'
         }, null];
     },
     update(state: State, msg: Msg) {
@@ -86,6 +86,7 @@ function view(state: State) {
                 required: state.required,
                 placeholder: ' ',
                 disabled: state.disabled,
+                name: state.name,
                 value: state.value,
                 ariaLabelledby: state.label,
                 oninput: (event: any): Msg => ['Input', event.target.value, event.target.validationMessage]
