@@ -206,9 +206,11 @@ export function component<State, Msg>({
             if (!isValidElement(vnode)) {
                 vnode = toVNode(vnode, dispatcher);
             }
-            const rendered = initVNode(vnode, dispatcher.bind(null, this));
-            if (typeof rendered !== 'string') {
-                rendered.ref = ref => this.ref = ref;
+            const rendered = initVNode(vnode, dispatcher.bind(null, this)) as any;
+            if (typeof rendered !== 'string' && typeof rendered.type === 'string') {
+                rendered.ref = (ref: any) => this.ref = ref;
+            } else if (typeof rendered.type !== 'string' && rendered.props.children.length > 0) {
+                rendered.props.children[0].ref = (ref: any) => this.ref = ref;
             }
             return rendered;
         }
