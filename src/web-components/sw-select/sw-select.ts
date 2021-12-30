@@ -44,7 +44,7 @@ stm.component({
         config: Object
     },
     shadow: true,
-    debug: true,
+    debug: false,
     view,
     attributeChangeFactory: (name, value): Msg => ['AttributeChange', name, value],
     willMount(cmp: any, dispatch: stm.Dispatch<Msg>) {
