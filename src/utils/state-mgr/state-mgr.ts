@@ -128,7 +128,7 @@ export function component<State, Msg>({
             if (shadow) {
                 cmp.ref.getRootNode().host.dispatchEvent(next);
             } else {
-                cmp.ref.dispatchEvent(next);
+                cmp.ref.parentNode.dispatchEvent(next);
             }
 
             return;
@@ -207,7 +207,7 @@ export function component<State, Msg>({
                 vnode = toVNode(vnode, dispatcher);
             }
             const rendered = initVNode(vnode, dispatcher.bind(null, this)) as any;
-            if (typeof rendered !== 'string' && typeof rendered.type === 'string') {
+            if (typeof rendered !== 'string' && (typeof rendered.type === 'string' || !shadow)) {
                 rendered.ref = (ref: any) => this.ref = ref;
             } else if (typeof rendered.type !== 'string' && rendered.props.children.length > 0) {
                 rendered.props.children[0].ref = (ref: any) => this.ref = ref;
