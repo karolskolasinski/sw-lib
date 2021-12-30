@@ -11,7 +11,7 @@ type Msg
     | 'CloseSelect'
     | 'ToggleSelect'
     | [type: 'Pick', option: SelectOption]
-    | [type: 'KeyboadMove', keyCode: string]
+    | [type: 'KeyboardMove', keyCode: string]
     | [type: 'SearchRequest', phrase: string]
     | [type: 'DelaySearch', phrase: string]
     | [type: 'SearchSuccess', options: SelectOption[]]
@@ -53,10 +53,10 @@ stm.component({
                 dispatch('CloseSelect');
             }
         };
-        document.addEventListener('click', cmp.closeSelect);
+        document.addEventListener('mousedown', cmp.closeSelect);
     },
     willUnmount(cmp: any) {
-        document.removeEventListener('click', cmp.closeSelect);
+        document.removeEventListener('mousedown', cmp.closeSelect);
     },
     init() {
         return [{
@@ -84,8 +84,8 @@ stm.component({
                 { ...state, isDropdownVisible: true, isLoading: false },
                 stm.focus('.input')
             ])
-            .with([__, ['KeyboadMove', 'Escape']], () => [{ ...state, isDropdownVisible: false }, null])
-            .with([__, ['KeyboadMove', __]], () => [state, null])
+            .with([__, ['KeyboardMove', 'Escape']], () => [{ ...state, isDropdownVisible: false }, null])
+            .with([__, ['KeyboardMove', __]], () => [state, null])
             .with([__, 'CloseSelect'], () => [
                 { ...state, isDropdownVisible: false, isLoading: false },
                 null
@@ -180,7 +180,7 @@ function view(state: State): stm.View<Msg> {
                     type: 'text',
                     value: state.phrase,
                     placeholder: tr('select.placeholder'),
-                    onkeyup: (event: KeyboardEvent) => ['KeyboadMove', event.code],
+                    onkeyup: (event: KeyboardEvent) => ['KeyboardMove', event.code],
                     oninput: (event: any) => ['SearchRequest', event?.target?.value]
                 }],
                 ['.results',
