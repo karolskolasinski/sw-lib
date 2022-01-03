@@ -52,7 +52,7 @@ stm.component({
                 if ((propTypes as any)[name] === Boolean) {
                     (state as any)[name] = value && value !== 'false';
                 } else if ((propTypes as any)[name] === Number) {
-                    (state as any)[name] = (value as any) + 0;
+                    (state as any)[name] = 0 + (value as any);
                 } else if ((propTypes as any)[name]) {
                     (state as any)[name] = (value as any).toString();
                 }
