@@ -4,6 +4,7 @@
     right: 2em;
     display: flex;
     flex-direction: column;
+    z-index: 2147483647;
 }
 
 .flash-message {
