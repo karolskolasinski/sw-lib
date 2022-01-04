@@ -10,10 +10,10 @@ type Msg
     = [type: 'AttributeChange', name: string, value: string];
 
 const propTypes = {
-    value: String;
-    disabled: Boolean;
-    showLabel: Boolean;
-}
+    value: String,
+    disabled: Boolean,
+    showLabel: Boolean
+};
 
 stm.component({
     tagName: 'sw-number-input',
