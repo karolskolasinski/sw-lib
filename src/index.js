@@ -8,7 +8,7 @@ import './web-components/sw-text-input/sw-text-input.ts';
 import './web-components/sw-number-input/sw-number-input.ts';
 import './web-components/sw-map/sw-map.js';
 import './web-components/sw-button/sw-button.jsx';
-import './web-components/sw-markdown-editor/sw-markdown-editor.ts';
+import './web-components/sw-markdown-input/sw-markdown-input.ts';
 
 import * as routerModule from './utils/router.ts';
 export var router = routerModule.router;
