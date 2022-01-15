@@ -101,7 +101,8 @@ function getRoutePath(route: StoredRoute, params: RouteParams = {}) {
     return route.parts.map(part => part.paramsObjectToUrlPart(params)).join('/');
 }
 
-function addRoute({ name, path, isDefault, defaultParams }: RouteDefinition) {
+function addRoute(routeDef: RouteDefinition) {
+    const { path, defaultParams } = routeDef;
     const parts = path.split('/').filter(x => x).map(partString => {
         return {
             paramsObjectToUrlPart: (params: Record<string, string> = {}) => {
@@ -121,7 +122,7 @@ function addRoute({ name, path, isDefault, defaultParams }: RouteDefinition) {
         };
     });
 
-    routes.push({ name, parts, isDefault });
+    routes.push({ ...routeDef, parts });
 }
 
 window.addEventListener('hashchange', () => {

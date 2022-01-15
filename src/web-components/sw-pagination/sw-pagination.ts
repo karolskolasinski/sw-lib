@@ -9,6 +9,7 @@ interface NormalState {
     currentPage: number,
     numberOfPages: number,
     routeName: string,
+    routeParams: Record<string, any>
 }
 
 type State = stm.InitializationState | NormalState;
@@ -24,6 +25,7 @@ const propTypes = {
     currentPage: Number,
     numberOfPages: Number,
     routeName: String,
+    routeParams: Object
 };
 
 stm.component({
@@ -36,7 +38,7 @@ stm.component({
 });
 
 function init(): [State, stm.Cmd<Msg>] {
-    return [new stm.InitializationState(Object.keys(propTypes)), null];
+    return [new stm.InitializationState(['currentPage', 'numberOfPages']), null];
 }
 
 function update(state: State, msg: Msg): [State, stm.Cmd<Msg>] {
@@ -50,7 +52,8 @@ function update(state: State, msg: Msg): [State, stm.Cmd<Msg>] {
             const newState = {
                 currentPage: parseInt(state?.getValue('currentPage')),
                 numberOfPages: numberOfPagesValue,
-                routeName: state.getValue('routeName')
+                routeName: state.getValue('routeName'),
+                routeParams: state.getValue('routeParams') ?? {}
             };
 
             return [newState, null];
@@ -69,6 +72,9 @@ function update(state: State, msg: Msg): [State, stm.Cmd<Msg>] {
                 break;
             case 'routeName':
                 newState.routeName = msg?.value;
+                break;
+            case 'routeParams':
+                newState.routeParams = msg?.value;
                 break;
         }
 
@@ -138,7 +144,7 @@ function view(state: State): stm.View<Msg> {
 
 function pageView(state: NormalState, page: number, inner: any, className: string = ''): stm.View<Msg> {
     return ['a', {
-        href: router.getRouteUrl(state.routeName, { page }),
+        href: router.getRouteUrl(state.routeName, { ...state.routeParams, page }),
         className: className && className
     }, inner];
 }
