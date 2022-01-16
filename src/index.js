@@ -23,7 +23,7 @@ export * as dates from './utils/dates';
 export * as strings from './utils/strings';
 export * from './utils/v.ts';
 
-const areElementsRegistered = !!customElements.get('sw-button');
+const areElementsRegistered = !!customElements.get('sw-datetime-input');
 
 if (!areElementsRegistered) {
     register(
