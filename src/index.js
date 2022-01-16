@@ -29,7 +29,7 @@ if (!areElementsRegistered) {
     register(
         SwDatetimeInput,
         'sw-datetime-input',
-        ['name', 'required', 'placeholder', 'disabled', 'value', 'step', 'show-label'],
+        ['name', 'required', 'placeholder', 'disabled', 'value', 'step', 'showLabel'],
         { shadow: true },
     );
 }

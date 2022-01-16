@@ -14,7 +14,7 @@ export default class SwDatetimeInput extends Component {
         }));
     }
 
-    render({ name, required, placeholder, disabled, value, date, time, step }) {
+    render({ name, required, placeholder, disabled, value, date, time, step, showLabel }) {
         const dateVal = dateStringify(value);
         const timeVal = timeStringify(value, date);
 
@@ -24,7 +24,7 @@ export default class SwDatetimeInput extends Component {
             <div className="input-wrapper" ref={node => this.ref = node}>
                 <div className="datetime-wrapper">
                     {date && <input
-                        id={name + '-date'}
+                        id={date ? name + '-date' : name + '-time'}
                         type="date"
                         required={required === 'true'}
                         placeholder=" "
@@ -72,6 +72,7 @@ export default class SwDatetimeInput extends Component {
                         }}
                     />}
                 </div>
+                {showLabel && <label htmlFor={name + '-date'}>{placeholder}</label>}
             </div>
         </div>;
     }
