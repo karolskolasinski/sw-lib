@@ -146,7 +146,7 @@ export function modal({ header, body, footer, large }) {
     });
 }
 
-export function modalAlert({ title, text, buttonLabel, icon }) {
+export function modalAlert({ title, text, buttonLabel }) {
     return modal({
         header: title,
         body: text,
@@ -155,7 +155,7 @@ export function modalAlert({ title, text, buttonLabel, icon }) {
     });
 }
 
-export function modalPrompt({ title, text, placeholder, initialValue, icon }) {
+export function modalPrompt({ title, text, placeholder, initialValue }) {
     let content;
     return modal({
         header: title,
@@ -173,13 +173,13 @@ export function modalPrompt({ title, text, placeholder, initialValue, icon }) {
     });
 }
 
-export function modalConfirm({ title, text, okLabel, cancelLabel, icon }) {
+export function modalConfirm({ title, text, okLabel, cancelLabel }) {
     return modal({
         header: title,
         body: text,
         footer: ({ close }) => <>
-            <sw-button onClick={() => close(true)}>{okLabel}</sw-button>
-            <sw-button onClick={() => close(false)}>{cancelLabel}</sw-button>
+            <sw-button onClick={() => close(true)}>{okLabel || tr('general.ok')}</sw-button>
+            <sw-button onClick={() => close(false)}>{cancelLabel || tr('general.cancel')}</sw-button>
         </>,
         large: false
     });

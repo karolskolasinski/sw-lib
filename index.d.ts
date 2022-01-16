@@ -179,3 +179,29 @@ export interface ModalOptions {
 }
 
 export function modal(opts: ModalOptions): Promise<any>;
+
+export interface ModalConfirmOptions {
+    title?: ModalPart;
+    text: ModalPart;
+    okLabel?: string;
+    cancelLabel?: string;
+}
+
+export function modalConfirm(opts: ModalConfirmOptions): Promise<boolean>;
+
+export interface ModalAlertOptions {
+    title?: ModalPart;
+    text: ModalPart;
+    buttonLabel: string;
+}
+
+export function modalAlert(opts: ModalAlertOptions): Promise<boolean>;
+
+export interface ModalPromptOptions {
+    title?: ModalPart;
+    text: ModalPart;
+    placeholder: string;
+    initialValue?: string;
+}
+
+export function modalPrompt(opts: ModalPromptOptions): Promise<string>;
