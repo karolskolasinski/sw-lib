@@ -48,7 +48,7 @@ export var tr: Translate = (window as any).tr || function(
     return parse(
         _.get(window, ['tr', 'translations', phrase, lang],
             _.get(window, ['tr', 'translations', phrase, 'en'],
-                toSpaceCase(phrase))),
+                phrase)),
         locals as any
     );
 } as Translate;
