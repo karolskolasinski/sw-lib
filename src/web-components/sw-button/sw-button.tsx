@@ -3,7 +3,12 @@ import { match, select, __ } from 'ts-pattern';
 // @ts-ignore
 import style from './sw-button.style.css';
 
-type State = { isDisabled: boolean, href: string, children: any, msg: string };
+type State = {
+    isDisabled: boolean,
+    href: string,
+    children: any,
+    msg: string
+};
 
 type Msg = [type: 'AttributeChange', name: string, value: string];
 
@@ -11,6 +16,10 @@ stm.component({
     tagName: 'sw-button',
     shadow: true,
     debug: false,
+    propTypes: {
+        isDisabled: Boolean,
+        href: String
+    },
     attributeChangeFactory: (name: string, value: string): Msg => ['AttributeChange', name, value],
     init() {
         return [{ isDisabled: false, children: '', href: '', msg: '' }, null];
@@ -27,12 +36,12 @@ stm.component({
         return <>
             <style> {style}</style>
             {!state.isDisabled && state.href
-            ? <a className="button" href={state.href}>{state.children}</a>
-            : <button className="button"
-                      type="button"
-                      role="button"
-                      disabled={state.isDisabled}>{state.children}
-            </button>}
+                ? <a className="button" href={state.href}>{state.children}</a>
+                : <button className="button"
+                    type="button"
+                    role="button"
+                    disabled={state.isDisabled}>{state.children}
+                </button>}
         </>
     }
 });
