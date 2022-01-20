@@ -36,6 +36,7 @@ interface State {
     isDropdownVisible?: boolean;
     shouldDisplayAbove?: boolean;
     displayedOptions: SelectOption[];
+    placeholder: string;
 }
 
 stm.component({
@@ -75,7 +76,8 @@ stm.component({
                     isDropdownVisible: false,
                     shouldDisplayAbove: false,
                     displayedOptions: config.options ?? [],
-                    showLabel: config.showLabel && config.showLabel !== 'false'
+                    showLabel: config.showLabel && config.showLabel !== 'false',
+                    placeholder: config.placeholder
                 },
                 null
             ])
@@ -104,18 +106,7 @@ stm.component({
                     bubbles: true,
                 })
             ])
-            .with([{sourceFn: __.nullish}, ['SearchRequest', select()]], (phrase) => {
-                if (state.minimumCharLengthTrigger > phrase.length) {
-                    return [{ ...state, phrase }, null];
-                }
-                return [
-                    {
-                        ...state,
-                        phrase,
-                        displayedOptions: state.options?.filter(o => o.label.includes(phrase)) ?? []
-                    }, null
-                ];
-            })
+
             .with([__, ['SearchSuccess', select()]], (options) => [
                 { ...state, isLoading: true, displayedOptions: options },
                 null
@@ -130,6 +121,18 @@ stm.component({
                     return [{ ...state, phrase }, null];
                 }
                 return [{ ...state, phrase }, delaySearch(phrase)];
+            })
+            .with([__, ['SearchRequest', select()]], (phrase) => {
+                if (state.minimumCharLengthTrigger > phrase.length) {
+                    return [{ ...state, phrase }, null];
+                }
+                return [
+                    {
+                        ...state,
+                        phrase,
+                        displayedOptions: state.options?.filter(o => o.label.includes(phrase)) ?? []
+                    }, null
+                ];
             })
             .with([__, ['DelaySearch', select()]], (phrase) => {
                 if (state.phrase === phrase) {
@@ -162,7 +165,7 @@ async function search(state: State): Promise<Msg> {
 function view(state: State): stm.View<Msg> {
     const title = state.selected?.label
         ? trMaybe(state.selected?.label, state.selected)
-        : tr('select.prompt');
+        : state.placeholder || tr('select.prompt');
 
     return ['.sw-select', [
         ['style', style],
@@ -179,7 +182,9 @@ function view(state: State): stm.View<Msg> {
                 ['input.input', {
                     type: 'text',
                     value: state.phrase,
-                    placeholder: tr('select.placeholder'),
+                    placeholder: state.minimumCharLengthTrigger > 0
+                        ? tr('select.placeholder', { minimum: state.minimumCharLengthTrigger })
+                        : undefined,
                     onkeyup: (event: KeyboardEvent) => ['KeyboardMove', event.code],
                     oninput: (event: any) => ['SearchRequest', event?.target?.value]
                 }],
