@@ -57,7 +57,11 @@ tr = addEventDispatcherTrait(tr);
 
 function parse(text: string, locals: Record<string, string | number>) {
     if (Array.isArray(locals)) {
-        return text.split(/\$\{[a-zA-Z0-9]+\}/).map((item: string, index: number) => item + (locals[index] ?? '')).join('');
+        const split = text.split(/\$\{[a-zA-Z0-9]+\}/);
+        if (split.length === 1) {
+            return split[0];
+        }
+        return split.map((item: string, index: number) => item + (locals[index] ?? '')).join('');
     }
     return Object.keys(locals).reduce((text, varName) => {
         return text.replaceAll('${' + varName + '}', (locals as any)[varName]);
