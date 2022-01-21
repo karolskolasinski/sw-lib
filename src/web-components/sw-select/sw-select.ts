@@ -64,7 +64,8 @@ stm.component({
             minimumCharLengthTrigger: 2,
             isLoading: false,
             displayedOptions: [],
-            phrase: ''
+            phrase: '',
+            placeholder: ''
         }, null];
     },
     update(state: State, msg: Msg) {
