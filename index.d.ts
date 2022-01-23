@@ -136,6 +136,8 @@ export namespace stm {
 
     export function focus(selector: string): [type: 'Focus', selector: string];
 
+    type OnRefChangeFunc = (ref: HTMLElement, oldRef?: HTMLElement) => void;
+
     export function component<State, Msg>({
         init,
         update,
@@ -148,9 +150,9 @@ export namespace stm {
         willMount,
         willUnmount
     }: {
-        init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
+        init: (dispatch: Dispatch<Msg>, func: (onRefChange: OnRefChangeFunc) => void) => [State, Cmd<Msg>],
         update: (state: State, msg: Msg) => [State, Cmd<Msg>] | void,
-        view: (state: State) => View<Msg>,
+        view: (state: State, children?: any) => View<Msg>,
         attributeChangeFactory?: (name: string, value: string) => Msg,
         debug?: boolean,
         tagName: string,

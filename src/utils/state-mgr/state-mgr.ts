@@ -44,6 +44,8 @@ export function focus(selector: string): [type: 'Focus', selector: string] {
     return ['Focus', selector];
 }
 
+type OnRefChangeFunc = (ref: HTMLElement, oldRef?: HTMLElement) => void;
+
 export function component<State, Msg>({
     init,
     update,
@@ -56,9 +58,9 @@ export function component<State, Msg>({
     willMount,
     willUnmount
 }: {
-    init: (dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
+    init: (dispatch: Dispatch<Msg>, func: (onRefChange: OnRefChangeFunc) => void) => [State, Cmd<Msg>],
     update: (state: State, msg: Msg) => [State, Cmd<Msg>],
-    view: (state: State) => View<Msg>,
+    view: (state: State, children?: any) => View<Msg>,
     attributeChangeFactory?: (name: string, value: string) => Msg,
     debug?: boolean,
     tagName: string,
@@ -159,16 +161,20 @@ export function component<State, Msg>({
         public ref: any;
         public initialRenderComplete: boolean;
         public realProps: Record<string, any>;
+        private onRefChange?: (ref: HTMLElement, oldRef?: HTMLElement) => void;
 
         constructor() {
             super();
-            const [state, next] = init(msg => runUpdate(this, msg));
+            this.redraw = this.redraw.bind(this);
+            this.setRef = this.setRef.bind(this);
+
+            const [state, next] = init(msg => runUpdate(this, msg), func => this.onRefChange = func);
             log('INIT complete', state);
             setState(this, state);
             runNext(this, next);
             this.initialRenderComplete = false;
             this.realProps = {};
-            this.redraw = this.redraw.bind(this);
+
         }
 
         shouldComponentUpdate(nextProps: any): any {
@@ -202,17 +208,29 @@ export function component<State, Msg>({
                 });
             }
             const state = getState(this);
-            let vnode: any = view(state);
+            let vnode: any = view(state, props.children);
             if (!isValidElement(vnode)) {
                 vnode = toVNode(vnode, dispatcher);
             }
             const rendered = initVNode(vnode, dispatcher.bind(null, this)) as any;
             if (typeof rendered !== 'string' && (typeof rendered.type === 'string' || !shadow)) {
-                rendered.ref = (ref: any) => this.ref = ref;
+                rendered.ref = this.setRef;
             } else if (typeof rendered.type !== 'string' && rendered.props.children.length > 0) {
-                rendered.props.children[0].ref = (ref: any) => this.ref = ref;
+                rendered.props.children[0].ref = this.setRef;
             }
             return rendered;
+        }
+
+        setRef(ref: any) {
+            const old = this.ref;
+            if (shadow || !ref) {
+                this.ref = ref;
+            } else {
+                this.ref = ref.parentNode;
+            }
+            if (this.onRefChange) {
+                this.onRefChange(this.ref, old);
+            }
         }
 
         redraw() {
