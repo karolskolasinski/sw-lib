@@ -95,7 +95,7 @@ export function component<State, Msg>({
         requestAnimationFrame(() => {
             log('-------NEW MSG', msg);
             log('before update', getState(cmp));
-            const updateResult = update(getState(cmp), msg);
+            const updateResult = update(_.cloneDeep(getState(cmp)), msg);
             if (updateResult === undefined) {
                 throw new Error('update should cover all cases');
             }
