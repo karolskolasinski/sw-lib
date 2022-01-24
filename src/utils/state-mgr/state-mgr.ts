@@ -130,7 +130,7 @@ export function component<State, Msg>({
             if (shadow) {
                 cmp.ref.getRootNode().host.dispatchEvent(next);
             } else {
-                cmp.ref.parentNode.dispatchEvent(next);
+                cmp.ref.dispatchEvent(next);
             }
 
             return;
