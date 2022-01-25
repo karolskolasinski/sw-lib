@@ -8,6 +8,10 @@
     box-sizing: border-box;
 }
 
+.sw-select.disabled {
+    cursor: not-allowed;
+}
+
 .sw-select label {
     font-weight: var(--label-font-weight);
     position: absolute;
@@ -35,6 +39,10 @@
     border-radius: var(--border-radius, 0.25em);
     border-style: solid;
     line-height: 1em;
+}
+
+.sw-select.disabled .button {
+    cursor: not-allowed;
 }
 
 .sw-select button:hover,

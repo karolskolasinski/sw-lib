@@ -36,6 +36,7 @@ interface State {
     isDropdownVisible?: boolean;
     shouldDisplayAbove?: boolean;
     displayedOptions: SelectOption[];
+    disabled?: boolean;
     placeholder: string;
 }
 
@@ -78,6 +79,7 @@ stm.component({
                     shouldDisplayAbove: false,
                     displayedOptions: config.options ?? [],
                     showLabel: config.showLabel && config.showLabel !== 'false',
+                    disabled: config.disabled && config.disabled !== 'false',
                     placeholder: config.placeholder
                 },
                 null
@@ -168,13 +170,13 @@ function view(state: State): stm.View<Msg> {
         ? trMaybe(state.selected?.label, state.selected)
         : state.placeholder || tr('select.prompt');
 
-    return ['.sw-select', [
+    return ['.sw-select', { className: state.disabled ? 'disabled' : '' }, [
         ['style', style],
         ['span.button', {
             onclick: 'ToggleSelect',
             title
         }, title],
-        ['.dropdown', {
+        !state.disabled && ['.dropdown', {
             className: [
                 state.isDropdownVisible ? 'show' : '',
                 state.shouldDisplayAbove ? 'show-above' : ''

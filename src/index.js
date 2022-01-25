@@ -2,6 +2,7 @@ import register from 'preact-custom-element';
 import SwDatetimeInput from './web-components/sw-datetime-input/sw-datetime-input.jsx';
 
 import './web-components/sw-loader/sw-loader.jsx';
+import './web-components/sw-mini-loader/sw-mini-loader.tsx';
 import './web-components/sw-pagination/sw-pagination.ts';
 import './web-components/sw-select/sw-select.ts';
 import './web-components/sw-text-input/sw-text-input.ts';
