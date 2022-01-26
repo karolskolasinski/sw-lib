@@ -10,7 +10,7 @@ stm.component({
         <style>
             {`
              rect { fill: var(--color); }
-             :host { display: block; width: 24px; height: 30px; }
+             :host { display: inline-block; width: 24px; height: 30px; }
             `}
         </style>
         <rect x="0" y="0" width="4" height="10" fill="red">
