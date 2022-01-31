@@ -9,7 +9,6 @@
         "build:prod": "npm run build -- --minify --sourcemap --target=chrome96,firefox91,safari15,edge96",
         "build:watch": "concurrently \"npm run build -- --watch\" \"tsc --watch\"",
         "build:watch:dev": "npm run build:dev -- --watch",
-        "test": "jest",
         "test-client": "live-server . --open=/src/test-client/index.html --watch=dist/,src/**/*.html, src/**/*.css",
         "dev": "concurrently --kill-others \"live-server test-client\" \"npm run build:watch:dev\"",
         "lint": "eslint src/"
@@ -33,8 +32,6 @@
         "concurrently": "^6.2.1",
         "esbuild": "^0.12.26",
         "eslint": "^7.32.0",
-        "jest": "^27.1.1",
-        "jest-preset-preact": "^4.0.5",
         "live-server": "^1.2.1",
         "lodash": "^4.17.21",
         "moment": "^2.29.1",
