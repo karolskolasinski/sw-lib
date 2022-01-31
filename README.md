@@ -60,8 +60,7 @@ You can style the component changing the following options in the `:host` select
 
 ### JS
 
-To use the sw-modal call the `modal()` function, which takes an object as an argument. The object should contain the
-following keys:
+To use the sw-modal call the `modal()` function, which takes an object as an argument. The object should contain the following keys:
 
 - `header` - can be a `string` or a `function({ close }):string` or a `function({ close }):JSX` or `JSX`
 - `body` - can be a `string` or a `function({ close }):string` or a `function({ close }):JSX` or `JSX`

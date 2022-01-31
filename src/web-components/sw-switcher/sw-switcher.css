@@ -1,0 +1,109 @@
+*, :before, :after {
+    box-sizing: border-box;
+    font: inherit;
+    color: inherit;
+    --switcher-hover-box-shadow: var(--switcher-hover-color) 0 0 0 1px;
+}
+
+[data-label-on] {
+    --data-label-on: attr(data-label-on);
+}
+
+[data-label-off] {
+    --data-label-off: attr(data-label-off);
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.switcher, .bullet-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--on-off-gap, 0);
+    appearance: none;
+    width: fit-content;
+    min-width: 3.5em;
+    min-height: 1.8em;
+    margin: 0;
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    background-color: var(--switcher-off-bg-color, lightgray);
+    transition: background-color ease 0.3s;
+}
+
+.switcher:hover {
+    box-shadow: var(--switcher-hover-color, transparent 0 0 0 0);
+}
+
+.bullet-wrapper {
+    position: absolute;
+    background: none;
+    pointer-events: none;
+}
+
+.switcher:before, .bullet-wrapper:before {
+    padding: 0 0 0 1em;
+    content: var(--data-label-on, var(--on-value));
+    color: var(--on-color, whitesmoke);
+    font-size: var(--on-off-font-size, .5em);
+    font-weight: var(--on-off-font-weight, 600);
+    line-height: 1;
+    visibility: hidden;
+}
+
+.bullet {
+    position: absolute;
+    left: 2px;
+    bottom: 2px;
+    width: calc(1.8em - 4px);
+    height: calc(1.8em - 4px);
+    border: var(--bullet-border, 1px solid #fbfbfb);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+    background-color: var(--bullet-off-bg-color, #f3f3f3);
+    transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
+}
+
+.switcher:after, .bullet-wrapper:after {
+    padding: 0 1em 0 0;
+    content: var(--data-label-off, var(--off-value));
+    color: var(--off-color, dimgray);
+    font-size: var(--on-off-font-size, .5em);
+    font-weight: var(--on-off-font-weight, 600);
+    line-height: 1;
+    visibility: visible;
+}
+
+.bullet-wrapper:before, .bullet-wrapper:after {
+    visibility: hidden;
+}
+
+.switcher:checked {
+    background-color: var(--switcher-on-bg-color, #02ce54);
+}
+
+.switcher:checked:before {
+    visibility: visible;
+}
+
+.switcher:checked:after {
+    visibility: hidden;
+}
+
+.switcher:checked ~ .bullet-wrapper .bullet {
+    background-color: var(--bullet-on-bg-color, #f3f3f3);
+    left: calc(100% - calc(1.8em - 4px) - 2px);
+}
+
+label {
+    margin-bottom: var(--label-distance);
+    font-weight: var(--label-font-weight);
+    font-size: .8em;
+    line-height: 1.2em;
+}

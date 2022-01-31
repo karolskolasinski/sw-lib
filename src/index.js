@@ -5,6 +5,7 @@ import './web-components/sw-loader/sw-loader.jsx';
 import './web-components/sw-mini-loader/sw-mini-loader.tsx';
 import './web-components/sw-pagination/sw-pagination.ts';
 import './web-components/sw-select/sw-select.ts';
+import './web-components/sw-switcher/sw-switcher.ts';
 import './web-components/sw-text-input/sw-text-input.ts';
 import './web-components/sw-number-input/sw-number-input.ts';
 import './web-components/sw-map/sw-map.js';
