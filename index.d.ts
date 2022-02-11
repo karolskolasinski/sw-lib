@@ -49,6 +49,7 @@ export interface Route {
     name: string;
     params: Record<string, string>;
     isDefault: boolean;
+    [param: string]: unknown;
 }
 
 export interface Router extends EventDispatcher {
