@@ -12,8 +12,8 @@ function createNode(text) {
 
 // const svgMarkup = `<svg width="12" height="12" xmlns="http://www.w3.org/2000/svg">
 //     <rect stroke="white" fill="#1b468d" x="1" y="1" width="10" height="10" />
-//     <text x="6" y="9" font-size="0.75em" font-family="Arial" font-weight="bold" text-anchor="middle" fill="white">x</text>
-// </svg>`;
+//     <text x="6" y="9" font-size="0.75em" font-family="Arial" font-weight="bold" text-anchor="middle"
+// fill="white">x</text> </svg>`;
 
 const makeIcon = color => `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 512 512">
     <path fill="${color}" d="M256 0c-88.366 0-160 71.634-160 160 0 160 160 352 160 352s160-192 160-352c0-88.366-71.635-160-160-160zM256 256c-53.020 0-96-42.98-96-96s42.98-96 96-96 96 42.98 96 96-42.98 96-96 96z"></path>
@@ -30,7 +30,7 @@ async function ensureJsIsLoaded() {
 
 class SwMap extends HTMLElement {
     static get observedAttributes() {
-        return ['api-key', 'apiKey', 'apikey', 'selectable'];
+        return ['api-key', 'apiKey', 'apikey', 'selectable', 'zoom', 'center-lat', 'center-lng', 'centerLat', 'centerlat', 'centerLng', 'centerlng'];
     }
 
     constructor() {
@@ -91,6 +91,10 @@ class SwMap extends HTMLElement {
         log('establishing new here connection for key:' + current);
         await ensureJsIsLoaded();
 
+        if (this.addedMarkers && this.addedMarkers.length > 0) {
+            this.removeMarkers(this.addedMarkers);
+            this.addedMarkers = [];
+        }
         this.markersGroup = new H.map.Group();
 
         if (this.mainNode) {
@@ -116,14 +120,14 @@ class SwMap extends HTMLElement {
             this.mainNode,
             defaultLayers.vector.normal.map,
             {
-                zoom: 6,
-                center: { lat: 52, lng: 19 }
+                zoom: this.myAttrs['zoom'] ?? 6,
+                center: { lat: this.myAttrs['center-lat'] ?? 52, lng: this.myAttrs['center-lng'] ?? 19 }
             }
         );
 
         this.map.addObject(this.markersGroup);
 
-        this.ui = H.ui.UI.createDefault(this.map, defaultLayers, tr.getLang() + '-' + tr.getLocale());
+        this.ui = H.ui.UI.createDefault(this.map, defaultLayers, 'pl-PL');
         this.ui.removeControl('mapsettings');
 
         this.syncMarkers();
@@ -228,15 +232,21 @@ class SwMap extends HTMLElement {
             }
         });
 
-        markersToRemove.forEach(m => {
+        this.removeMarkers(markersToRemove);
+    }
+
+    removeMarkers(markers) {
+        markers.forEach(m => {
             const marker = m.marker;
             log('removing marker', m);
             marker.removeEventListener('click', this.onMarkerClick);
-            this.markersGroup.removeObject(marker);
+            if (this.markersGroup.getObjects().includes(marker)) {
+                this.markersGroup.removeObject(marker);
+            }
         });
     }
-
 }
+
 
 class SwMapMarker extends HTMLElement {
 }
