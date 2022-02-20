@@ -125,12 +125,6 @@ function addRoute(routeDef: RouteDefinition) {
     routes.push({ ...routeDef, parts });
 }
 
-window.addEventListener('hashchange', () => {
-    const route = getCurrentRoute();
-    const event = new CustomEvent('routeChange', { detail: route });
-    router.trigger(event);
-});
-
 export var router = (window as any).router || addEventDispatcherTrait({
     findDefaultRoute,
     findRouteByName,
@@ -141,4 +135,12 @@ export var router = (window as any).router || addEventDispatcherTrait({
     addRoute
 });
 
-(window as any).router = router;
+if (!(window as any).router) {
+    window.addEventListener('hashchange', function() {
+        const route = getCurrentRoute();
+        const event = new CustomEvent('routeChange', { detail: route });
+        router.trigger(event);
+    });
+    (window as any).router = router;
+}
+
