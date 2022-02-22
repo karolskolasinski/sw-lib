@@ -12,6 +12,7 @@ export type Cmd<Msg>
     | null
     | Event
     | [type: 'Focus', selector: string]
+    | CombinedCmds<Msg>
 
 export type Props = Record<string, unknown>;
 
@@ -109,6 +110,11 @@ export function component<State, Msg>({
     }
 
     function runNext(cmp: Cmp, next: any) {
+        if (next instanceof CombinedCmds) {
+            next.cmds.forEach(cmd => runNext(cmp, cmd));
+            return;
+        }
+
         if (next && next[0] === 'Focus') {
             function tryFocus(tries: number) {
                 requestAnimationFrame(() => {
@@ -385,4 +391,8 @@ function getType(x: any) {
     if (x instanceof Object) {
         return 'object';
     }
+}
+
+export class CombinedCmds<Msg> {
+    constructor(public cmds: Cmd<Msg>[]) { }
 }
