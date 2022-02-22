@@ -99,7 +99,16 @@ export namespace v {
     export type View<Msg> = VNode<Options<Msg>>;
 }
 
+export interface TypeAheadSuggestion {
+    suggestion: string;
+    value: string;
+}
+
 export namespace stm {
+
+    export class CombinedCmds<Msg> {
+        constructor(cmds: Cmd<Msg>[]);
+    }
 
     export type Cmd<Msg>
         = Promise<Msg>
@@ -107,6 +116,7 @@ export namespace stm {
         | null
         | Event
         | ReturnType<typeof focus>
+        | CombinedCmds<Msg>
 
     export type Props = Record<string, unknown>;
 
