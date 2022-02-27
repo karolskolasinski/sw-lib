@@ -14,6 +14,8 @@ import './web-components/sw-number-input/sw-number-input';
 import './web-components/sw-map/sw-map.js';
 import './web-components/sw-button/sw-button.jsx';
 import './web-components/sw-markdown-input/sw-markdown-input';
+import './web-components/sw-markdown-input/sw-markdown-input.ts';
+import './web-components/sw-type-ahead/sw-type-ahead.ts';
 
 import * as routerModule from './utils/router';
 export var router = routerModule.router;
@@ -23,10 +25,11 @@ export * from './utils/tr';
 export * from './utils/flash-message/flash-message';
 export * from './utils/modal/modal';
 export * as stm from './utils/state-mgr/state-mgr';
-// @ts-ignoreR
 export * as dates from './utils/dates';
 export * as strings from './utils/strings';
 export * from './utils/v';
+
+export { TypeAheadSuggestion } from './web-components/sw-type-ahead/sw-type-ahead';
 
 const areElementsRegistered = !!customElements.get('sw-datetime-input');
 
