@@ -120,7 +120,7 @@ export namespace modal {
         return modal({
             header: title,
             body: text,
-            footer: close => <button class="button" onClick={() => close(true)}>{buttonLabel}</button>,
+            footer: close => <button class="button button-primary" onClick={() => close(true)}>{buttonLabel}</button>,
             large: false
         });
     }
@@ -138,7 +138,7 @@ export namespace modal {
                     onInput={(event: any) => content = event.target.value}
                 />
             </>,
-            footer: close => <button class="button" onClick={() => close(content)}>
+            footer: close => <button class="button button-primary" onClick={() => close(content)}>
                 {tr('general.submit')}
             </button>,
             large: false
@@ -150,8 +150,8 @@ export namespace modal {
             header: title,
             body: text,
             footer: close => <>
-                <button class="button" onClick={() => close(false)}>{cancelLabel || tr('general.cancel')}</button>
-                <button class="button" onClick={() => close(true)}>{okLabel || tr('general.ok')}</button>
+                <button class="button button-tertiary" onClick={() => close(false)}>{cancelLabel || tr('general.cancel')}</button>
+                <button class="button button-primary" onClick={() => close(true)}>{okLabel || tr('general.ok')}</button>
             </>,
             large: false
         });
