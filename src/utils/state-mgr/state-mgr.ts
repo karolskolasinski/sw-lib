@@ -16,7 +16,7 @@ export type Cmd<Msg>
 
 export type Props = Record<string, unknown>;
 
-export type Handler<Msg> = Msg | ((event: Event) => Msg);
+export type Handler<Msg> = Msg | ((event: CustomEvent | Event) => Msg);
 
 export interface Options<Msg> {
     [on: `on${string}`]: Handler<Msg>;

@@ -152,7 +152,7 @@ function view(state: State) {
             oninput: (event: any) => msg('Input', event.target.value),
             onkeydown: (event: any) => msg('KeyDown', event)
         }),
-        state.suggestions && state.suggestions.length > 0 && v('ul.suggestions',
+        !!state.suggestions && state.suggestions.length > 0 && v('ul.suggestions',
             ...state.suggestions.map(suggestion => v.li<Msg>({
                 onClick: msg('SuggestionChosen', suggestion),
                 className: state.selectedSuggestion === suggestion ? 'active' : ''
