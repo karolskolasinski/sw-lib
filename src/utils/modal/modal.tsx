@@ -150,8 +150,8 @@ export namespace modal {
             header: title,
             body: text,
             footer: close => <>
-                <button class="button" onClick={() => close(true)}>{okLabel || tr('general.ok')}</button>
                 <button class="button" onClick={() => close(false)}>{cancelLabel || tr('general.cancel')}</button>
+                <button class="button" onClick={() => close(true)}>{okLabel || tr('general.ok')}</button>
             </>,
             large: false
         });
@@ -177,7 +177,7 @@ function manageStyle() {
         return;
     }
 
-    const modalContainer = document.querySelector('.modal-container');
+    const modalContainer = document.querySelector('.modal-backdrop');
     if (!modalContainer) document.head.removeChild(style);
 }
 
@@ -190,11 +190,11 @@ function managePrevent() {
 }
 
 function manageModalContainer() {
-    const modalContainer = document.querySelector('.modal-container');
+    const modalContainer = document.querySelector('.modal-backdrop');
 
     if (!modalContainer) {
         const modalContainer = document.createElement('div');
-        modalContainer.classList.add('modal-container');
+        modalContainer.classList.add('modal-backdrop');
         document.body.appendChild(modalContainer);
         managePrevent();
         return;

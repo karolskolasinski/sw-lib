@@ -4,7 +4,7 @@
     "license": "UNLICENSED",
     "main": "dist/build.js",
     "scripts": {
-        "build": "esbuild src/index.js --bundle --outfile=dist/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text --format=esm",
+        "build": "esbuild src/index.ts --bundle --outfile=dist/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text --format=esm",
         "build:dev": "esbuild src/test-client/index.jsx --bundle --outfile=src/test-client/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text",
         "build:prod": "npm run build -- --minify --sourcemap --target=chrome96,firefox91,safari15,edge96",
         "build:watch": "concurrently \"npm run build -- --watch\" \"tsc --watch\"",

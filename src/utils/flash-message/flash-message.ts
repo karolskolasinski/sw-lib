@@ -20,14 +20,14 @@ function addStyleFile() {
 }
 
 function manageMessageContainer(withAction?: any) {
-    if (!document.querySelector('.message-container') && !withAction) {
+    if (!document.querySelector('.flash-message-container') && !withAction) {
         const messageContainer = document.createElement('div');
-        messageContainer.classList.add('message-container');
+        messageContainer.classList.add('flash-message-container');
         document.body.appendChild(messageContainer);
         return;
     }
 
-    const messageContainer = document.querySelector('.message-container');
+    const messageContainer = document.querySelector('.flash-message-container');
     if (messageContainer && !messageContainer.hasChildNodes()) {
         messageContainer.remove();
     }
@@ -36,7 +36,7 @@ function manageMessageContainer(withAction?: any) {
 function displayFlashMessage(flashMessage: any) {
     manageMessageContainer();
 
-    const messageContainer = document.querySelector('.message-container') as any;
+    const messageContainer = document.querySelector('.flash-message-container') as any;
     messageContainer?.appendChild(flashMessage);
 }
 
@@ -53,13 +53,13 @@ export function flashMessage(message: string, level: FlashMessageLevel) {
 
     const levelIcon = (window as any).flashMessage.levelIcon === false
         ? ''
-        : `  <div class="icon ${level}">
+        : `  <div class="icon ${level}-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width = "1.5rem" height="1.5rem" viewBox="0 0 16 16">
                     ${(icons as any)[level]}
                 </svg>
             </div>`
 
-    item.innerHTML = `<div class= "flash-message bounce-right ${level}-border">
+    item.innerHTML = `<div class= "flash-message flash-message-show ${level}-message">
         ${levelIcon}
         <div class="content">${message}</div>
     </div>`;
@@ -67,19 +67,19 @@ export function flashMessage(message: string, level: FlashMessageLevel) {
     const flashMessage = item.firstChild as any;
 
     flashMessage.onclick = () => {
-        flashMessage.classList.add('slide-out-blurred-right');
+        flashMessage.classList.add('flash-message-hide');
         setTimeout(() => {
             flashMessage.remove();
             manageMessageContainer(true);
-        }, 500);
+        }, 300);
     };
 
     setTimeout(() => {
-        flashMessage.classList.add('slide-out-blurred-right');
+        flashMessage.classList.add('flash-message-hide');
         setTimeout(() => {
             flashMessage.remove();
             manageMessageContainer(true);
-        }, 500);
+        }, 300);
     }, 10000);
 
     displayFlashMessage(flashMessage);

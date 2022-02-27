@@ -1,4 +1,4 @@
-.message-container {
+.flash-message-container {
     position: fixed;
     top: 2em;
     right: 2em;
@@ -17,7 +17,7 @@
     border-radius: var(--radius);
 }
 
-.message-container .content {
+.flash-message-container .content {
     display: flex;
     text-shadow: 0 0 0.125em rgba(255, 255, 255, 0.5);
     width: 20em;
@@ -28,7 +28,7 @@
     color: #333841;
 }
 
-.message-container .icon {
+.flash-message-container .icon {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -36,35 +36,35 @@
     border-radius: var(--flash-radius) 0 0 var(--flash-radius);
 }
 
-.message-container .info {
+.flash-message-container .info-icon {
     background: rgba(84, 178, 255, 0.3);
 }
 
-.message-container .info-border {
+.flash-message-container .info-message {
     border: 1px solid rgba(0, 146, 255, 0.4);
 }
 
-.message-container .success {
+.flash-message-container .success-icon {
     background: rgba(0, 248, 65, 0.3);
 }
 
-.message-container .success-border {
+.flash-message-container .success-message {
     border: 1px solid rgba(74, 194, 107, 0.4);
 }
 
-.message-container .warning {
+.flash-message-container .warning-icon {
     background: rgba(255, 233, 30, 0.3);
 }
 
-.message-container .warning-border {
+.flash-message-container .warning-message {
     border: 1px solid rgba(212, 167, 44, 0.4)
 }
 
-.message-container .error {
+.flash-message-container .error-icon {
     background: rgba(255, 94, 64, 0.3);
 }
 
-.message-container .error-border {
+.flash-message-container .error-message {
     border: 1px solid rgba(255, 129, 130, 0.4);
 }
 
@@ -80,7 +80,7 @@
  * animation bounce-right
  * ----------------------------------------
  */
-.message-container .bounce-right {
+.flash-message-container .flash-message-show {
     -webkit-animation: bounce-right 0.8s both;
     animation: bounce-right 0.8s both;
 }
@@ -198,7 +198,7 @@
  * animation slide-out-blurred-right
  * ----------------------------------------
  */
-.message-container .slide-out-blurred-right {
+.flash-message-container .flash-message-hide {
     -webkit-animation: slide-out-blurred-right 0.45s cubic-bezier(0.755, 0.050, 0.855, 0.060) both;
     animation: slide-out-blurred-right 0.45s cubic-bezier(0.755, 0.050, 0.855, 0.060) both;
 }

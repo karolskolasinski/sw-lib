@@ -1,4 +1,4 @@
-.modal-container {
+.modal-backdrop {
     position: fixed;
     top: 0;
     right: 0;
@@ -75,7 +75,7 @@
     filter: blur(1px) brightness(95%);
 }
 
-body > :not(.modal-wrapper, .modal-container) {
+body > :not(.modal-wrapper, .modal-backdrop) {
     filter: blur(1px);
 }
 
