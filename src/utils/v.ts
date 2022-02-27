@@ -54,6 +54,10 @@ export var v = new Proxy(view, {
     }
 }) as V;
 
+export namespace v {
+    export type View<Msg> = VNode<Options<Msg>>;
+}
+
 interface V {
     <Msg>(
         tagName: string,
