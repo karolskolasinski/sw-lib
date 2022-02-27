@@ -1,3 +1,4 @@
+// @ts-ignore
 import clean from 'to-no-case';
 
 export function toSpaceCase(str: string): string {

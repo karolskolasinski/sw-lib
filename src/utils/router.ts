@@ -2,28 +2,7 @@ import { addEventDispatcherTrait } from './event-dispatcher';
 
 const routes = (window as any).routes = (window as any).routes ?? [];
 
-type RouteParams = Record<string, string | number | boolean>;
-
-interface RoutePart {
-    paramsObjectFromUrlPart(urlPart: string): Record<string, string>;
-    paramsObjectToUrlPart(obj: RouteParams): string;
-}
-
-export interface StoredRoute {
-    name: string;
-    params: Record<string, string>;
-    isDefault: boolean;
-    parts: RoutePart[]
-}
-
-export interface RouteDefinition {
-    name: string;
-    path: string;
-    isDefault?: boolean;
-    defaultParams?: RouteParams;
-}
-
-function routeMatchUrl(route: StoredRoute, url: string) {
+function routeMatchUrl(route: router.Route, url: string) {
     const testParts = url.split('/').filter((x: string) => x);
 
     if (testParts.length !== route.parts.length) {
@@ -42,8 +21,8 @@ function routeMatchUrl(route: StoredRoute, url: string) {
     return true;
 }
 
-function findDefaultRoute() {
-    const defaultRoute = routes.find((r: StoredRoute) => r.isDefault);
+function findDefaultRoute(): router.Route {
+    const defaultRoute = routes.find((r: router.Route) => r.isDefault);
 
     if (!defaultRoute) {
         throw new Error('no default route specified ');
@@ -53,39 +32,37 @@ function findDefaultRoute() {
     return defaultRoute;
 }
 
-function findRouteByName(routeName: string) {
-    const route = routes.find((r: StoredRoute) => r.name === routeName)
+function findRouteByName(routeName: string): router.Route {
+    const route = routes.find((r: router.Route) => r.name === routeName)
         ?? findDefaultRoute();
 
     route.params = getRouteParams(route);
     return route;
 }
 
-function findRouteByUrl(url: string) {
+function findRouteByUrl(url: string): router.Route {
     url = (url ?? '').split('#')[1] ?? '';
-    const route = routes.find((route: StoredRoute) => routeMatchUrl(route, url))
+    const route = routes.find((route: router.Route) => routeMatchUrl(route, url))
         ?? findDefaultRoute();
 
     route.params = getRouteParams(route);
     return route;
 }
 
-function getCurrentRoute() {
+function getCurrentRoute(): router.Route {
     return findRouteByUrl(window.location.href);
 }
 
-function getRouteUrl(routeName: string, params?: RouteParams) {
+function getRouteUrl(routeName: string, params?: router.RouteParams) {
     const route = findRouteByName(routeName);
     return window.location.pathname + '#' + getRoutePath(route, params);
 }
 
-
-
-function navigate(routeName: string, params?: RouteParams): void {
+function navigate(routeName: string, params?: router.RouteParams): void {
     window.location.href = getRouteUrl(routeName, params);
 }
 
-function getRouteParams(route: StoredRoute) {
+function getRouteParams(route: router.Route) {
     const pathSplit = window.location.hash.slice(1).split('/');
     let params = {};
 
@@ -97,24 +74,24 @@ function getRouteParams(route: StoredRoute) {
     return params;
 }
 
-function getRoutePath(route: StoredRoute, params: RouteParams = {}) {
+function getRoutePath(route: router.Route, params: router.RouteParams = {}) {
     return route.parts.map(part => part.paramsObjectToUrlPart(params)).join('/');
 }
 
-function addRoute(routeDef: RouteDefinition) {
+function addRoute(routeDef: router.RouteDefinition) {
     const { path, defaultParams } = routeDef;
     const parts = path.split('/').filter(x => x).map(partString => {
         return {
             paramsObjectToUrlPart: (params: Record<string, string> = {}) => {
                 if (partString[0] === ':') {
-                    const varName = partString.substr(1);
+                    const varName = partString.substring(1);
                     return params[varName] ?? defaultParams?.[varName] ?? '';
                 }
                 return partString;
             },
             paramsObjectFromUrlPart: (val: string) => {
                 if (partString[0] === ':') {
-                    const varName = partString.substr(1);
+                    const varName = partString.substring(1);
                     return { [varName]: val ?? defaultParams?.[varName] };
                 }
                 return {};
@@ -134,6 +111,29 @@ export var router = (window as any).router || addEventDispatcherTrait({
     navigate,
     addRoute
 });
+
+export namespace router {
+    export interface Route {
+        name: string;
+        params: Record<string, string>;
+        isDefault: boolean;
+        [param: string]: unknown;
+        parts: RoutePart[]
+    }
+    export type RouteParams = Record<string, string | number | boolean>;
+
+    interface RoutePart {
+        paramsObjectFromUrlPart(urlPart: string): Record<string, string>;
+        paramsObjectToUrlPart(obj: RouteParams): string;
+    }
+
+    export interface RouteDefinition {
+        name: string;
+        path: string;
+        isDefault?: boolean;
+        defaultParams?: RouteParams;
+    }
+}
 
 if (!(window as any).router) {
     window.addEventListener('hashchange', function() {
