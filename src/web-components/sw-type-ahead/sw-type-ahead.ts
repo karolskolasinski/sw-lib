@@ -122,10 +122,6 @@ stm.component({
 
                 return [state, null];
             })
-            .with(['KeyDown', __], () => [
-                state,
-                null
-            ])
             .exhaustive();
     },
     view
@@ -165,7 +161,13 @@ function view(state: State) {
             autocomplete: 'off',
             value: state.value,
             oninput: (event: any) => msg('Input', event.target.value),
-            onkeydown: (event: any) => msg('KeyDown', event),
+            onkeydown: (event: any) => {
+                if (event.key === 'Enter' && state.suggestions.length > 0) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                return msg('KeyDown', event)
+            },
             onblur: msg('HideSuggestions')
         }),
         !!state.suggestions && state.suggestions.length > 0 && v('ul.suggestions',
