@@ -13,6 +13,10 @@
     --data-label-off: attr(data-label-off);
 }
 
+input:disabled {
+    cursor: not-allowed;
+}
+
 .input-wrapper {
     position: relative;
     display: flex;
@@ -52,7 +56,6 @@
     color: var(--on-color, whitesmoke);
     font-size: var(--on-off-font-size, .5em);
     font-weight: var(--on-off-font-weight, 600);
-    line-height: 1;
     visibility: hidden;
 }
 
@@ -76,7 +79,6 @@
     color: var(--off-color, dimgray);
     font-size: var(--on-off-font-size, .5em);
     font-weight: var(--on-off-font-weight, 600);
-    line-height: 1;
     visibility: visible;
 }
 
