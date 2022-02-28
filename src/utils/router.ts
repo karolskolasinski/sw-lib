@@ -102,7 +102,32 @@ function addRoute(routeDef: router.RouteDefinition) {
     routes.push({ ...routeDef, parts });
 }
 
-export var router = (window as any).router || addEventDispatcherTrait({
+interface EventDispatcher {
+    addEventListener(eventType: string, listener: (event: Event) => void): void;
+    removeEventListener(eventType: string, listenr: (event: Event) => void): void;
+    dispatchEvent(event: Event): void;
+
+    on(eventType: string, listener: (event: Event) => void): void;
+    off(eventType: string, listenr: (event: Event) => void): void;
+    trigger(event: Event): void;
+}
+
+interface Router extends EventDispatcher {
+    findDefaultRoute(): router.Route;
+    findRouteByName(routeName: string): router.Route;
+    findRouteByUrl(url: string): router.Route;
+    getCurrentRoute(): router.Route;
+    getRouteUrl(routeName: string, params?: router.RouteParams): string;
+    navigate(routeName: string, params?: router.RouteParams): void;
+    addRoute(initRoute: {
+        name: string,
+        path: string;
+        isDefault?: string,
+        defaultParams?: Record<string, string | number>
+    }): void;
+}
+
+export var router: Router = (window as any).router || addEventDispatcherTrait({
     findDefaultRoute,
     findRouteByName,
     findRouteByUrl,
