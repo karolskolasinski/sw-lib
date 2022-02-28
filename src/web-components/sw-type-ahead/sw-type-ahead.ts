@@ -22,6 +22,8 @@ type Msg
     | [type: 'Input', value: string]
     | [type: 'SuggestionChosen', suggestion: TypeAheadSuggestion]
     | [type: 'KeyDown', event: KeyboardEvent]
+    | [type: 'HideSuggestions']
+    | [type: 'HideSuggestionsDeleyed']
 
 function msg(...args: Msg): Msg {
     return args;
@@ -52,8 +54,8 @@ stm.component({
             className: ''
         }, null];
     },
-    update(state: State, msg: Msg) {
-        return match<Msg, [State, stm.Cmd<Msg>]>(msg)
+    update(state: State, incomingMsg: Msg) {
+        return match<Msg, [State, stm.Cmd<Msg>]>(incomingMsg)
             .with(['AttributeChange', 'disabled', select()], disabled => {
                 return [{ ...state, disabled: !!disabled && disabled !== 'false' }, null];
             })
@@ -79,6 +81,14 @@ stm.component({
                     bubbles: true,
                     detail: value,
                 })
+            ])
+            .with(['HideSuggestionsDeleyed'], () => [
+                { ...state, suggestions: [] },
+                null
+            ])
+            .with(['HideSuggestions'], () => [
+                state,
+                waitAndDispatch(msg('HideSuggestionsDeleyed'), 500)
             ])
             .with(['SuggestionChosen', select()], suggestion => chooseSuggestion(state, suggestion))
             .with(['KeyDown', select()], event => {
@@ -121,6 +131,11 @@ stm.component({
     view
 });
 
+async function waitAndDispatch(msg: Msg, delay: number) {
+    await new Promise(resolve => setTimeout(resolve, delay));
+    return msg;
+}
+
 function chooseSuggestion(state: State, suggestion: any): [State, stm.Cmd<Msg>] {
     return [
         {
@@ -150,7 +165,8 @@ function view(state: State) {
             autocomplete: 'off',
             value: state.value,
             oninput: (event: any) => msg('Input', event.target.value),
-            onkeydown: (event: any) => msg('KeyDown', event)
+            onkeydown: (event: any) => msg('KeyDown', event),
+            onblur: msg('HideSuggestions')
         }),
         !!state.suggestions && state.suggestions.length > 0 && v('ul.suggestions',
             ...state.suggestions.map(suggestion => v.li<Msg>({
