@@ -274,17 +274,17 @@ function initVNode(vnode: VNode | string, dispatcher: any): VNode | string {
     if (typeof vnode === 'string' || typeof vnode === 'boolean') {
         return vnode;
     }
-    Object.keys(vnode.props).forEach(key => {
+    Object.keys(vnode.props || {}).forEach(key => {
         if (key.slice(0, 2) === 'on') {
             (vnode as any).props[key] = dispatcher((vnode as any).props[key]);
         }
     });
 
-    if (Array.isArray(vnode.props.children)) {
+    if (Array.isArray(vnode?.props?.children)) {
         vnode.props.children.forEach(child => {
             initVNode(child as VNode, dispatcher);
         });
-    } else if (vnode.props.children) {
+    } else if (vnode?.props?.children) {
         initVNode(vnode.props.children as VNode, dispatcher);
     }
 
