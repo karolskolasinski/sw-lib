@@ -20,7 +20,7 @@ interface Translate extends EventDispatcher {
     addTranslation(phrase: string, translation: Record<string, string>): void;
 }
 
-export var tr: Translate = (window as any).tr || function(
+export var tr: Translate = (window as any).tr as Translate || function(
     phrase: string | Record<string, string>,
     arg2?: string | Record<string, string | number> | (string | number)[],
     arg3?: string
