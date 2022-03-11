@@ -23,3 +23,22 @@ export function capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+export function truncateToWord(countChars: number, text: string) {
+    if (text.length < countChars) {
+        return text;
+    }
+
+    const words = text.split(/\s/);
+    let truncated = '';
+
+    for (const word of words) {
+        if (truncated.length + word.length > countChars) {
+            break;
+        }
+        truncated += ' ' + word;
+    }
+
+    return truncated.length > 0
+        ? truncated + '...'
+        : '';
+}
