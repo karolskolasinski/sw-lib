@@ -106,7 +106,7 @@ export namespace modal {
     export interface ModalAlertOptions {
         title?: ModalPart;
         text: ModalPart;
-        buttonLabel: string;
+        buttonLabel?: string;
     }
 
     export interface ModalPromptOptions {
@@ -120,7 +120,9 @@ export namespace modal {
         return modal({
             header: title,
             body: text,
-            footer: close => <button class="button button-primary" onClick={() => close(true)}>{buttonLabel}</button>,
+            footer: close => <button class="button button-primary" onClick={() => close(true)}>
+                {buttonLabel || tr('general.ok')}
+            </button>,
             large: false
         });
     }
