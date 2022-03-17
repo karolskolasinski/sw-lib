@@ -24,6 +24,9 @@ export function capitalizeFirstLetter(str: string): string {
 }
 
 export function truncateToWord(countChars: number, text: string) {
+    if (!text) {
+        return '';
+    }
     if (text.length < countChars) {
         return text;
     }
