@@ -1,7 +1,7 @@
 // @ts-ignore
 import clean from 'to-no-case';
 
-export function prefixForConstSize(text: string, size: number, prefixChar: stirng) {
+export function prefixForConstSize(text: string, size: number, prefixChar: string) {
     if (text.length >= size) {
         return text;
     }
