@@ -85,7 +85,7 @@ function addRoute(routeDef: router.RouteDefinition) {
             paramsObjectToUrlPart: (params: Record<string, string> = {}) => {
                 if (partString[0] === ':') {
                     const varName = partString.substring(1);
-                    return params[varName]
+                    return params[varName] !== undefined
                         ? encodeURIComponent(params[varName])
                         : (defaultParams?.[varName] ?? '');
                 }
@@ -95,7 +95,7 @@ function addRoute(routeDef: router.RouteDefinition) {
                 if (partString[0] === ':') {
                     const varName = partString.substring(1);
                     return {
-                        [varName]: val
+                        [varName]: val !== undefined
                             ? decodeURIComponent(val)
                             : defaultParams?.[varName]
                     }
