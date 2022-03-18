@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import isObject from 'lodash/isObject';
 import { toKebabCase } from './strings';
 import { h, VNode, isValidElement } from 'preact';
 
@@ -26,7 +26,7 @@ function view<Msg>(
     if (isContentChild(initialOpts)) {
         content = [initialOpts, ...content];
         opts = {};
-    } else if (_.isObject(initialOpts)) {
+    } else if (isObject(initialOpts)) {
         opts = initialOpts as Options<Msg>;
     }
 

@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import { toSpaceCase } from './strings';
+import get from 'lodash/get';
+import set from 'lodash/set';
 import { addEventDispatcherTrait, EventDispatcher } from './event-dispatcher';
 
 interface Translate extends EventDispatcher {
@@ -46,8 +46,8 @@ export var tr: Translate = (window as any).tr as Translate || function(
     }
 
     return parse(
-        _.get(window, ['tr', 'translations', phrase, lang],
-            _.get(window, ['tr', 'translations', phrase, 'en'],
+        get(window, ['tr', 'translations', phrase, lang],
+            get(window, ['tr', 'translations', phrase, 'en'],
                 phrase)),
         locals as any
     );
@@ -99,8 +99,8 @@ tr.getLocale = function getLocale() {
 
 
 tr.addTranslation = function(phrase: string, translation: Record<string, string>) {
-    _.set(window, ['tr', 'translations', phrase], {
-        ..._.get(window, ['tr', 'translations', phrase], {}),
+    set(window, ['tr', 'translations', phrase], {
+        ...get(window, ['tr', 'translations', phrase], {}),
         ...translation
     });
 };

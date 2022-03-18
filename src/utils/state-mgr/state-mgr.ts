@@ -1,6 +1,8 @@
 import { Component, h, VNode, isValidElement } from 'preact';
 import registerCustomElement from 'preact-custom-element';
-import _ from 'lodash';
+import uniq from 'lodash/uniq';
+import cloneDeep from 'lodash/cloneDeep';
+import isEqual from 'lodash/isEqual';
 import { toKebabCase, toCamelCase } from '../strings';
 import { tr } from '../tr';
 
@@ -96,7 +98,7 @@ export function component<State, Msg>({
         requestAnimationFrame(() => {
             log('-------NEW MSG', msg);
             log('before update', getState(cmp));
-            const updateResult = update(_.cloneDeep(getState(cmp)), msg);
+            const updateResult = update(cloneDeep(getState(cmp)), msg);
             if (updateResult === undefined) {
                 throw new Error('update should cover all cases');
             }
@@ -187,7 +189,7 @@ export function component<State, Msg>({
             if (!attributeChangeFactory) {
                 return true;
             }
-            const allPropNames = _.uniq(Object.keys(this.realProps).concat(Object.keys(nextProps)).map(toCamelCase));
+            const allPropNames = uniq(Object.keys(this.realProps).concat(Object.keys(nextProps)).map(toCamelCase));
 
             allPropNames.forEach((propName) => {
                 if (propName === 'children') {
@@ -198,7 +200,7 @@ export function component<State, Msg>({
                     return;
                 }
 
-                if (!isEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
+                if (!myIsEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
                     this.realProps[propName] = nextProps[propName];
                     runUpdate(this, attributeChangeFactory(propName, nextProps[propName]));
                 }
@@ -258,7 +260,7 @@ export function component<State, Msg>({
         }
     }
 
-    const attrs = _.uniq(Object.keys(propTypes).map(toKebabCase).concat(Object.keys(propTypes)));
+    const attrs = uniq(Object.keys(propTypes).map(toKebabCase).concat(Object.keys(propTypes)));
     registerCustomElement(Cmp, tagName, attrs, { shadow });
 }
 
@@ -354,7 +356,7 @@ function parseElement(el: string) {
     };
 }
 
-function isEqual(a: any, b: any): boolean {
+function myIsEqual(a: any, b: any): boolean {
     const aType = getType(a);
     const bType = getType(b);
 
@@ -363,19 +365,19 @@ function isEqual(a: any, b: any): boolean {
     }
 
     if (aType === 'object') {
-        const sameKeys = _.isEqual(Object.keys(a), Object.keys(b));
+        const sameKeys = isEqual(Object.keys(a), Object.keys(b));
 
         if (!sameKeys) {
             return false;
         }
-        return Object.keys(a).every((key: string) => isEqual(a[key], b[key]));
+        return Object.keys(a).every((key: string) => myIsEqual(a[key], b[key]));
     }
 
     if (aType === 'function') {
         return aType?.toString() === bType?.toString();
     }
 
-    return _.isEqual(a, b);
+    return isEqual(a, b);
 }
 
 function getType(x: any) {

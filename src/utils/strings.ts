@@ -1,6 +1,18 @@
 // @ts-ignore
 import clean from 'to-no-case';
 
+export function prefixForConstSize(text: string, size: number, prefixChar: stirng) {
+    if (text.length >= size) {
+        return text;
+    }
+
+    while (text.length < size) {
+        text = prefixChar + text;
+    }
+
+    return text;
+}
+
 export function toSpaceCase(str: string): string {
     return clean(str).replace(/[\W_]+(.|$)/g, function(_matches: any, match: any) {
         return match ? ' ' + match : '';

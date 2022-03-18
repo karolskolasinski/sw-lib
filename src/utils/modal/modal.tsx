@@ -1,8 +1,7 @@
 // @ts-ignore
 import cssFile from './modal.style.css';
 import { render } from 'preact';
-// @ts-ignore
-import sanitizeHtml from 'sanitize-html';
+import escape from 'lodash/escape';
 import { tr } from '../tr';
 
 let counter = 0;
@@ -227,7 +226,7 @@ function convertToElement(
     }
 
     if (typeof item === 'string') {
-        element.innerHTML = sanitizeHtml(item);
+        element.innerHTML = escape(item);
         return null;
     }
 

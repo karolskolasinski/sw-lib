@@ -1,9 +1,26 @@
-import moment from 'moment';
+import { prefixForConstSize } from "./strings";
+import { tr } from './tr';
 
 export function formatDate(timestamp: number) {
-    return moment(timestamp).format('DD.MM.YYYY');
+    const date = new Date(timestamp);
+
+    const day = prefixForConstSize(date.getDate().toString(), 2, '0');
+    const month = prefixForConstSize((date.getMonth() + 1).toString(), 2, '0');
+    const year = date.getFullYear().toString();
+
+    return `${day}.${month}.${year}`;
 }
 
 export function formatDateTime(timestamp: number) {
-    return moment(timestamp).format('D MMMM YYYY, hh:mm:ss');
+    const date = new Date(timestamp);
+
+    const day = date.getDate();
+    const month = tr('month.' + (date.getMonth() + 1));
+    const year = date.getFullYear();
+
+    const hours = prefixForConstSize(date.getHours().toString(), 2, '0');
+    const minutes = prefixForConstSize(date.getMinutes().toString(), 2, '0');
+    const seconds = prefixForConstSize(date.getSeconds().toString(), 2, '0');
+
+    return `${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
 }
