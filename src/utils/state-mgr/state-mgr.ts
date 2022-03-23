@@ -276,6 +276,7 @@ function initVNode(vnode: VNode | string, dispatcher: any): VNode | string {
     if (typeof vnode === 'string' || typeof vnode === 'boolean') {
         return vnode;
     }
+
     Object.keys(vnode.props || {}).forEach(key => {
         if (key.slice(0, 2) === 'on') {
             (vnode as any).props[key] = dispatcher((vnode as any).props[key]);

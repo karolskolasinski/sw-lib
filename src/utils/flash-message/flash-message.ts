@@ -45,13 +45,13 @@ export function flashMessage(message: string, level: FlashMessageLevel) {
         throw new Error('The passed parameters are not strings');
     }
 
-    if (!isStyleFileAdded && (window as any).flashMessage.defaultStyles !== false) {
+    if (!isStyleFileAdded && (window as any).flashMessage?.defaultStyles !== false) {
         addStyleFile();
     }
 
     const item = document.createElement('div');
 
-    const levelIcon = (window as any).flashMessage.levelIcon === false
+    const levelIcon = (window as any).flashMessage?.levelIcon === false
         ? ''
         : `  <div class="icon ${level}-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width = "1.5rem" height="1.5rem" viewBox="0 0 16 16">
