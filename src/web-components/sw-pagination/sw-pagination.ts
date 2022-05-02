@@ -89,7 +89,7 @@ function view(state: State): stm.View<Msg> {
 
     return ['.wrapper', [
         ['style', style],
-        state.currentPage > 1 && pageView(state, state.currentPage - 1, [
+        state.currentPage > 2 && pageView(state, Number(state.currentPage) - 1, [
             ['i.icon.icon-chevron-left'],
             ['span.previous-page-link-text', tr('pagination.previousPage')]
         ], 'previous'),
@@ -134,8 +134,8 @@ function view(state: State): stm.View<Msg> {
 
         ]],
 
-        state.numberOfPages > 1 && state.numberOfPages - state.currentPage !== 0
-        && pageView(state, state.currentPage + 1, [
+        state.numberOfPages > 4 && state.numberOfPages - state.currentPage !== 0
+        && pageView(state, Number(state.currentPage) + 1, [
             ['span.next-page-link-text', tr('pagination.nextPage')],
             ['i.icon.icon-chevron-right']
         ], 'next-page-link')
