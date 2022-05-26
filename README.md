@@ -95,3 +95,11 @@ Example of use:
     --radius: 5px;
 }
 ```
+## STM - State Manager
+
+`stm` is a state manager for preact. It's main concept is borrowed from ELM Architecture, although it differs in many edge cases. The goal of an `stm` is to create a web component which could be plugged into any other framework. Conceptually this is how data flows in `stm`:
+
+![STM data flow](./stm-diagram.svg "STM data flow")
+
+
+
