@@ -54,7 +54,7 @@ function getCurrentRoute(): router.Route {
 }
 
 function getRouteUrl(routeName: string, params?: router.RouteParams) {
-    return window.location.pathname + '#' + getRoutePath(params);
+    return window.location.pathname + '#' + getRoutePath(routeName, params);
 }
 
 function navigate(routeName: string, params?: router.RouteParams): void {
@@ -73,7 +73,7 @@ function getRouteParams(route: router.Route) {
     return params;
 }
 
-function getRoutePath(params: router.RouteParams = {}) {
+function getRoutePath(routeName: string, params: router.RouteParams = {}) {
     const route = findRouteByName(routeName);
     return route.parts.map(part => part.paramsObjectToUrlPart(params)).join('/');
 }
@@ -124,6 +124,7 @@ interface Router extends EventDispatcher {
     findRouteByUrl(url: string): router.Route;
     getCurrentRoute(): router.Route;
     getRouteUrl(routeName: string, params?: router.RouteParams): string;
+    getRoutePath(routeName: string, params?: router.RouteParams): string;
     navigate(routeName: string, params?: router.RouteParams): void;
     addRoute(initRoute: {
         name: string,
