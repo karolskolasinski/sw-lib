@@ -1,7 +1,7 @@
 {
     "name": "@7willows/sw-lib",
-    "version": "2.1.2",
-    "license": "UNLICENSED",
+    "version": "2.1.4",
+    "license": "MIT",
     "main": "dist/build.js",
     "scripts": {
         "build": "esbuild src/index.ts --bundle  --outfile=dist/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text --format=esm",
