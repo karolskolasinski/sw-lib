@@ -54,7 +54,8 @@ function getCurrentRoute(): router.Route {
 }
 
 function getRouteUrl(routeName: string, params?: router.RouteParams) {
-    return window.location.pathname + '#' + getRoutePath(routeName, params);
+    const route = findRouteByName(routeName);
+    return window.location.pathname + '#' + getRoutePath(route, params);
 }
 
 function navigate(routeName: string, params?: router.RouteParams): void {
@@ -73,8 +74,7 @@ function getRouteParams(route: router.Route) {
     return params;
 }
 
-function getRoutePath(routeName: string, params: router.RouteParams = {}) {
-    const route = findRouteByName(routeName);
+function getRoutePath(route: router.Route, params: router.RouteParams = {}) {
     return route.parts.map(part => part.paramsObjectToUrlPart(params)).join('/');
 }
 
@@ -124,7 +124,6 @@ interface Router extends EventDispatcher {
     findRouteByUrl(url: string): router.Route;
     getCurrentRoute(): router.Route;
     getRouteUrl(routeName: string, params?: router.RouteParams): string;
-    getRoutePath(routeName: string, params?: router.RouteParams): string;
     navigate(routeName: string, params?: router.RouteParams): void;
     addRoute(initRoute: {
         name: string,
@@ -140,7 +139,6 @@ export var router: Router = (window as any).router || addEventDispatcherTrait({
     findRouteByUrl,
     getCurrentRoute,
     getRouteUrl,
-    getRoutePath,
     navigate,
     addRoute
 });
