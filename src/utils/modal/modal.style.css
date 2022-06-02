@@ -67,7 +67,7 @@
 }
 
 .modal-footer-content > :not(:last-child) {
-    margin-right: 1em;
+    padding-right: 1em;
 }
 
 .modal-prevent {
