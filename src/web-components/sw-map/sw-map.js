@@ -1,5 +1,4 @@
 /* global H */
-import { add } from 'lodash';
 import makeLog from '../../utils/make-log';
 import { tr } from '../../utils/tr';
 
@@ -8,7 +7,6 @@ const log = makeLog('sw-map');
 function createNode(text) {
     const node = document.createElement('div');
     node.innerHTML = text;
-    window.debug = false;
     return node.children[0];
 }
 
@@ -30,16 +28,11 @@ async function ensureJsIsLoaded() {
     }
 }
 
-
-
 class SwMap extends HTMLElement {
-
-    // observedAttributes - its list attr which can be attached to component - case sensitive
     static get observedAttributes() {
-        return ['api-key', 'apiKey', 'apikey', 'selectable', 'zoom', 'center-lat', 'center-lng', 'centerLat', 'centerlat', 'centerLng', 'centerlng', 'search'];
+        return ['api-key', 'apiKey', 'apikey', 'selectable', 'zoom', 'center-lat', 'center-lng', 'centerLat', 'centerlat', 'centerLng', 'centerlng'];
     }
 
-    //  constructor should contains method if you would like to call them
     constructor() {
         super();
         this.myAttrs = {};
@@ -47,8 +40,6 @@ class SwMap extends HTMLElement {
         this.onMarkerClick = this.onMarkerClick.bind(this);
         this.onResize = this.onResize.bind(this);
         this.onMapClick = this.onMapClick.bind(this);
-        this.onSuccess = this.onSuccess.bind(this);
-        this.onError = this.onError.bind(this);
         this.styleNode = createNode(`<style>
 :host {
     display: block;
@@ -82,15 +73,15 @@ class SwMap extends HTMLElement {
     async attributeChangedCallback(attrName, _previous, current) {
         this.myAttrs[attrName] = current;
         log('got attribute', attrName);
+
         if (attrName === 'selectable') {
             const coords = (current || '').split('x');
             if (this.selectedCoords && coords[0] && coords[1]) {
+                log('change location');
                 this.setLocation({ lat: coords[0], lng: coords[1] });
             }
             return;
         }
-
-
 
         const apiKey = this.myAttrs['api-key'] || this.myAttrs['apiKey'] || this.myAttrs['apikey'];
 
@@ -155,15 +146,6 @@ class SwMap extends HTMLElement {
                 this.map.setCenter(coords);
             }
         }
-
-        // search atrribute -> get string with address, but only longer than 3 letters as there is no sense to satrt looking for shorter string
-        if (attrName === 'search') {
-            if (current.length > 3) {
-                this.findAddress(this.platform, current);
-            }
-        }
-
-
     }
 
     onMapClick(event) {
@@ -191,14 +173,15 @@ class SwMap extends HTMLElement {
             log('Map is not initialized');
             return;
         }
+        log('setting location', coords);
         this.selectedCoords = coords;
+
         if (!this.marker) {
             const icon = new H.map.Icon(makeIcon('#000'));
             this.marker = new H.map.Marker(coords, { icon: icon });
             this.map.addObject(this.marker);
         } else {
-            this.map.addObject(this.marker);
-            this.marker.setGeometry(coords); // setGeometry are problematic, without addObject its not working[doesn't display marker]
+            this.marker.setGeometry(coords);
         }
     }
 
@@ -262,39 +245,8 @@ class SwMap extends HTMLElement {
             }
         });
     }
-
-    //  findAddress get string as parameter, and string construction should looks like below:
-    //
-    //  postalCode=00-988;city=Warsaw;street=Nowa;houseNumber=45;  [; as separator, parameters are caseSensitive]
-    //
-    //  available parameters [city | street | houseNumber | postalCode | country] - not all are required
-    //  all above will works with 'qq'  ->  { qq: address, limit: 10, in: 'countryCode:POL' };
-    //  its possible to search just by string with parameter 'q': 'string....'
-    findAddress(platform, address) {
-        var geocoder = platform.getSearchService(),
-            geocodingParameters = { qq: address, limit: 10, in: 'countryCode:POL' };
-
-        geocoder.geocode(geocodingParameters, this.onSuccess, this.onError);
-    }
-
-    onSuccess(result) {
-        var locations = result.items;
-        this.syncMarkers();
-        if (result.items.length > 0) {
-            const coords = { lat: locations[0].position.lat, lng: locations[0].position.lng };
-            this.setLocation(coords);
-            this.map.setCenter(coords);
-            this.map.setZoom(12);
-            const icon = new H.map.Icon(makeIcon('#000'));
-            this.marker = new H.map.Marker(coords, { icon: icon });
-            this.map.addObject(this.marker);
-        }
-    }
-
-    onError(error) {
-        alert('Can\'t reach the remote server');
-    }
 }
+
 
 class SwMapMarker extends HTMLElement {
 }
