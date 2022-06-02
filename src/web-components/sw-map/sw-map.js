@@ -156,7 +156,7 @@ class SwMap extends HTMLElement {
             }
         }
 
-        // search atrribute -> get string with address, but only longer than 3 letters as there is no sense to start looking for shorter string
+        // search atrribute -> get string with address, but only longer than 3 letters as there is no sense to satrt looking for shorter string
         if (attrName === 'search') {
             if (current.length > 3) {
                 this.findAddress(this.platform, current);
@@ -288,7 +288,6 @@ class SwMap extends HTMLElement {
             const icon = new H.map.Icon(makeIcon('#000'));
             this.marker = new H.map.Marker(coords, { icon: icon });
             this.map.addObject(this.marker);
-            this.triggerUpdateEvent(coords);
         }
     }
 
