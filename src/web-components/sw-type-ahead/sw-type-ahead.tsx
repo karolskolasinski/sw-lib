@@ -18,10 +18,10 @@ interface State {
 }
 
 type Msg
-    = [type: 'AttributeChange', name: string, value: string | boolean | string[]]
+    = [type: 'Attr', name: string, value: string | boolean | string[]]
     | [type: 'Input', value: string]
     | [type: 'SuggestionChosen', suggestion: TypeAheadSuggestion]
-    | [type: 'KeyDown', event: KeyboardEvent]
+    | [type: 'Key', event: KeyboardEvent]
     | [type: 'HideSuggestions']
     | [type: 'HideSuggestionsDeleyed']
 
@@ -42,7 +42,7 @@ stm.component({
     tagName: 'sw-type-ahead',
     shadow: false,
     debug: false,
-    attributeChangeFactory: (name, value): Msg => ['AttributeChange', name, value],
+    attributeChangeFactory: (name, value): Msg => ['Attr', name, value],
     propTypes,
     init(): [State, stm.Cmd<Msg>] {
         return [{
@@ -56,25 +56,28 @@ stm.component({
     },
     update(state: State, incomingMsg: Msg) {
         return match<Msg, [State, stm.Cmd<Msg>]>(incomingMsg)
-            .with(['AttributeChange', 'disabled', select()], disabled => {
+            .with(['Attr', 'disabled', select()], disabled => {
                 return [{ ...state, disabled: !!disabled && disabled !== 'false' }, null];
             })
-            .with(['AttributeChange', 'name', select()], name => {
+            .with(['Attr', 'name', select()], name => {
                 return [{ ...state, name: name.toString() }, null];
             })
-            .with(['AttributeChange', 'value', select()], value => {
+            .with(['Attr', 'value', select()], value => {
+                if (state.value === value) {
+                    return [state, null];
+                }
                 return [{ ...state, value: value.toString() }, null];
             })
-            .with(['AttributeChange', 'class', select()], className => {
+            .with(['Attr', 'class', select()], className => {
                 return [{ ...state, className: className.toString() }, null];
             })
-            .with(['AttributeChange', 'placeholder', select()], placeholder => {
+            .with(['Attr', 'placeholder', select()], placeholder => {
                 return [{ ...state, placeholder: placeholder.toString() }, null];
             })
-            .with(['AttributeChange', 'suggestions', select()], (suggestions: any) => {
+            .with(['Attr', 'suggestions', select()], (suggestions: any) => {
                 return [{ ...state, suggestions: suggestions as TypeAheadSuggestion[] }, null];
             })
-            .with(['AttributeChange', __, __], () => [state, null])
+            .with(['Attr', __, __], () => [state, null])
             .with(['Input', select()], value => [
                 { ...state, value },
                 new CustomEvent('update', {
@@ -91,7 +94,7 @@ stm.component({
                 waitAndDispatch(msg('HideSuggestionsDeleyed'), 500)
             ])
             .with(['SuggestionChosen', select()], suggestion => chooseSuggestion(state, suggestion))
-            .with(['KeyDown', select()], event => {
+            .with(['Key', select()], event => {
                 if (event.key === 'ArrowDown') {
                     if (!state.selectedSuggestion) {
                         state.selectedSuggestion = state.suggestions[0];
@@ -101,6 +104,7 @@ stm.component({
                         state.selectedSuggestion = next || state.selectedSuggestion;
                     }
 
+                    event.preventDefault();
                     return [state, null];
                 }
 
@@ -113,6 +117,7 @@ stm.component({
                         state.selectedSuggestion = next || state.selectedSuggestion;
                     }
 
+                    event.preventDefault();
                     return [state, null];
                 }
 
@@ -148,35 +153,34 @@ function chooseSuggestion(state: State, suggestion: any): [State, stm.Cmd<Msg>] 
 }
 
 function view(state: State) {
-    return v.div<Msg>({
-        className: 'sw-type-ahead ' + state.className
-    },
-        v.input({
-            type: 'text',
-            className: state.className,
-            placeholder: state.placeholder,
-            disabled: state.disabled,
-            name: state.name,
-            id: state.name,
-            autocomplete: 'off',
-            value: state.value,
-            oninput: (event: any) => msg('Input', event.target.value),
-            onkeydown: (event: any) => {
+    return <div class={'sw-type-ahead ' + state.className}>
+        <input
+            type="text"
+            class={state.className}
+            placeholder={state.placeholder}
+            disabled={state.disabled}
+            name={state.name}
+            id={state.name}
+            autocomplete="off"
+            value={state.value}
+            oninput={(event: any) => msg('Input', event.target.value)}
+            onkeydown={(event: any) => {
                 if (event.key === 'Enter' && state.suggestions.length > 0) {
-                    event.preventDefault();
                     event.stopPropagation();
+                    event.preventDefault();
                 }
-                return msg('KeyDown', event)
-            },
-            onblur: msg('HideSuggestions')
-        }),
-        !!state.suggestions && state.suggestions.length > 0 && v('ul.suggestions',
-            ...state.suggestions.map(suggestion => v.li<Msg>({
-                onClick: msg('SuggestionChosen', suggestion),
-                className: state.selectedSuggestion === suggestion ? 'active' : ''
-            },
-                suggestion.suggestion
-            ))
-        )
-    );
+                return msg('Key', event)
+            }}
+            onblur={msg('HideSuggestions')}
+        />
+        {!!state.suggestions && state.suggestions.length > 0 && <ul class="suggestions">
+            <>
+                {state.suggestions.map(suggestion => <li
+                    onclick={msg('SuggestionChosen', suggestion)}
+                    class={state.selectedSuggestion === suggestion ? 'active' : ''}>
+                    {suggestion.suggestion}
+                </li>)}
+            </>
+        </ul>}
+    </div >
 }

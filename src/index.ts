@@ -14,7 +14,7 @@ import './web-components/sw-text-input/sw-text-input';
 import './web-components/sw-number-input/sw-number-input';
 import './web-components/sw-button/sw-button.jsx';
 import './web-components/sw-markdown-input/sw-markdown-input.ts';
-import './web-components/sw-type-ahead/sw-type-ahead.ts';
+import './web-components/sw-type-ahead/sw-type-ahead.tsx';
 
 export * from './utils/router';
 export * from './utils/tr';

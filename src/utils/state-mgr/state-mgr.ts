@@ -95,20 +95,18 @@ export function component<State, Msg>({
     }
 
     function runUpdate(cmp: Cmp, msg: Msg) {
-        requestAnimationFrame(() => {
-            log('-------NEW MSG', msg);
-            log('before update', getState(cmp));
-            const updateResult = update(cloneDeep(getState(cmp)), msg);
-            if (updateResult === undefined) {
-                throw new Error('update should cover all cases');
-            }
-            const [newState, next] = updateResult;
-            log('after update', newState);
-            setState(cmp, newState);
-            if (next !== null) {
-                runNext(cmp, next);
-            }
-        });
+        log('-------NEW MSG', msg);
+        log('before update', getState(cmp));
+        const updateResult = update(cloneDeep(getState(cmp)), msg);
+        if (updateResult === undefined) {
+            throw new Error('update should cover all cases');
+        }
+        const [newState, next] = updateResult;
+        log('after update', newState);
+        setState(cmp, newState);
+        if (next !== null) {
+            runNext(cmp, next);
+        }
     }
 
     function runNext(cmp: Cmp, next: any) {
