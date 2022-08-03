@@ -51,7 +51,7 @@ stm.component({
                     ? inputValue as string
                     : 'text';
 
-                return [state, msg];
+                return [state, null];
             })
             .with(['AttributeChange', select('name'), select('value')], ({ name, value }: any) => {
                 if ((propTypes as any)[name] === Boolean) {
