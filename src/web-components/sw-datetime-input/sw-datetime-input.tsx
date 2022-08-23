@@ -1,27 +1,28 @@
 import { Component } from 'preact';
+// @ts-ignore
 import style from '../common/sw-input/sw-input.style.css';
 import { tr } from '../../utils/tr';
 
 export default class SwDatetimeInput extends Component {
-    dispatchEvent(name) {
-        this.ref.getRootNode().host.dispatchEvent(new CustomEvent('update', {
+    dispatchEvent(name: any) {
+        ((this as any).ref as any).getRootNode().host.dispatchEvent(new CustomEvent('update', {
             detail: {
                 name,
-                value: this.state.value,
-                error: this.state?.timeErr || this.state?.dateErr || this.state?.datetimeErr,
+                value: (this.state as any).value as any,
+                error: (this.state as any)?.timeErr || (this.state as any)?.dateErr || (this.state as any)?.datetimeErr,
             },
             bubbles: true,
         }));
     }
 
-    render({ name, required, placeholder, disabled, value, date, time, step, showLabel }) {
+    render({ name, required, placeholder, disabled, value, date, time, step, showLabel }: any) {
         const dateVal = dateStringify(value);
         const timeVal = timeStringify(value, date);
 
         return <div className="sw-input sw-datetime-input">
             <style>{style}</style>
 
-            <div className="input-wrapper" ref={node => this.ref = node}>
+            <div className="input-wrapper" ref={(node: any) => (this as any).ref = node}>
                 <div className="datetime-wrapper">
                     {date && <input
                         id={date ? name + '-date' : name + '-time'}
@@ -29,17 +30,17 @@ export default class SwDatetimeInput extends Component {
                         required={required === 'true'}
                         placeholder=" "
                         disabled={disabled !== 'false' && !!disabled}
-                        value={this.state.dateVal ?? dateVal}
+                        value={(this.state as any).dateVal ?? dateVal}
                         aria-labelledby={placeholder}
-                        onBlur={async e => {
+                        onBlur={async (e: any) => {
                             const {
                                 newVal,
                                 datetimeErr,
-                            } = datetimeToInteger(e.target.value, time, this.state.timeVal ?? timeVal, this);
+                            } = datetimeToInteger(e.target.value, time, (this.state as any).timeVal ?? timeVal);
 
                             await this.setState({
                                 dateVal: e.target.value,
-                                timeVal: this.state.timeVal ?? timeVal,
+                                timeVal: (this.state as any).timeVal ?? timeVal,
                                 dateErr: e.target.validationMessage !== e.target.value && e.target.validationMessage,
                                 value: newVal,
                                 datetimeErr,
@@ -53,17 +54,17 @@ export default class SwDatetimeInput extends Component {
                         required={required === 'true'}
                         placeholder=" "
                         disabled={disabled !== 'false' && !!disabled}
-                        value={this.state.timeVal ?? timeVal}
+                        value={(this.state as any).timeVal ?? timeVal}
                         step={step}
                         aria-labelledby={placeholder}
-                        onBlur={async e => {
+                        onBlur={async (e: any) => {
                             const { newVal, datetimeErr } = date
-                                ? datetimeToInteger(this.state.dateVal ?? dateVal, time, e.target.value, this)
+                                ? datetimeToInteger((this.state as any).dateVal ?? dateVal, time, e.target.value)
                                 : timeToInteger(e.target.value);
 
                             await this.setState({
                                 timeVal: e.target.value,
-                                dateVal: this.state.dateVal ?? dateVal,
+                                dateVal: (this.state as any).dateVal ?? dateVal,
                                 timeErr: e.target.validationMessage !== e.target.value && e.target.validationMessage,
                                 value: newVal,
                                 datetimeErr,
@@ -74,47 +75,47 @@ export default class SwDatetimeInput extends Component {
                 </div>
                 {showLabel && <label htmlFor={name + '-date'}>{placeholder}</label>}
             </div>
-        </div>;
+        </div >;
     }
 }
 
-function dateStringify(intAsStr) {
+function dateStringify(intAsStr: string) {
     if (intAsStr === '') {
         return null;
     }
     const date = new Date(Number(intAsStr));
-    const yyyy = String(date.getFullYear()).padStart(4, 0);
-    const mm = String(date.getMonth() + 1).padStart(2, 0);
-    const dd = String(date.getDate()).padStart(2, 0);
+    const yyyy = String(date.getFullYear()).padStart(4, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
     return [yyyy, mm, dd].join('-');
 }
 
-function timeStringify(intAsStr, withDate) {
+function timeStringify(intAsStr: any, withDate: any) {
     if (intAsStr === '') {
         return null;
     }
     const time = new Date(Number(intAsStr));
     const arr = [];
     if (withDate) {
-        arr.push(String(time.getHours()).padStart(2, 0));
-        arr.push(String(time.getMinutes()).padStart(2, 0));
-        arr.push(String(time.getSeconds()).padStart(2, 0));
+        arr.push(String(time.getHours()).padStart(2, '0'));
+        arr.push(String(time.getMinutes()).padStart(2, '0'));
+        arr.push(String(time.getSeconds()).padStart(2, '0'));
     } else {
-        arr.push(String(time.getUTCHours()).padStart(2, 0));
-        arr.push(String(time.getUTCMinutes()).padStart(2, 0));
-        arr.push(String(time.getUTCSeconds()).padStart(2, 0));
+        arr.push(String(time.getUTCHours()).padStart(2, '0'));
+        arr.push(String(time.getUTCMinutes()).padStart(2, '0'));
+        arr.push(String(time.getUTCSeconds()).padStart(2, '0'));
     }
     return arr.join(':');
 }
 
-function timeToInteger(timeString) {
-    let arr = timeString.split(':');
-    arr = arr.map(val => Number(val));
+function timeToInteger(timeString: string) {
+    let arr: any = timeString.split(':');
+    arr = arr.map((val: any) => Number(val));
     const seconds = arr[0] * 60 * 60 + arr[1] * 60 + (arr[2] || 0);
     return { newVal: 1000 * seconds, datetimeErr: '' };
 }
 
-function datetimeToInteger(dateString, withTime, timeString) {
+function datetimeToInteger(dateString: string, withTime: any, timeString: string) {
     if (!dateString && (!withTime || !timeString)) {
         return { newVal: null, datetimeErr: '' };
     }

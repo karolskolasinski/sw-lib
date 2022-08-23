@@ -177,4 +177,3 @@ if (!(window as any).router) {
     });
     (window as any).router = router;
 }
-
