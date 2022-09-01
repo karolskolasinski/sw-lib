@@ -62,7 +62,7 @@ export function component<State, Msg>({
     willUnmount
 }: {
     init: (dispatch: Dispatch<Msg>, func: (onRefChange: OnRefChangeFunc) => void) => [State, Cmd<Msg>],
-    update: (state: State, msg: Msg) => [State, Cmd<Msg>],
+    update: (state: State, msg: Msg, cmp: any, dispatch: Dispatch<Msg>) => [State, Cmd<Msg>],
     view: (state: State, children?: any) => View<Msg>,
     attributeChangeFactory?: (name: string, value: string) => Msg,
     debug?: boolean,
@@ -97,7 +97,7 @@ export function component<State, Msg>({
     function runUpdate(cmp: Cmp, msg: Msg) {
         log('-------NEW MSG', msg);
         log('before update', getState(cmp));
-        const updateResult = update(cloneDeep(getState(cmp)), msg);
+        const updateResult = update(cloneDeep(getState(cmp)), msg, cmp, (msg: any) => runUpdate(cmp, msg));
         if (updateResult === undefined) {
             throw new Error('update should cover all cases');
         }
