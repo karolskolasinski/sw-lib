@@ -5,8 +5,8 @@ stm.component({
     shadow: true,
     init: () => [{}, null],
     update: (state) => [state, null],
-    view: () => <svg version="1.1" id="L9" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-        viewBox="0 0 24 30" enable-background="new 0 0 0 0" xml:space="preserve">
+    view: () => <svg version="1.1" id="L9" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+        viewBox="0 0 24 30" enable-background="new 0 0 0 0">
         <style>
             {`
              rect { fill: var(--color); }
