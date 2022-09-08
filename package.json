@@ -4,7 +4,7 @@
     "license": "MIT",
     "main": "dist/build.js",
     "scripts": {
-        "build": "esbuild src/index.ts --bundle  --outfile=dist/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text --format=esm",
+        "build": "esbuild src/index.ts --bundle  --outfile=dist/build.js --sourcemap --loader:.css=text --format=esm",
         "build:dev": "esbuild src/test-client/index.jsx --bundle --outfile=src/test-client/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text",
         "build:prod": "npm run build -- --minify --sourcemap --target=chrome96,firefox91,safari15,edge96",
         "build:watch": "concurrently \"npm run build -- --watch\" \"tsc --watch\"",
@@ -31,7 +31,7 @@
         "@types/moment": "^2.13.0",
         "@types/preact-custom-element": "^4.0.1",
         "concurrently": "^6.2.1",
-        "esbuild": "^0.14.25",
+        "esbuild": "^0.15.7",
         "eslint": "^7.32.0",
         "live-server": "^1.2.1",
         "lodash": "^4.17.21",
