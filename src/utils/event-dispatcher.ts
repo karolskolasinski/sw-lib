@@ -10,7 +10,7 @@ export interface EventDispatcher {
     trigger(event: Event): void;
 }
 
-export function addEventDispatcherTrait<T>(target: T): T & EventDispatcher {
+export function addEventDispatcherTrait<T extends object>(target: T): T & EventDispatcher {
     const eventListeners: Record<string, Listener[]> = {};
 
     function addEventListener(eventType: string, listener: Listener) {
