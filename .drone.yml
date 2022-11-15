@@ -12,7 +12,7 @@ steps:
     - npm publish
   environment:
     TOKEN:
-      from_secret: dronenpm
+      from_secret: gitea-token
   #when:
   #  event:
   #    tag
