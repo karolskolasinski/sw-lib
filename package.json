@@ -1,6 +1,6 @@
 {
     "name": "@7willows/sw-lib",
-    "version": "2.3.5",
+    "version": "2.3.6",
     "license": "MIT",
     "main": "dist/build.js",
     "scripts": {
@@ -14,9 +14,6 @@
         "lint": "eslint src/"
     },
     "types": "src/index.ts",
-    "publishConfig": {
-        "@7willows:registry": "https://gitea.7willows.com/api/packages/7willows/npm"
-    },
     "devDependencies": {
         "@types/lodash": "^4.14.177",
         "@types/moment": "^2.13.0",
