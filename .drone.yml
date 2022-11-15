@@ -13,6 +13,6 @@ steps:
   environment:
     TOKEN:
       from_secret: gitea-token
-  #when:
-  #  event:
-  #    tag
+  when:
+   event:
+     tag
