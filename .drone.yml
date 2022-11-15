@@ -9,7 +9,6 @@ steps:
     - npm install
     - npm config set @7willows:registry https://gitea.7willows.com/api/packages/7willows/npm/
     - npm config set -- '//gitea.7willows.com/api/packages/7willows/npm/:_authToken' "$TOKEN"
-    - npm whoami
     - npm publish
   environment:
     TOKEN:
