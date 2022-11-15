@@ -1,0 +1,18 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: publish
+  image: node:16-alpine
+  commands:
+    - npm install
+    - npm config set @7willows:registry https://gitea.7willows.com/api/packages/7willows/npm/
+    - npm config set -- '//gitea.7willows.com/api/packages/7willows/npm/:_authToken' "$TOKEN"
+    - npm publish
+  environment:
+    TOKEN:
+      from_secret: gitea-token
+  when:
+    event:
+      tag
