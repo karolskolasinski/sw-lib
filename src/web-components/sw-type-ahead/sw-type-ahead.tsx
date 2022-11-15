@@ -163,20 +163,20 @@ function view(state: State) {
             id={state.name}
             autocomplete="off"
             value={state.value}
-            oninput={(event: any) => msg('Input', event.target.value)}
-            onkeydown={(event: any) => {
+            onInput={(event: any) => msg('Input', event.target.value)}
+            onKeyDown={(event: any) => {
                 if (event.key === 'Enter' && state.suggestions.length > 0) {
                     event.stopPropagation();
                     event.preventDefault();
                 }
                 return msg('Key', event)
             }}
-            onblur={msg('HideSuggestions')}
+            onBlur={msg('HideSuggestions') as any}
         />
         {!!state.suggestions && state.suggestions.length > 0 && <ul class="suggestions">
             <>
                 {state.suggestions.map(suggestion => <li
-                    onclick={msg('SuggestionChosen', suggestion)}
+                    onClick={msg('SuggestionChosen', suggestion) as any}
                     class={state.selectedSuggestion === suggestion ? 'active' : ''}>
                     {suggestion.suggestion}
                 </li>)}
