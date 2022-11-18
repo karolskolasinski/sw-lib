@@ -7,12 +7,7 @@ steps:
   image: gitea.7willows.com/7willows/node-builder:latest
   commands:
     - npm install
-    - npm config set @7willows:registry https://gitea.7willows.com/api/packages/7willows/npm/
-    - npm config set -- '//gitea.7willows.com/api/packages/7willows/npm/:_authToken' "$TOKEN"
     - npm publish
-  environment:
-    TOKEN:
-      from_secret: gitea-token
   when:
    event:
      tag
