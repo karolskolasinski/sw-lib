@@ -1,6 +1,6 @@
 {
     "name": "@7willows/sw-lib",
-    "version": "2.3.7",
+    "version": "2.3.8",
     "license": "MIT",
     "main": "dist/build.js",
     "scripts": {
@@ -24,7 +24,7 @@
         "live-server": "^1.2.1",
         "lodash": "^4.17.21",
         "preact": "^10.5.14",
-        "preact-custom-element": "^4.2.1",
+
         "to-no-case": "^1.0.2",
         "typescript": "^4.5.4"
     },
@@ -37,6 +37,7 @@
     },
     "dependencies": {
         "lodash-es": "^4.17.21",
-        "ts-pattern": "^3.3.4"
+        "ts-pattern": "^3.3.4",
+        "preact-custom-element": "^4.2.1"
     }
 }
