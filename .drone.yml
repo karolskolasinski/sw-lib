@@ -7,6 +7,7 @@ steps:
   image: gitea.7willows.com/7willows/node-builder:latest
   commands:
     - npm install
+    - npm run build:prod
     - npm publish
   when:
    event:
