@@ -1,6 +1,5 @@
 export * from './router';
 export * from './tr';
-
 export * from './flash-message/flash-message';
 export * from './modal/modal';
 export * as stm from './state-mgr/state-mgr';
