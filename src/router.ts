@@ -1,4 +1,4 @@
-import { addEventDispatcherTrait } from './event-dispatcher';
+import { addEventDispatcherTrait, EventDispatcher } from './event-dispatcher';
 
 const routes = (window as any).routes = (window as any).routes ?? [];
 
@@ -109,17 +109,7 @@ function addRoute(routeDef: router.RouteDefinition) {
     routes.push({ ...routeDef, parts });
 }
 
-interface EventDispatcher {
-    addEventListener(eventType: string, listener: (event: Event) => void): void;
-    removeEventListener(eventType: string, listenr: (event: Event) => void): void;
-    dispatchEvent(event: Event): void;
-
-    on(eventType: string, listener: (event: Event) => void): void;
-    off(eventType: string, listenr: (event: Event) => void): void;
-    trigger(event: Event): void;
-}
-
-interface Router extends EventDispatcher {
+export interface Router extends EventDispatcher {
     findDefaultRoute(): router.Route;
     findRouteByName(routeName: string): router.Route;
     findRouteByUrl(url: string): router.Route;

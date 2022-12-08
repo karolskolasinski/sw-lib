@@ -2,7 +2,7 @@ import get from 'lodash/get';
 import set from 'lodash/set';
 import { addEventDispatcherTrait, EventDispatcher } from './event-dispatcher';
 
-interface Translate extends EventDispatcher {
+export interface Translate extends EventDispatcher {
     (
         phrase: string | Record<string, string>,
         langOrParams?: string | Record<string, string | number> | (string | number)[],
