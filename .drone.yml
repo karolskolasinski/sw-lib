@@ -10,9 +10,12 @@ steps:
     - npm run build:prod
     - npm run build:defs
     - npm publish
+#  when:
+#   event:
+#     tag
   when:
-   event:
-     tag
+    ref:
+    - refs/tags/^v[0-9]*[.][0-9]*[.][0-9]*$
 
 image_pull_secrets:
 - dockerconfig
