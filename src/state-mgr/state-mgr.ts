@@ -58,7 +58,7 @@ export function component<State, Msg>({
     tagName,
     propTypes = {},
     shadow = false,
-    idempotentState = true,
+    passStateByReference = false,
     willMount,
     willUnmount
 }: {
@@ -68,7 +68,7 @@ export function component<State, Msg>({
     attributeChangeFactory?: (name: string, value: string) => Msg,
     debug?: boolean,
     tagName: string,
-    idempotentState: boolean,
+    passStateByReference: boolean,
     propTypes?: Record<string, BasicTypeConstructor>,
     shadow?: boolean,
     willMount?: (cmp: any, dispatch: Dispatch<Msg>) => void,
@@ -100,9 +100,9 @@ export function component<State, Msg>({
 	log('-------NEW MSG', msg);
 	log('before update', getState(cmp));
 
-	const s = idempotentState
-	    ? cloneDeep(getState(cmp))
-	    : getState(cmp);
+	const s = passStateByReference
+	    ? getState(cmp)
+	    : cloneDeep(getState(cmp));
 
 	const updateResult = update(s, msg, cmp, (msg: any) => runUpdate(cmp, msg));
 	if (updateResult === undefined) {
