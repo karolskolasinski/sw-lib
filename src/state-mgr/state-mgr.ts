@@ -58,6 +58,7 @@ export function component<State, Msg>({
     tagName,
     propTypes = {},
     shadow = false,
+    idempotentState = true,
     willMount,
     willUnmount
 }: {
@@ -67,6 +68,7 @@ export function component<State, Msg>({
     attributeChangeFactory?: (name: string, value: string) => Msg,
     debug?: boolean,
     tagName: string,
+    idempotentState: boolean,
     propTypes?: Record<string, BasicTypeConstructor>,
     shadow?: boolean,
     willMount?: (cmp: any, dispatch: Dispatch<Msg>) => void,
@@ -75,187 +77,192 @@ export function component<State, Msg>({
     const alreadyRegistered = !!customElements.get(tagName);
 
     const log = debug
-        ? (msg: string, ...args: any[]) => {
-            console.log('stm:' + tagName + ': ' + msg, ...args);
-        }
-        : () => { };
+	? (msg: string, ...args: any[]) => {
+	    console.log('stm:' + tagName + ': ' + msg, ...args);
+	}
+	: () => { };
 
     if (alreadyRegistered) {
-        log(`custom element "${tagName}" is already registered`);
-        return;
+	log(`custom element "${tagName}" is already registered`);
+	return;
     }
 
     function setState(cmp: any, s: State) {
-        cmp.swState = s;
-        cmp.setState({ states: [s] });
+	cmp.swState = s;
+	cmp.setState({ states: [s] });
     }
 
     function getState(cmp: any) {
-        return cmp.swState;
+	return cmp.swState;
     }
 
     function runUpdate(cmp: Cmp, msg: Msg) {
-        log('-------NEW MSG', msg);
-        log('before update', getState(cmp));
-        const updateResult = update(cloneDeep(getState(cmp)), msg, cmp, (msg: any) => runUpdate(cmp, msg));
-        if (updateResult === undefined) {
-            throw new Error('update should cover all cases');
-        }
-        const [newState, next] = updateResult;
-        log('after update', newState);
-        setState(cmp, newState);
-        if (next !== null) {
-            runNext(cmp, next);
-        }
+	log('-------NEW MSG', msg);
+	log('before update', getState(cmp));
+
+	const s = idempotentState
+	    ? cloneDeep(getState(cmp))
+	    : getState(cmp);
+
+	const updateResult = update(s, msg, cmp, (msg: any) => runUpdate(cmp, msg));
+	if (updateResult === undefined) {
+	    throw new Error('update should cover all cases');
+	}
+	const [newState, next] = updateResult;
+	log('after update', newState);
+	setState(cmp, newState);
+	if (next !== null) {
+	    runNext(cmp, next);
+	}
     }
 
     function runNext(cmp: Cmp, next: any) {
-        if (next instanceof CombinedCmds) {
-            next.cmds.forEach(cmd => runNext(cmp, cmd));
-            return;
-        }
+	if (next instanceof CombinedCmds) {
+	    next.cmds.forEach(cmd => runNext(cmp, cmd));
+	    return;
+	}
 
-        if (next && next[0] === 'Focus') {
-            function tryFocus(tries: number) {
-                requestAnimationFrame(() => {
-                    const node = cmp.ref.querySelector(next[1]);
-                    if (node) {
-                        node.focus();
-                    } else if (tries > 0) {
-                        tryFocus(tries - 1);
-                    }
-                });
-            }
+	if (next && next[0] === 'Focus') {
+	    function tryFocus(tries: number) {
+		requestAnimationFrame(() => {
+		    const node = cmp.ref.querySelector(next[1]);
+		    if (node) {
+			node.focus();
+		    } else if (tries > 0) {
+			tryFocus(tries - 1);
+		    }
+		});
+	    }
 
-            tryFocus(100);
-            return;
-        }
-        if (next instanceof Event) {
-            log('DISPATCH', next);
+	    tryFocus(100);
+	    return;
+	}
+	if (next instanceof Event) {
+	    log('DISPATCH', next);
 
-            if (shadow) {
-                cmp.ref.getRootNode().host.dispatchEvent(next);
-            } else {
-                cmp.ref.dispatchEvent(next);
-            }
+	    if (shadow) {
+		cmp.ref.getRootNode().host.dispatchEvent(next);
+	    } else {
+		cmp.ref.dispatchEvent(next);
+	    }
 
-            return;
-        }
-        Promise.resolve(next)
-            .then(maybeMsg => {
-                if (maybeMsg !== null) {
-                    runUpdate(cmp, maybeMsg);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                throw new Error('update promise should never throw');
-            });
+	    return;
+	}
+	Promise.resolve(next)
+	    .then(maybeMsg => {
+		if (maybeMsg !== null) {
+		    runUpdate(cmp, maybeMsg);
+		}
+	    })
+	    .catch(err => {
+		console.error(err);
+		throw new Error('update promise should never throw');
+	    });
     }
 
     const dispatcher = (cmp: Cmp, msgFactory: any) => {
-        return async function(event: Event) {
-            const msg = getOrCall(msgFactory, event);
-            if (msg) {
-                runUpdate(cmp, msg);
-            }
-        };
+	return async function(event: Event) {
+	    const msg = getOrCall(msgFactory, event);
+	    if (msg) {
+		runUpdate(cmp, msg);
+	    }
+	};
     };
 
     class Cmp extends Component {
 
-        public ref: any;
-        public initialRenderComplete: boolean;
-        public realProps: Record<string, any>;
-        private onRefChange?: (ref: HTMLElement, oldRef?: HTMLElement) => void;
+	public ref: any;
+	public initialRenderComplete: boolean;
+	public realProps: Record<string, any>;
+	private onRefChange?: (ref: HTMLElement, oldRef?: HTMLElement) => void;
 
-        constructor() {
-            super();
-            this.redraw = this.redraw.bind(this);
-            this.setRef = this.setRef.bind(this);
+	constructor() {
+	    super();
+	    this.redraw = this.redraw.bind(this);
+	    this.setRef = this.setRef.bind(this);
 
-            const [state, next] = init(msg => runUpdate(this, msg), func => this.onRefChange = func);
-            log('INIT complete', state);
-            setState(this, state);
-            runNext(this, next);
-            this.initialRenderComplete = false;
-            this.realProps = {};
+	    const [state, next] = init(msg => runUpdate(this, msg), func => this.onRefChange = func);
+	    log('INIT complete', state);
+	    setState(this, state);
+	    runNext(this, next);
+	    this.initialRenderComplete = false;
+	    this.realProps = {};
 
-        }
+	}
 
-        shouldComponentUpdate(nextProps: any): any {
-            if (!attributeChangeFactory) {
-                return true;
-            }
-            const allPropNames = uniq(Object.keys(this.realProps).concat(Object.keys(nextProps)).map(toCamelCase));
+	shouldComponentUpdate(nextProps: any): any {
+	    if (!attributeChangeFactory) {
+		return true;
+	    }
+	    const allPropNames = uniq(Object.keys(this.realProps).concat(Object.keys(nextProps)).map(toCamelCase));
 
-            allPropNames.forEach((propName) => {
-                if (propName === 'children') {
-                    if (this.realProps['children'] !== nextProps['children']) {
-                        this.realProps[propName] = nextProps[propName];
-                        runUpdate(this, attributeChangeFactory(propName, nextProps[propName]));
-                    }
-                    return;
-                }
+	    allPropNames.forEach((propName) => {
+		if (propName === 'children') {
+		    if (this.realProps['children'] !== nextProps['children']) {
+			this.realProps[propName] = nextProps[propName];
+			runUpdate(this, attributeChangeFactory(propName, nextProps[propName]));
+		    }
+		    return;
+		}
 
-                if (!myIsEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
-                    this.realProps[propName] = nextProps[propName];
-                    runUpdate(this, attributeChangeFactory(propName, nextProps[propName]));
-                }
-            });
-        }
+		if (!myIsEqual(this.realProps[propName], nextProps[propName]) && nextProps[propName] !== undefined) {
+		    this.realProps[propName] = nextProps[propName];
+		    runUpdate(this, attributeChangeFactory(propName, nextProps[propName]));
+		}
+	    });
+	}
 
-        render(props: any) {
-            if (!this.initialRenderComplete && attributeChangeFactory) {
-                this.initialRenderComplete = true;
-                Object.keys(props).forEach(propName => {
-                    this.realProps[toCamelCase(propName)] = props[propName];
-                    runUpdate(this, attributeChangeFactory(toCamelCase(propName), props[propName]));
-                });
-            }
-            const state = getState(this);
-            let vnode: any = view(state, props.children);
-            if (!isValidElement(vnode)) {
-                vnode = toVNode(vnode, dispatcher);
-            }
-            const rendered = initVNode(vnode, dispatcher.bind(null, this)) as any;
-            if (typeof rendered !== 'string' && (typeof rendered.type === 'string' || !shadow)) {
-                rendered.ref = this.setRef;
-            } else if (typeof rendered.type !== 'string' && rendered.props.children.length > 0) {
-                rendered.props.children[0].ref = this.setRef;
-            }
-            return rendered;
-        }
+	render(props: any) {
+	    if (!this.initialRenderComplete && attributeChangeFactory) {
+		this.initialRenderComplete = true;
+		Object.keys(props).forEach(propName => {
+		    this.realProps[toCamelCase(propName)] = props[propName];
+		    runUpdate(this, attributeChangeFactory(toCamelCase(propName), props[propName]));
+		});
+	    }
+	    const state = getState(this);
+	    let vnode: any = view(state, props.children);
+	    if (!isValidElement(vnode)) {
+		vnode = toVNode(vnode, dispatcher);
+	    }
+	    const rendered = initVNode(vnode, dispatcher.bind(null, this)) as any;
+	    if (typeof rendered !== 'string' && (typeof rendered.type === 'string' || !shadow)) {
+		rendered.ref = this.setRef;
+	    } else if (typeof rendered.type !== 'string' && rendered.props.children.length > 0) {
+		rendered.props.children[0].ref = this.setRef;
+	    }
+	    return rendered;
+	}
 
-        setRef(ref: any) {
-            const old = this.ref;
-            if (shadow || !ref) {
-                this.ref = ref;
-            } else {
-                this.ref = ref.parentNode;
-            }
-            if (this.onRefChange) {
-                this.onRefChange(this.ref, old);
-            }
-        }
+	setRef(ref: any) {
+	    const old = this.ref;
+	    if (shadow || !ref) {
+		this.ref = ref;
+	    } else {
+		this.ref = ref.parentNode;
+	    }
+	    if (this.onRefChange) {
+		this.onRefChange(this.ref, old);
+	    }
+	}
 
-        redraw() {
-            this.forceUpdate();
-        }
+	redraw() {
+	    this.forceUpdate();
+	}
 
-        componentWillMount() {
-            tr.addEventListener('setlang', this.redraw);
-            if (willMount) {
-                willMount.call(this, this, msg => runUpdate(this, msg));
-            }
-        }
+	componentWillMount() {
+	    tr.addEventListener('setlang', this.redraw);
+	    if (willMount) {
+		willMount.call(this, this, msg => runUpdate(this, msg));
+	    }
+	}
 
-        componentWillUnmount() {
-            tr.removeEventListener('setlang', this.redraw);
-            if (willUnmount) {
-                willUnmount.call(this, this, msg => runUpdate(this, msg));
-            }
-        }
+	componentWillUnmount() {
+	    tr.removeEventListener('setlang', this.redraw);
+	    if (willUnmount) {
+		willUnmount.call(this, this, msg => runUpdate(this, msg));
+	    }
+	}
     }
 
     const attrs = uniq(Object.keys(propTypes).map(toKebabCase).concat(Object.keys(propTypes)));
@@ -264,29 +271,29 @@ export function component<State, Msg>({
 
 function getOrCall(item: any, ...args: any[]) {
     if (typeof item === 'function') {
-        return item(...args);
+	return item(...args);
     } else {
-        return item;
+	return item;
     }
 }
 
 function initVNode(vnode: VNode | string, dispatcher: any): VNode | string {
     if (typeof vnode === 'string' || typeof vnode === 'boolean') {
-        return vnode;
+	return vnode;
     }
 
     Object.keys(vnode.props || {}).forEach(key => {
-        if (key.slice(0, 2) === 'on') {
-            (vnode as any).props[key] = dispatcher((vnode as any).props[key]);
-        }
+	if (key.slice(0, 2) === 'on') {
+	    (vnode as any).props[key] = dispatcher((vnode as any).props[key]);
+	}
     });
 
     if (Array.isArray(vnode?.props?.children)) {
-        vnode.props.children.forEach(child => {
-            initVNode(child as VNode, dispatcher);
-        });
+	vnode.props.children.forEach(child => {
+	    initVNode(child as VNode, dispatcher);
+	});
     } else if (vnode?.props?.children) {
-        initVNode(vnode.props.children as VNode, dispatcher);
+	initVNode(vnode.props.children as VNode, dispatcher);
     }
 
     return vnode;
@@ -298,37 +305,37 @@ function toVNode(item: any, dispatcher: any) {
     let content = item[2];
 
     if (!content) {
-        if (Array.isArray(opts)) {
-            content = opts;
-            opts = {};
-        } else if (opts instanceof Object) {
-            content = [];
-        } else {
-            content = opts;
-            opts = {};
-        }
+	if (Array.isArray(opts)) {
+	    content = opts;
+	    opts = {};
+	} else if (opts instanceof Object) {
+	    content = [];
+	} else {
+	    content = opts;
+	    opts = {};
+	}
     }
     const { nodeName, id, classes } = parseElement(el);
 
     if (id) {
-        opts.id = opts.id ?? id;
+	opts.id = opts.id ?? id;
     }
 
     if (classes && classes.length > 0) {
-        const allClasses = classes.concat((opts.className ?? '').split(' ').filter((x: any) => x));
-        opts.className = allClasses.join(' ');
+	const allClasses = classes.concat((opts.className ?? '').split(' ').filter((x: any) => x));
+	opts.className = allClasses.join(' ');
     }
 
     if (Array.isArray(content)) {
-        content = content
-            .filter(item => item)
-            .map(child => {
-                if (Array.isArray(child)) {
-                    return toVNode(child, dispatcher);
-                }
-                // it's already a VNode
-                return initVNode(child, dispatcher);
-            });
+	content = content
+	    .filter(item => item)
+	    .map(child => {
+		if (Array.isArray(child)) {
+		    return toVNode(child, dispatcher);
+		}
+		// it's already a VNode
+		return initVNode(child, dispatcher);
+	    });
     }
 
     return h(nodeName, opts, content);
@@ -337,21 +344,21 @@ function toVNode(item: any, dispatcher: any) {
 function parseElement(el: string) {
     const nodeName = el.split('.')[0] || 'div';
     const { classes, id } = el
-        .split(/(#[a-zA-Z0-9\-_]+)|(\.[a-zA-Z0-9\-_]*)/g) // split into "#abc" and ".abc" parts
-        .filter((x: any) => x)
-        .reduce((acc: { classes: string[], id: string }, item: string) => {
-            if (item[0] === '#') {
-                acc.id = item.slice(1);
-            } else if (item[0] === '.') {
-                acc.classes.push(item.slice(1));
-            }
-            return acc;
-        }, { classes: [], id: '' });
+	.split(/(#[a-zA-Z0-9\-_]+)|(\.[a-zA-Z0-9\-_]*)/g) // split into "#abc" and ".abc" parts
+	.filter((x: any) => x)
+	.reduce((acc: { classes: string[], id: string }, item: string) => {
+	    if (item[0] === '#') {
+		acc.id = item.slice(1);
+	    } else if (item[0] === '.') {
+		acc.classes.push(item.slice(1));
+	    }
+	    return acc;
+	}, { classes: [], id: '' });
 
     return {
-        nodeName,
-        id,
-        classes
+	nodeName,
+	id,
+	classes
     };
 }
 
@@ -360,20 +367,20 @@ function myIsEqual(a: any, b: any): boolean {
     const bType = getType(b);
 
     if (aType !== bType) {
-        return false;
+	return false;
     }
 
     if (aType === 'object') {
-        const sameKeys = isEqual(Object.keys(a), Object.keys(b));
+	const sameKeys = isEqual(Object.keys(a), Object.keys(b));
 
-        if (!sameKeys) {
-            return false;
-        }
-        return Object.keys(a).every((key: string) => myIsEqual(a[key], b[key]));
+	if (!sameKeys) {
+	    return false;
+	}
+	return Object.keys(a).every((key: string) => myIsEqual(a[key], b[key]));
     }
 
     if (aType === 'function') {
-        return aType?.toString() === bType?.toString();
+	return aType?.toString() === bType?.toString();
     }
 
     return isEqual(a, b);
@@ -381,16 +388,16 @@ function myIsEqual(a: any, b: any): boolean {
 
 function getType(x: any) {
     if (['string', 'number', 'boolean', 'undefined', 'function'].includes(typeof x)) {
-        return typeof x;
+	return typeof x;
     }
     if (Array.isArray(x)) {
-        return 'array';
+	return 'array';
     }
     if (x === null) {
-        return 'null';
+	return 'null';
     }
     if (x instanceof Object) {
-        return 'object';
+	return 'object';
     }
 }
 
