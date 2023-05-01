@@ -1,40 +1,50 @@
 {
-    "name": "@7willows/sw-lib",
-    "version": "3.0.4",
-    "license": "MIT",
-    "main": "dist/build.js",
-    "types": "index.d.ts",
-    "scripts": {
-        "build:defs": "npm-dts generate",
-        "build": "esbuild src/index.ts --bundle --outfile=dist/build.js --sourcemap --loader:.css=text --format=esm",
-        "build:dev": "esbuild src/test-client/index.jsx --bundle --outfile=src/test-client/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text",
-        "build:prod": "npm run build -- --minify --sourcemap --target=chrome96,firefox91,safari15,edge96",
-        "build:watch": "run-p esbuild:watch tsc:watch",
-        "build:watch:dev": "npm run build:dev -- --watch",
-        "tsc:watch": "tsc --watch",
-        "esbuild:watch": "npm run build -- --watch",
-        "test-client": "live-server . --open=/src/test-client/index.html --watch=dist/,src/**/*.html, src/**/*.css",
-        "dev": "concurrently --kill-others \"live-server test-client\" \"npm run build:watch:dev\"",
-        "lint": "eslint src/"
-    },
-    "devDependencies": {
-        "esbuild": "^0.15.7",
-        "eslint": "^7.32.0",
-        "live-server": "^1.2.1",
-        "lodash": "^4.17.21",
-        "npm-dts": "^1.3.12",
-        "npm-run-all": "^4.1.5",
-        "to-no-case": "^1.0.2",
-        "tslib": "^2.4.1",
-        "typescript": "^4.5.4"
-    },
-    "dependencies": {
-        "@types/lodash": "^4.14.177",
-        "@types/moment": "^2.13.0",
-        "@types/preact-custom-element": "^4.0.1",
-        "lodash-es": "^4.17.21",
-        "preact": "^10.5.14",
-        "preact-custom-element": "^4.2.1",
-        "ts-pattern": "^3.3.4"
-    }
+  "name": "@7willows/sw-lib",
+  "description": "Base toolset for building web components with preact",
+  "version": "3.0.5",
+  "license": "ISC",
+  "main": "dist/build.js",
+  "types": "index.d.ts",
+  "author": "7willows",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:7willows/sw-lib.git"
+  },
+  "bugs": {
+    "url": "https://github.com/7willows/sw-lib/issues"
+  },
+  "homepage": "https://github.com/7willows/sw-lib#readme",
+  "scripts": {
+    "build:defs": "npm-dts generate",
+    "build": "esbuild src/index.ts --bundle --outfile=dist/build.js --sourcemap --loader:.css=text --format=esm",
+    "build:dev": "esbuild src/test-client/index.jsx --bundle --outfile=src/test-client/build.js --sourcemap --jsx-factory=h --jsx-fragment=Fragment --inject:./preact-shim.js --loader:.css=text",
+    "build:prod": "npm run build -- --minify --sourcemap --target=chrome96,firefox91,safari15,edge96",
+    "build:watch": "run-p esbuild:watch tsc:watch",
+    "build:watch:dev": "npm run build:dev -- --watch",
+    "tsc:watch": "tsc --watch",
+    "esbuild:watch": "npm run build -- --watch",
+    "test-client": "live-server . --open=/src/test-client/index.html --watch=dist/,src/**/*.html, src/**/*.css",
+    "dev": "concurrently --kill-others \"live-server test-client\" \"npm run build:watch:dev\"",
+    "lint": "eslint src/"
+  },
+  "devDependencies": {
+    "esbuild": "^0.15.7",
+    "eslint": "^7.32.0",
+    "live-server": "^1.2.1",
+    "lodash": "^4.17.21",
+    "npm-dts": "^1.3.12",
+    "npm-run-all": "^4.1.5",
+    "to-no-case": "^1.0.2",
+    "tslib": "^2.4.1",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.177",
+    "@types/moment": "^2.13.0",
+    "@types/preact-custom-element": "^4.0.1",
+    "lodash-es": "^4.17.21",
+    "preact": "^10.5.14",
+    "preact-custom-element": "^4.2.1",
+    "ts-pattern": "^3.3.4"
+  }
 }
