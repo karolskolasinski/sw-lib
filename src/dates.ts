@@ -24,3 +24,16 @@ export function formatDateTime(timestamp: number) {
 
     return `${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
 }
+
+export function timestampToHumanDate(timestamp: number) {
+    const date = new Date(timestamp);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear().toString();
+
+    return `${day}.${month}.${year}`;
+}
+
+export function timestampToHumanTime(timestamp: number) {
+    return new Date(timestamp).toTimeString().slice(0, 5);
+}
