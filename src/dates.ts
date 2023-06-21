@@ -1,7 +1,7 @@
 import { prefixForConstSize } from "./strings";
 import { tr } from './tr';
 
-export function formatDate(timestamp: number) {
+export function timestampToHumanDate(timestamp: number) {
     const date = new Date(timestamp);
 
     const day = prefixForConstSize(date.getDate().toString(), 2, '0');
@@ -11,7 +11,7 @@ export function formatDate(timestamp: number) {
     return `${day}.${month}.${year}`;
 }
 
-export function formatDateTime(timestamp: number) {
+export function timestampToHumanDateTime(timestamp: number) {
     const date = new Date(timestamp);
 
     const day = date.getDate();
@@ -23,15 +23,6 @@ export function formatDateTime(timestamp: number) {
     const seconds = prefixForConstSize(date.getSeconds().toString(), 2, '0');
 
     return `${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
-}
-
-export function timestampToHumanDate(timestamp: number) {
-    const date = new Date(timestamp);
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear().toString();
-
-    return `${day}.${month}.${year}`;
 }
 
 export function timestampToHumanTime(timestamp: number) {
