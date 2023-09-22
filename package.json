@@ -1,7 +1,7 @@
 {
   "name": "@7willows/sw-lib",
   "description": "Base toolset for building web components with preact",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "license": "ISC",
   "main": "dist/build.js",
   "types": "index.d.ts",
